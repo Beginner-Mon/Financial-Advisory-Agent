@@ -125,3 +125,89 @@ def health():
         db_connected=db_ok,
         catalog_loaded=catalog_ok,
     )
+
+
+# ---------------------------------------------------------------------------
+# Structured endpoint for mobile app
+# ---------------------------------------------------------------------------
+
+class StructuredRecommendation(BaseModel):
+    name: str
+    type: str
+    return_pct: float
+    rationale: str = ""
+    min_credit: int = 0
+
+
+class StructuredReport(BaseModel):
+    """Parsed advisory data for mobile app rendering."""
+    session_id: str
+    health_score: float
+    risk_profile: str
+    goals: list[str]
+    plan_steps: list[str]
+    recommendations: list[StructuredRecommendation]
+    agent_commentary: str = ""
+    report_markdown: str = ""
+
+
+@app.post("/advise/structured", response_model=StructuredReport)
+def advise_structured(q: AdvisoryQuery):
+    """Run the pipeline and return structured JSON for mobile apps."""
+    try:
+        from agents.profiling.agent import run as profile_user
+        from tools.financial_intel.engine import build_financial_plan
+        from tools.product_catalog.service import get_recommendations
+        from tools.reporting.generator import generate_report
+        from models.user import UserProfile
+
+        logger.info(f"Structured advise: session={q.session_id}, message='{q.message[:60]}'")
+
+        # Step 1: Profile
+        profile_result = profile_user(q.message)
+        profile_data = profile_result.get("profile")
+        if not profile_data:
+            raise HTTPException(status_code=400, detail="Could not extract financial profile from input.")
+
+        profile = UserProfile(**profile_data) if isinstance(profile_data, dict) else profile_data
+
+        # Step 2: Assess
+        assessment = build_financial_plan(profile)
+        risk_value = assessment.risk_profile.value if hasattr(assessment.risk_profile, 'value') else str(assessment.risk_profile)
+
+        # Step 3: Recommend
+        recs = get_recommendations(risk_value, profile.goals, profile.credit_score)
+
+        # Step 4: Report
+        report_md = generate_report(profile, assessment, recs)
+
+        # Build structured response
+        structured_recs = []
+        for r in recs:
+            structured_recs.append(StructuredRecommendation(
+                name=r.get("name", "Unknown"),
+                type=r.get("type", "general"),
+                return_pct=r.get("projected_return", 0.0),
+                rationale=r.get("rationale", f"Matched for {risk_value} risk profile"),
+                min_credit=r.get("min_credit_score", 0),
+            ))
+
+        return StructuredReport(
+            session_id=q.session_id,
+            health_score=assessment.health_score,
+            risk_profile=risk_value,
+            goals=[g if isinstance(g, str) else str(g) for g in profile.goals],
+            plan_steps=assessment.plan_steps,
+            recommendations=structured_recs,
+            agent_commentary=profile_result.get("agent_response", ""),
+            report_markdown=report_md,
+        )
+
+    except HTTPException:
+        raise
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"Structured pipeline failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
