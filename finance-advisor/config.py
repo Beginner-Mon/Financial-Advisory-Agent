@@ -21,8 +21,11 @@ class Settings:
         self.DATA_DIR = _PROJECT_ROOT / "data"
         self.DB_PATH = Path(os.getenv("DB_PATH", str(self.DATA_DIR / "db.sqlite")))
         self.CATALOG_PATH = Path(os.getenv("CATALOG_PATH", str(self.DATA_DIR / "products.json")))
-        self.ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
-        self.ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "claude-sonnet-4-20250514")
+
+        # Google Gemini API
+        self.GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY", "")
+        self.GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+
         self.LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
         # Ensure data directory exists
