@@ -44,7 +44,7 @@ def seed_db():
         },
     ]
     db["accounts"].upsert_all(accounts, pk="account_id")
-    print(f"  ✓ Seeded {len(accounts)} accounts")
+    print(f"  [ok] Seeded {len(accounts)} accounts")
 
     # -----------------------------------------------------------------------
     # Transactions — 20 per account
@@ -109,7 +109,7 @@ def seed_db():
     ]
 
     db["transactions"].upsert_all(checking_txns + savings_txns, pk="txn_id")
-    print(f"  ✓ Seeded {len(checking_txns) + len(savings_txns)} transactions")
+    print(f"  [ok] Seeded {len(checking_txns) + len(savings_txns)} transactions")
 
     # -----------------------------------------------------------------------
     # Cards
@@ -137,7 +137,7 @@ def seed_db():
         },
     ]
     db["cards"].upsert_all(cards, pk="card_id")
-    print(f"  ✓ Seeded {len(cards)} cards")
+    print(f"  [ok] Seeded {len(cards)} cards")
 
     # -----------------------------------------------------------------------
     # Goals (empty to start)
@@ -152,7 +152,7 @@ def seed_db():
         "status": "active",
         "created_at": today.strftime("%Y-%m-%d"),
     }, pk="goal_id")
-    print("  ✓ Seeded 1 goal")
+    print("  [ok] Seeded 1 goal")
 
     # -----------------------------------------------------------------------
     # User profile for demo user
@@ -173,11 +173,11 @@ def seed_db():
             "addresses": '[{"label":"home","street":"123 Main St","city":"San Francisco","state":"CA","zip":"94102"}]',
             "primary_address_index": 0,
         }, pk="user_id")
-        print("  ✓ Seeded demo user profile")
+        print("  [ok] Seeded demo user profile")
     except Exception as e:
-        print(f"  ⚠ Could not upsert user profiles table: {e}")
+        print(f"  [warn] Could not upsert user profiles table: {e}")
 
-    print(f"\n✅ Database seeded at: {DB_PATH}")
+    print(f"\n[DONE] Database seeded at: {DB_PATH}")
     print(f"   Demo user ID: {DEMO_USER}")
 
 

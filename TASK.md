@@ -249,9 +249,9 @@
 - **Verify (curl):** `curl http://localhost:8000/goals/user-demo-001`
 
 ### Phase 5 Gate Check
-- [ ] `python -m pytest tests/ -v` — all 43 original tests still pass
-- [ ] All new endpoints return `200` with correct shape when tested with curl
-- [ ] `finance-advisor/.env` has a valid `ANTHROPIC_API_KEY`
+- [x] `python -m pytest tests/ -v` — all 43 original tests still pass
+- [x] All new endpoints return `200` with correct shape — **11/11 PASS** (verified via `tests/verify_phase56.py`)
+- [x] `finance-advisor/.env` has a valid `ANTHROPIC_API_KEY`
 
 ---
 
@@ -318,10 +318,10 @@
   ```
 
 ### Phase 6 Gate Check
-- [ ] `/execute/start` returns correct first step for each product_type
-- [ ] `/execute/resume` with `{"input_type":"otp","value":"123456"}` advances the flow
-- [ ] `load_progress` returns None for expired sessions
-- [ ] `GET /execute/progress/sess-001` returns saved state
+- [x] `/execute/start` returns correct first step for each product_type
+- [x] `/execute/resume` with `{"input_type":"otp","value":"123456"}` advances the flow
+- [x] `load_progress` returns None for expired sessions
+- [x] `GET /execute/progress/sess-001` returns saved state
 
 ---
 
@@ -666,8 +666,8 @@
 | 2 | All agents importable, supervisor pipeline callable | ✅ PASSED |
 | 3 | CLI --help works, FastAPI importable, 43 tests pass | ✅ PASSED |
 | 4 | Rich output, error handling, demo scenarios ready | ✅ PASSED |
-| 5 | Bank models, extended products.json, seeded DB, all new endpoints 200 | [ ] |
-| 6 | Execution agent processes steps, /execute/* endpoints work end-to-end | [ ] |
+| 5 | Bank models, extended products.json, seeded DB, all new endpoints 200 | ✅ PASSED |
+| 6 | Execution agent processes steps, /execute/* endpoints work end-to-end | ✅ PASSED |
 | 7 | Expo app runs, Home + Accounts tabs render with real API data | [ ] |
 | 8 | Transfer 4-step flow complete, OTP works, success screen shows ref | [ ] |
 | 9 | All 6 product detail types render, compare works, chat responds | [ ] |
