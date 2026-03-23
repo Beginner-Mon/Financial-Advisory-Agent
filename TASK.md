@@ -480,185 +480,185 @@
 ## Phase 9 — Mobile: Discover Tab
 
 ### Step 9.1 — Discover Home Screen
-- [ ] Create `app/(tabs)/discover/index.tsx`
-  - [ ] `ScoreRing` with financial health score (from `/advise` or stored)
-  - [ ] "Recommended for you" horizontal strip — AI picks (top 3 from `GET /products` filtered by stored profile)
-  - [ ] Category grid: Cards, Savings, Loans, Insurance, Investments, Promotions (2×3)
-  - [ ] Current promotions list (from `GET /promotions`)
-  - [ ] Persistent chat bar at bottom — tapping navigates to AI chat screen
-- **Verify:** Discover home renders; category tiles navigate to correct category listing
+- [x] Create `app/(tabs)/discover/index.tsx`
+  - [x] `ScoreRing` with financial health score (from `/advise` or stored)
+  - [x] "Recommended for you" horizontal strip — AI picks (top 3 from `GET /products` filtered by stored profile)
+  - [x] Category grid: Cards, Savings, Loans, Insurance, Investments, Promotions (2×3)
+  - [x] Current promotions list (from `GET /promotions`)
+  - [x] Persistent chat bar at bottom — tapping navigates to AI chat screen
+- **Verify:** Discover home renders; category tiles navigate to correct category listing ✅
 
 ### Step 9.2 — Category Listing Screen
-- [ ] Create `app/(tabs)/discover/[category].tsx`
-  - [ ] Fetches `GET /products?type={category}` on mount
-  - [ ] Sub-type filter pills (e.g. All, Cashback, Travel for Cards)
-  - [ ] Product list cards: name, key metric (cashback%/rate/etc.), CTA button
-  - [ ] "★ AI Pick" badge on recommended items
-  - [ ] Compare toggle: select up to 2 items → "Compare" button appears
-  - [ ] Tapping product card navigates to product detail
-  - [ ] Tapping CTA button navigates directly to execution flow
-- **Verify:** Cards category shows at least 3 products; compare button appears after selecting 2
+- [x] Create `app/(tabs)/discover/[category].tsx`
+  - [x] Fetches `GET /products?type={category}` on mount
+  - [x] Sub-type filter pills (e.g. All, Cashback, Travel for Cards)
+  - [x] Product list cards: name, key metric (cashback%/rate/etc.), CTA button
+  - [x] "★ AI Pick" badge on recommended items
+  - [x] Compare toggle: select up to 2 items → "Compare" button appears
+  - [x] Tapping product card navigates to product detail
+  - [x] Tapping CTA button navigates directly to execution flow
+- **Verify:** Cards category shows at least 3 products; compare button appears after selecting 2 ✅
 
 ### Step 9.3 — Product Detail Screens (Type-Aware)
-- [ ] Create `finance-advisor-app/components/products/ProductShell.tsx` — shared wrapper (back nav, sticky CTA, chat strip)
-- [ ] Create per-type detail components:
-  - [ ] `CardDetail.tsx` — card visual, annual fee, rewards rate, benefits list, eligibility, fees table
-  - [ ] `SavingsDetail.tsx` — interest rate (large), account type badge, rate tiers table, lock-in period, deposit insurance badge
-  - [ ] `LoanDetail.tsx` — loan type badge, interest range, loan calculator widget (amount slider × tenure → monthly repayment), docs checklist, eligibility
-  - [ ] `InsuranceDetail.tsx` — coverage summary, premium estimate (monthly/annual toggle), exclusions accordion, claim process steps
-  - [ ] `InvestmentDetail.tsx` — fund type, risk rating visual (1–7 scale), historical returns chart (1y/3y/5y tabs), min investment, platform fee
-  - [ ] `PromoDetail.tsx` — offer headline, expiry badge, eligibility result, T&C accordion, activation steps
-- [ ] Create `app/(tabs)/discover/product/[id].tsx`
-  - [ ] Fetch `GET /products/{id}` on mount
-  - [ ] Render correct detail component based on `product_type`
-  - [ ] CTA label from `product.cta_label`
-  - [ ] Tapping CTA starts execution flow
-- **Verify:** Navigate to a Card product → CardDetail renders; navigate to a Savings product → SavingsDetail renders
+- [x] Create `finance-advisor-app/components/products/ProductShell.tsx` — shared wrapper (back nav, sticky CTA, chat strip)
+- [x] Create per-type detail components:
+  - [x] `CardDetail.tsx` — card visual, annual fee, rewards rate, benefits list, eligibility, fees table
+  - [x] `SavingsDetail.tsx` — interest rate (large), account type badge, rate tiers table, lock-in period, deposit insurance badge
+  - [x] `LoanDetail.tsx` — loan type badge, interest range, loan calculator widget (amount slider × tenure → monthly repayment), docs checklist, eligibility
+  - [x] `InsuranceDetail.tsx` — coverage summary, premium estimate (monthly/annual toggle), exclusions accordion, claim process steps
+  - [x] `InvestmentDetail.tsx` — fund type, risk rating visual (1–7 scale), historical returns chart (1y/3y/5y tabs), min investment, platform fee
+  - [x] `PromoDetail.tsx` — offer headline, expiry badge, eligibility result, T&C accordion, activation steps
+- [x] Create `app/(tabs)/discover/product/[id].tsx`
+  - [x] Fetch `GET /products/{id}` on mount
+  - [x] Render correct detail component based on `product_type`
+  - [x] CTA label from `product.cta_label`
+  - [x] Tapping CTA starts execution flow
+- **Verify:** Navigate to a Card product → CardDetail renders; navigate to a Savings product → SavingsDetail renders ✅
 
 ### Step 9.4 — Compare Screen
-- [ ] Create `app/(tabs)/discover/compare.tsx`
-  - [ ] Receives two product IDs via route params
-  - [ ] Calls `POST /products/compare` → receives side-by-side data + agent note
-  - [ ] Renders comparison table (green highlight = better value per row)
-  - [ ] Agent note shown at bottom
-  - [ ] "Apply" CTA under each column starts execution for that product
-- **Verify:** Selecting 2 cards and comparing shows correct highlighted differences
+- [x] Create `app/(tabs)/discover/compare.tsx`
+  - [x] Receives two product IDs via route params
+  - [x] Calls `POST /products/compare` → receives side-by-side data + agent note
+  - [x] Renders comparison table (green highlight = better value per row)
+  - [x] Agent note shown at bottom
+  - [x] "Apply" CTA under each column starts execution for that product
+- **Verify:** Selecting 2 cards and comparing shows correct highlighted differences ✅
 
 ### Step 9.5 — AI Chat Screen
-- [ ] Create `app/(tabs)/discover/chat.tsx`
-  - [ ] Message list (scrollable, time-stamped bubbles)
-  - [ ] Text input + send button at bottom
-  - [ ] On send → calls `POST /advise` (or a `/chat` variant) with session_id
-  - [ ] Typing indicator while waiting for response
-  - [ ] Support for markdown rendering in assistant responses
-- **Verify:** Sending "What card is best for travel?" returns an AI response
+- [x] Create `app/(tabs)/discover/chat.tsx`
+  - [x] Message list (scrollable, time-stamped bubbles)
+  - [x] Text input + send button at bottom
+  - [x] On send → calls `POST /advise` (or a `/chat` variant) with session_id
+  - [x] Typing indicator while waiting for response
+  - [x] Support for markdown rendering in assistant responses
+- **Verify:** Sending "What card is best for travel?" returns an AI response ✅
 
 ### Phase 9 Gate Check
-- [ ] All 6 product type detail screens render with real data from API
-- [ ] Compare screen highlights better values correctly
-- [ ] Chat screen sends a message and receives a response
+- [x] All 6 product type detail screens render with real data from API
+- [x] Compare screen highlights better values correctly
+- [x] Chat screen sends a message and receives a response
 
 ---
 
 ## Phase 10 — Mobile: Agent Execution Screen
 
 ### Step 10.1 — Execution Screen Component
-- [ ] Create `finance-advisor-app/components/execution/ExecutionScreen.tsx`
-  - [ ] Manages 3 states: working (spinner), paused (input required), done (summary)
-  - [ ] On mount: calls `POST /execute/start` with product + session_id
-  - [ ] After each step: if `status === "done"` → auto-advances (calls `/execute/resume` with null value) after 500ms delay
-  - [ ] If `status === "paused"` → renders correct `PausePrompt`
-  - [ ] Saves progress to store after every step
-  - [ ] Cancel button: calls `DELETE /execute/cancel/{sessionId}`, saves state, navigates back
-  - [ ] On `complete === true` → renders `SummaryCard`
+- [x] Create `finance-advisor-app/components/execution/ExecutionScreen.tsx`
+  - [x] Manages 3 states: working (spinner), paused (input required), done (summary)
+  - [x] On mount: calls `POST /execute/start` with product + session_id
+  - [x] After each step: if `status === "done"` → auto-advances (calls `/execute/resume` with null value) after 500ms delay
+  - [x] If `status === "paused"` → renders correct `PausePrompt`
+  - [x] Saves progress to store after every step
+  - [x] Cancel button: calls `DELETE /execute/cancel/{sessionId}`, saves state, navigates back
+  - [x] On `complete === true` → renders `SummaryCard`
 
 ### Step 10.2 — Pause Prompt Component
-- [ ] Create `finance-advisor-app/components/execution/PausePrompt.tsx`
-  - [ ] Renders correct UI per `input_type`:
-    - [ ] `"otp"` → 6-digit input, resend timer (60s), "Continue" button
-    - [ ] `"biometric"` → fingerprint icon, "Touch sensor to continue" text, "Use PIN instead" fallback (simulated in dev)
-    - [ ] `"user_choice"` → radio list of `options`, "Continue" button
-    - [ ] `"clarification"` → text input or choice (depends on prompt context), "Continue" button
-    - [ ] `"document_upload"` → file picker placeholder + "Upload later" option
-  - [ ] On submit → calls `POST /execute/resume` with `{session_id, input_type, value}`
+- [x] Create `finance-advisor-app/components/execution/PausePrompt.tsx`
+  - [x] Renders correct UI per `input_type`:
+    - [x] `"otp"` → 6-digit input, resend timer (60s), "Continue" button
+    - [x] `"biometric"` → fingerprint icon, "Touch sensor to continue" text, "Use PIN instead" fallback (simulated in dev)
+    - [x] `"user_choice"` → radio list of `options`, "Continue" button
+    - [x] `"clarification"` → text input or choice (depends on prompt context), "Continue" button
+    - [x] `"document_upload"` → file picker placeholder + "Upload later" option
+  - [x] On submit → calls `POST /execute/resume` with `{session_id, input_type, value}`
 
 ### Step 10.3 — Summary Card Component
-- [ ] Create `finance-advisor-app/components/execution/SummaryCard.tsx`
-  - [ ] Animated checkmark (✓) at top
-  - [ ] Product name + reference number
-  - [ ] Agent log list: ✓ prefix for auto-filled steps, ! prefix for user-provided steps
-  - [ ] "What happens next" section (approval timeline, delivery info)
-  - [ ] Two CTAs: "View in My Products", "Back to Discover"
+- [x] Create `finance-advisor-app/components/execution/SummaryCard.tsx`
+  - [x] Animated checkmark (✓) at top
+  - [x] Product name + reference number
+  - [x] Agent log list: ✓ prefix for auto-filled steps, ! prefix for user-provided steps
+  - [x] "What happens next" section (approval timeline, delivery info)
+  - [x] Two CTAs: "View in My Products", "Back to Discover"
 
 ### Step 10.4 — Execution Screen Route
-- [ ] Create `app/(tabs)/discover/execute.tsx`
-  - [ ] Receives `productId`, `productType`, `sessionId` (or auto-generates new sessionId) via route params
-  - [ ] Renders `<ExecutionScreen />`
-  - [ ] On cancel → navigates back to product detail with cancelled state
-  - [ ] On complete → navigates to discover home with success toast
+- [x] Create `app/(tabs)/discover/execute.tsx`
+  - [x] Receives `productId`, `productType`, `sessionId` (or auto-generates new sessionId) via route params
+  - [x] Renders `<ExecutionScreen />`
+  - [x] On cancel → navigates back to product detail with cancelled state
+  - [x] On complete → navigates to discover home with success toast
 
 ### Step 10.5 — Resume Banner Integration
-- [ ] In `app/(tabs)/home.tsx` and `app/(tabs)/discover/index.tsx`:
-  - [ ] Check `store.inProgressProduct` on screen focus
-  - [ ] If present and not expired: show resume banner with product name + current step
-  - [ ] Tapping banner → navigates to `execute.tsx` with existing sessionId (loads saved progress)
-  - [ ] If expired: show "This application has expired. Start again?" banner
+- [x] In `app/(tabs)/home.tsx` and `app/(tabs)/discover/index.tsx`:
+  - [x] Check `store.inProgressProduct` on screen focus
+  - [x] If present and not expired: show resume banner with product name + current step
+  - [x] Tapping banner → navigates to `execute.tsx` with existing sessionId (loads saved progress)
+  - [x] If expired: show "This application has expired. Start again?" banner
 
 ### Phase 10 Gate Check
-- [ ] Card application flow: spinner → OTP pause → summary card with reference number
-- [ ] Cancelling mid-flow: resume banner appears on Home and Discover
-- [ ] Resuming from banner: execution continues from saved step_index
-- [ ] Summary card agent log distinguishes ✓ (auto) from ! (user) steps
+- [x] Card application flow: spinner → OTP pause → summary card with reference number
+- [x] Cancelling mid-flow: resume banner appears on Home and Discover
+- [x] Resuming from banner: execution continues from saved step_index
+- [x] Summary card agent log distinguishes ✓ (auto) from ! (user) steps
 
 ---
 
 ## Phase 11 — Profile Tab & Agent History
 
 ### Step 11.1 — Profile Home Screen
-- [ ] Create `app/(tabs)/profile/index.tsx`
-  - [ ] Personal info section (name, email, phone — from stored profile)
-  - [ ] Quick links: Active Products, Goals, Agent History, Settings
-  - [ ] Security settings section (biometric toggle, PIN change placeholder)
+- [x] Create `app/(tabs)/profile/index.tsx`
+  - [x] Personal info section (name, email, phone — from stored profile)
+  - [x] Quick links: Active Products, Goals, Agent History, Settings
+  - [x] Security settings section (biometric toggle, PIN change placeholder)
 
 ### Step 11.2 — Active Products Screen
-- [ ] Create `app/(tabs)/profile/products.tsx`
-  - [ ] Fetch `GET /orders/{userId}` — show submitted/approved orders
-  - [ ] Group by product_type
-  - [ ] Show status badge (Submitted / Approved / Rejected)
+- [x] Create `app/(tabs)/profile/products.tsx`
+  - [x] Fetch `GET /orders/{userId}` — show submitted/approved orders
+  - [x] Group by product_type
+  - [x] Show status badge (Submitted / Approved / Rejected)
 
 ### Step 11.3 — Goals Tracker Screen
-- [ ] Create `app/(tabs)/profile/goals.tsx`
-  - [ ] Fetch `GET /goals/{userId}` — list goals with `GoalBar` progress bars
-  - [ ] "Add goal" button → simple form (name, target amount, deadline)
-  - [ ] Swipe-to-delete with `DELETE /goals/{goalId}` confirmation
+- [x] Create `app/(tabs)/profile/goals.tsx`
+  - [x] Fetch `GET /goals/{userId}` — list goals with `GoalBar` progress bars
+  - [x] "Add goal" button → simple form (name, target amount, deadline)
+  - [x] Swipe-to-delete with `DELETE /goals/{goalId}` confirmation
 
 ### Step 11.4 — Agent History Screen
-- [ ] Create `app/(tabs)/profile/agent-history.tsx`
-  - [ ] Fetch `GET /agent-history/{userId}`
-  - [ ] Each entry: product name, date, status badge, reference number
-  - [ ] Expand row to show full agent_log
-- **Verify:** After completing at least one execution flow, agent history shows the entry
+- [x] Create `app/(tabs)/profile/agent-history.tsx`
+  - [x] Fetch `GET /agent-history/{userId}`
+  - [x] Each entry: product name, date, status badge, reference number
+  - [x] Expand row to show full agent_log
+- **Verify:** After completing at least one execution flow, agent history shows the entry ✅
 
 ### Phase 11 Gate Check
-- [ ] All 4 Profile sub-screens render without errors
-- [ ] Agent History shows completed execution entries
-- [ ] Goals can be created and deleted
+- [x] All 4 Profile sub-screens render without errors
+- [x] Agent History shows completed execution entries
+- [x] Goals can be created and deleted
 
 ---
 
 ## Phase 12 — API Wiring & Polish
 
 ### Step 12.1 — Replace All Mock Data
-- [ ] Audit every screen for hardcoded data
-- [ ] Replace every mock with real API call
-- [ ] Add loading spinners / skeleton screens for all async fetches
-- [ ] Add empty states for lists with zero items
+- [x] Audit every screen for hardcoded data
+- [x] Replace every mock with real API call
+- [x] Add loading spinners / skeleton screens for all async fetches
+- [x] Add empty states for lists with zero items
 
 ### Step 12.2 — Error States
-- [ ] API error → toast notification with error message
-- [ ] Network offline → offline banner across all screens
-- [ ] 401 / session expired → redirect to onboarding / login screen
+- [x] API error → toast notification with error message
+- [x] Network offline → offline banner across all screens
+- [x] 401 / session expired → redirect to onboarding / login screen
 
 ### Step 12.3 — Animations & Micro-interactions
-- [ ] Home balance counter animates on mount (count-up from 0)
-- [ ] Account pill strip smooth horizontal scroll
-- [ ] Transaction list items fade-in staggered on first load
-- [ ] Execution spinner: subtle 3-dot pulse animation (`Animated` API)
-- [ ] Summary card checkmark: animated draw (SVG or Lottie)
-- [ ] Score ring: animated fill on mount
+- [x] Home balance counter animates on mount (count-up from 0)
+- [x] Account pill strip smooth horizontal scroll
+- [x] Transaction list items fade-in staggered on first load
+- [x] Execution spinner: subtle 3-dot pulse animation (`Animated` API)
+- [x] Summary card checkmark: animated draw (SVG or Lottie)
+- [x] Score ring: animated fill on mount
 
 ### Step 12.4 — Local Dev Environment Verification
-- [ ] Backend: `cd finance-advisor && uvicorn api:app --reload --port 8000` — runs with no errors
-- [ ] Frontend: `cd finance-advisor-app && npx expo start` — app loads on Android emulator or iOS simulator
-- [ ] Demo user: `user-demo-001` has seeded accounts, transactions, cards in DB
-- [ ] All endpoints return data for demo user
-- [ ] Execution flow for at least 2 product types (card + savings) completes end-to-end
+- [x] Backend: `cd finance-advisor && uvicorn api:app --reload --port 8000` — runs with no errors
+- [x] Frontend: `cd finance-advisor-app && npx expo start` — app loads on Android emulator or iOS simulator
+- [x] Demo user: `user-demo-001` has seeded accounts, transactions, cards in DB
+- [x] All endpoints return data for demo user
+- [x] Execution flow for at least 2 product types (card + savings) completes end-to-end
 
 ### Phase 12 Gate Check
-- [ ] No mock data remaining in any screen
-- [ ] Full card application flow works end-to-end on emulator
-- [ ] No TypeScript errors (`npx tsc --noEmit`)
-- [ ] All 43 backend unit tests still pass: `python -m pytest tests/ -v`
+- [x] No mock data remaining in any screen
+- [x] Full card application flow works end-to-end on emulator
+- [x] No TypeScript errors (`npx tsc --noEmit`)
+- [x] All 43 backend unit tests still pass: `python -m pytest tests/ -v`
 
 ---
 
@@ -675,10 +675,10 @@
 | 6 | Execution agent processes steps, /execute/* endpoints work end-to-end | ✅ PASSED |
 | 7 | Expo app runs, Home + Accounts tabs render with real API data | ✅ PASSED |
 | 8 | Transfer 4-step flow complete, OTP works, success screen shows ref | ✅ PASSED |
-| 9 | All 6 product detail types render, compare works, chat responds | [ ] |
-| 10 | Card execution flow: spinner → OTP → summary card; resume banner works | [ ] |
-| 11 | Profile tab, Goals CRUD, Agent History populated after execution | [ ] |
-| 12 | No mock data, no TS errors, animations, full end-to-end on emulator | [ ] |
+| 9 | All 6 product detail types render, compare works, chat responds | ✅ PASSED |
+| 10 | Card execution flow: spinner → OTP → summary card; resume banner works | ✅ PASSED |
+| 11 | Profile tab, Goals CRUD, Agent History populated after execution | ✅ PASSED |
+| 12 | No mock data, no TS errors, animations, full end-to-end on emulator | ✅ PASSED |
 
 ---
 
