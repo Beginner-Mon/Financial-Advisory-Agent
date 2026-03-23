@@ -1,61 +1,27 @@
-import { Tabs } from 'expo-router';
+/**
+ * Root Layout — wraps the entire app.
+ * Handles expo-router entry, loads fonts, initializes store.
+ */
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../constants/theme';
+import { useEffect } from 'react';
+import { loadBaseUrl } from '../services/api';
 
 export default function RootLayout() {
+  useEffect(() => {
+    loadBaseUrl();
+  }, []);
+
   return (
     <>
       <StatusBar style="light" />
-      <Tabs
+      <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: Colors.background },
-          headerTintColor: Colors.textPrimary,
-          headerTitleStyle: { fontWeight: '700' },
-          tabBarStyle: {
-            backgroundColor: Colors.surface,
-            borderTopColor: Colors.cardBorder,
-            borderTopWidth: 1,
-            height: 60,
-            paddingBottom: 8,
-            paddingTop: 4,
-          },
-          tabBarActiveTintColor: Colors.primary,
-          tabBarInactiveTintColor: Colors.textMuted,
-          tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+          headerShown: false,
+          contentStyle: { backgroundColor: '#0a0f1e' },
+          animation: 'fade',
         }}
-      >
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Advisor',
-            headerTitle: '💰 Finance Advisor',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="chatbubble-ellipses" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="history"
-          options={{
-            title: 'History',
-            headerTitle: '📋 History',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="time" size={size} color={color} />
-            ),
-          }}
-        />
-        <Tabs.Screen
-          name="settings"
-          options={{
-            title: 'Settings',
-            headerTitle: '⚙️ Settings',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="settings-sharp" size={size} color={color} />
-            ),
-          }}
-        />
-      </Tabs>
+      />
     </>
   );
 }

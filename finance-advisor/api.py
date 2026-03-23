@@ -47,6 +47,7 @@ from typing import Any, Optional
 
 import sqlite_utils
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from config import settings, get_logger
@@ -95,8 +96,13 @@ def _load_products() -> list[dict]:
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
+    if isinstance(exc, HTTPException):
+        raise exc
     logger.error(f"Unhandled error: {exc}")
-    raise HTTPException(status_code=500, detail={"success": False, "data": None, "error": str(exc)})
+    return JSONResponse(
+        status_code=500,
+        content={"success": False, "data": None, "error": str(exc)},
+    )
 
 
 # ===========================================================================
@@ -387,7 +393,7 @@ def confirm_transfer(transfer_id: str, body: ConfirmTransferBody):
     transfer["status"] = "completed"
     transfer["reference_no"] = reference_no
     transfer["completed_at"] = now.isoformat()
-    db["pending_transfers"].upsert(transfer, pk="transfer_id")
+    db["pending_transfers"].upsert(transfer, pk="transfer_id", alter=True)
 
     return _ok({
         "reference_no": reference_no,
