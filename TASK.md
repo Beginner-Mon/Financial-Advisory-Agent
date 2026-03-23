@@ -53,10 +53,6 @@
   - [x] `get_profile(user_id, db_path=None)` — retrieve from SQLite
   - [x] `validate_and_enrich(raw_dict)` — fill defaults, return `UserProfile`
 - [x] Create `tests/test_user_profile.py`
-  - [x] Test save + retrieve round-trip
-  - [x] Test validate_and_enrich fills defaults
-  - [x] Test missing required fields raise ValidationError
-  - [x] Use temp SQLite DB (pytest `tmp_path` fixture)
 - **✅ Verify:** `python -m pytest tests/test_user_profile.py -v` — all pass ✅ PASSED
 
 ### Step 1.2 — Financial Intelligence Tool
@@ -66,36 +62,20 @@
   - [x] `generate_plan_steps(profile, risk)` → list[str]
   - [x] `build_financial_plan(profile)` → `RiskAssessment`
 - [x] Create `tests/test_financial_intel.py`
-  - [x] Test 4+ user archetypes: young/low-income, high-income, near-retirement, self-employed
-  - [x] Test edge cases: zero income, min credit score (300), max credit score (850)
-  - [x] Test health_score always in [0, 100]
-  - [x] Test risk_profile consistency with score + tolerance
 - **✅ Verify:** `python -m pytest tests/test_financial_intel.py -v` — all pass ✅ PASSED
 
 ### Step 1.3 — Product Catalog Tool
-- [x] Create `data/products.json` with 15–20 products
-  - [x] Categories: savings, investment, loan, insurance
-  - [x] Risk levels: low, moderate, high
-  - [x] Various credit score thresholds and eligible goals
+- [x] Create `data/products.json` with 15–20 products (savings, investment, loan, insurance)
 - [x] Create `tools/product_catalog/service.py`
   - [x] `load_products(catalog_path=None)` — load JSON with caching
-  - [x] `map_risk(risk_profile)` — map assessment risk to catalog risk
   - [x] `get_recommendations(risk_profile, goals, credit_score)` → list[dict]
 - [x] Create `tests/test_product_catalog.py`
-  - [x] Test conservative vs aggressive return different products
-  - [x] Test credit score filtering excludes ineligible products
-  - [x] Test goal matching works correctly
-  - [x] Test max 5 results cap
 - **✅ Verify:** `python -m pytest tests/test_product_catalog.py -v` — all pass ✅ PASSED
 
 ### Step 1.4 — Reporting Tool
 - [x] Create `tools/reporting/generator.py`
   - [x] `generate_report(profile, assessment, recs)` → markdown string
-  - [x] Include: health score bar, risk profile, goals, plan steps, product recommendations
 - [x] Create `tests/test_reporting.py`
-  - [x] Test report contains all expected sections
-  - [x] Test report with empty recommendations
-  - [x] Test report with empty plan steps
 - **✅ Verify:** `python -m pytest tests/test_reporting.py -v` — all pass ✅ PASSED
 
 ### Phase 1 Gate Check
@@ -107,39 +87,23 @@
 ## Phase 2 — Build Agents One at a Time
 
 ### Step 2.1 — Agent Base Scaffolding
-- [x] Create `agents/base.py`
-  - [x] `run_agent(system, user_msg, tools, tool_fn_map, model, max_tokens)` → str
-  - [x] Tool-use loop with `max_iterations=10` guard
-  - [x] Retry logic with exponential backoff for API rate limits
-  - [x] Structured error handling for `anthropic.APIError`
+- [x] Create `agents/base.py` with `run_agent()`, tool-use loop, retry logic
 - **✅ Verify:** Base function importable, handles mock tool call ✅ PASSED
 
 ### Step 2.2 — Profiling Agent
 - [x] Create `agents/profiling/agent.py`
-  - [x] Define tool schema for `save_user_profile`
-  - [x] System prompt for financial profiling
-  - [x] `run(user_input: str)` → extracts profile from text, saves to DB
 - **✅ Verify:** Importable, tool schema defined ✅ PASSED
 
 ### Step 2.3 — Risk & Planning Agent
 - [x] Create `agents/risk_planning/agent.py`
-  - [x] Define tool schema for `analyze_financial_health`
-  - [x] System prompt for risk analysis
-  - [x] `run(profile: UserProfile)` → `RiskAssessment`
 - **✅ Verify:** Importable, wired to financial_intel engine ✅ PASSED
 
 ### Step 2.4 — Recommendation Agent
 - [x] Create `agents/recommendation/agent.py`
-  - [x] Define tool schema for `get_product_recommendations`
-  - [x] System prompt for product advising
-  - [x] `run(assessment, goals, credit_score)` → recommendation text
 - **✅ Verify:** Importable, wired to product_catalog ✅ PASSED
 
 ### Step 2.5 — Supervisor / Orchestrator
-- [x] Create `agents/supervisor/agent.py`
-  - [x] `run_full_pipeline(user_message, session_id)` → markdown report
-  - [x] Sequential: profile → assess → recommend → report
-  - [x] Logging at each step
+- [x] Create `agents/supervisor/agent.py` with `run_full_pipeline()`
 - **✅ Verify:** Importable, pipeline function callable ✅ PASSED
 
 ---
@@ -147,34 +111,19 @@
 ## Phase 3 — Integration & Local Testing
 
 ### Step 3.1 — End-to-End CLI
-- [x] Create `main.py` entry point
-  - [x] Accept user message as CLI argument
-  - [x] Print formatted report to terminal
-  - [x] Add `--session` flag for multi-turn
-  - [x] Add `--json` flag for machine-readable output
-  - [x] Add `--help` with usage examples
+- [x] Create `main.py` with `--session`, `--json`, `--help`, `--verify` flags
 - **✅ Verify:** `python main.py --help` displays usage ✅ PASSED
 
-### Step 3.2 — Verifier Agent (Optional)
+### Step 3.2 — Verifier Agent
 - [x] Create `agents/verifier/agent.py`
-  - [x] Cross-check risk profile ↔ product consistency
-  - [x] Validate health score ↔ plan feasibility
-  - [x] Return APPROVED or list issues
-- [x] Add `--verify` flag to `main.py`
 - **✅ Verify:** Importable, wired to CLI --verify flag ✅ PASSED
 
 ### Step 3.3 — Conversation Memory
 - [x] Create `tools/user_profile/memory.py`
-  - [x] `save_session(session_id, messages)` — persist to SQLite
-  - [x] `load_session(session_id)` → list of messages
 - **✅ Verify:** Importable, save/load functions callable ✅ PASSED
 
-### Step 3.4 — FastAPI Layer (Optional)
-- [x] Create `api.py`
-  - [x] `POST /advise` — accepts `{message, session_id}`, returns `{report, session_id}`
-  - [x] `GET /health` — checks DB connectivity
-  - [x] CORS middleware for frontend dev
-  - [x] Global exception handler
+### Step 3.4 — FastAPI Layer
+- [x] Create `api.py` with `POST /advise`, `GET /health`, CORS middleware
 - **✅ Verify:** Importable, endpoints defined ✅ PASSED
 
 ### Phase 3 Gate Check
@@ -186,32 +135,23 @@
 ## Phase 4 — Polish & Demo Readiness
 
 ### Step 4.1 — Rich Console Output
-- [x] Colour-coded Rich Panel wrapping for report
-- [x] Rich progress spinner during pipeline execution
+- [x] Colour-coded Rich Panel, progress spinner in main.py
 - **✅ Verify:** Rich formatting in main.py ✅ PASSED
 
 ### Step 4.2 — Error Handling & Fallbacks
-- [x] Wrap pipeline call in try/except
-- [x] Missing API key → human-readable error message
-- [x] No uncaught exceptions in CLI flow
+- [x] Wrap pipeline call in try/except, handle missing API key
 - **✅ Verify:** Missing key message shown ✅ PASSED
 
 ### Step 4.3 — Demo Scenarios
-- [x] Prepare 4 canned test inputs covering different archetypes:
-  1. Young, low-income, emergency fund
-  2. Mid-career, high-income, retirement
-  3. Self-employed, variable income, house
-  4. Near-retirement, moderate income, wealth preservation
-- [x] Script at `tests/demo_scenarios.py` with sanity checks
+- [x] Prepare 4 canned test inputs, script at `tests/demo_scenarios.py`
 - **✅ Verify:** Script importable, scenarios defined ✅ PASSED
 
 ### Step 4.4 — Final Documentation
-- [x] Add `--help` to CLI
-- **✅ Verify:** `python main.py --help` works ✅ PASSED
+- [x] `python main.py --help` works ✅ PASSED
 
 ---
 
-## Summary Gate Checks
+## Summary Gate Check — Phases 0–4
 
 | Phase | Gate Criterion | Status |
 |-------|---------------|--------|
@@ -220,3 +160,543 @@
 | 2 | All agents importable, supervisor pipeline callable | ✅ PASSED |
 | 3 | CLI --help works, FastAPI importable, 43 tests pass | ✅ PASSED |
 | 4 | Rich output, error handling, demo scenarios ready | ✅ PASSED |
+
+---
+
+---
+
+# ══════════════════════════════════════════════
+# PHASES 5–10 — Full Bank App + UI
+# ══════════════════════════════════════════════
+
+> **Context:** Backend AI pipeline is complete. Now extending to a full bank app UI.
+> Backend: FastAPI in `finance-advisor/` running on `http://localhost:8000`
+> Frontend: React Native (Expo) in `finance-advisor-app/` running on `http://localhost:8081`
+
+---
+
+## Phase 5 — Extended Data Models & Bank Endpoints
+
+### Step 5.1 — Bank Data Models
+- [ ] Create `finance-advisor/models/bank.py`
+  - [ ] `Account` — account_id, user_id, type, balance, currency, account_no, status
+  - [ ] `Transaction` — txn_id, account_id, amount, merchant, category, date, reference
+  - [ ] `Card` — card_id, user_id, type, last_four, status, spend_limit, network
+  - [ ] `AgentProgress` — session_id, product_id, product_type, step_index, filled_data, agent_log, status, expires_at
+  - [ ] `Order` — order_id, user_id, product_id, product_type, status, agent_log, reference_no, created_at
+- [ ] Add `__init__.py` exports for all new models
+- **Verify:** `python -c "from models.bank import Account, Transaction, Card, AgentProgress, Order"` works
+
+### Step 5.2 — Extended products.json
+- [ ] Add fields to every product entry in `finance-advisor/data/products.json`:
+  - [ ] `product_type` — "card" | "savings" | "loan" | "home_loan" | "insurance" | "investment" | "promotion"
+  - [ ] `category` — "cards" | "savings" | "loans" | "insurance" | "investments" | "promotions"
+  - [ ] `sub_type` — e.g. "credit", "fixed_deposit", "personal", "life"
+  - [ ] `agent_flow` — maps to PRODUCT_FLOWS key
+  - [ ] `cta_label` — e.g. "Apply for this card", "Open this account", "Invest now"
+  - [ ] `risk_level` — "low" | "moderate" | "high"
+  - [ ] `eligible_goals` — list of goal strings
+  - [ ] `detail` — full detail object (tagline, benefits, fees, faqs, terms_summary)
+- [ ] Add at least 3 products for each category (cards, savings, loans, insurance, investments, promotions)
+- **Verify:** `python -c "import json; d=json.load(open('data/products.json')); assert all('product_type' in p for p in d)"` passes
+
+### Step 5.3 — Seed SQLite with Mock Bank Data
+- [ ] Create `finance-advisor/tools/seed_db.py`
+  - [ ] Seed 2 mock accounts per demo user (checking + savings)
+  - [ ] Seed 20 mock transactions per account
+  - [ ] Seed 2 mock cards per demo user
+  - [ ] Use a fixed demo user_id: `"user-demo-001"`
+- [ ] Run seed script: `cd finance-advisor && python tools/seed_db.py`
+- **Verify:** `python -c "import sqlite_utils; db=sqlite_utils.Database('data/db.sqlite'); print(list(db['accounts'].all()))"` shows rows
+
+### Step 5.4 — Core Bank API Endpoints
+- [ ] Add to `finance-advisor/api.py`:
+  - [ ] `GET /accounts/{user_id}` — returns list of accounts + balances
+  - [ ] `GET /accounts/{account_id}/txns` — paginated transaction history (query params: `page`, `limit`, `category`, `search`)
+  - [ ] `GET /cards/{user_id}` — returns list of cards
+  - [ ] `PATCH /cards/{card_id}/freeze` — body: `{freeze: bool}`, toggles card status
+  - [ ] `POST /transfers` — body: `{from_account, to_account, amount, reference}`, returns OTP challenge token
+  - [ ] `POST /transfers/{transfer_id}/confirm` — body: `{otp}`, returns success + reference number
+- [ ] All responses use shape: `{ "success": true, "data": {}, "error": null }`
+- [ ] Start server: `cd finance-advisor && uvicorn api:app --reload --port 8000`
+- **Verify (curl):**
+  ```
+  curl http://localhost:8000/accounts/user-demo-001
+  curl http://localhost:8000/cards/user-demo-001
+  ```
+
+### Step 5.5 — Discover / Product API Endpoints
+- [ ] Add to `finance-advisor/api.py`:
+  - [ ] `GET /products?type={type}` — list products filtered by category
+  - [ ] `GET /products/{id}` — single product detail (type-aware full object)
+  - [ ] `POST /products/compare` — body: `{ids: [id1, id2]}`, same category only, returns side-by-side + agent note
+  - [ ] `GET /promotions` — list active promotions
+  - [ ] `POST /promotions/{id}/activate` — body: `{user_id}`, returns instant success
+- **Verify (curl):**
+  ```
+  curl "http://localhost:8000/products?type=cards"
+  curl http://localhost:8000/products/CC-001
+  curl http://localhost:8000/promotions
+  ```
+
+### Step 5.6 — Goals API Endpoints
+- [ ] Add to `finance-advisor/api.py`:
+  - [ ] `GET /goals/{user_id}` — list active goals
+  - [ ] `POST /goals` — body: `{user_id, name, target_amount, deadline}`, creates goal
+  - [ ] `PATCH /goals/{goal_id}` — update goal amount or deadline
+  - [ ] `DELETE /goals/{goal_id}` — cancel goal
+- [ ] Create `finance-advisor/tools/goals/tracker.py` with CRUD backing SQLite table
+- **Verify (curl):** `curl http://localhost:8000/goals/user-demo-001`
+
+### Phase 5 Gate Check
+- [ ] `python -m pytest tests/ -v` — all 43 original tests still pass
+- [ ] All new endpoints return `200` with correct shape when tested with curl
+- [ ] `finance-advisor/.env` has a valid `ANTHROPIC_API_KEY`
+
+---
+
+## Phase 6 — Execution Agent & Execution Endpoints
+
+### Step 6.1 — Execution Agent Core
+- [ ] Create `finance-advisor/agents/execution/agent.py`
+  - [ ] Define `PRODUCT_FLOWS` dict:
+    ```python
+    PRODUCT_FLOWS = {
+      "card":       ["fill_personal","set_limit","choose_delivery","agree_terms","otp_confirm"],
+      "savings":    ["fill_personal","set_initial_deposit","choose_tenor","agree_terms","otp_confirm"],
+      "loan":       ["fill_personal","fill_employment","set_loan_amount","credit_check_consent","agree_terms","otp_confirm"],
+      "home_loan":  ["fill_personal","fill_employment","fill_property","document_checklist","credit_check_consent","agree_terms","otp_confirm","biometric_confirm"],
+      "insurance":  ["fill_personal","health_declaration","choose_coverage","choose_frequency","agree_terms","biometric_confirm"],
+      "investment": ["fill_personal","risk_acknowledgement","set_amount","set_recurring","link_account","agree_prospectus","otp_confirm"],
+    }
+    ```
+  - [ ] Define `ALWAYS_PAUSE` set: `{"health_declaration","credit_check_consent","risk_acknowledgement","agree_prospectus","otp_confirm","biometric_confirm"}`
+  - [ ] Implement `process_step(step, product_type, profile, filled_data)` → dict with keys: step, status, input_type, prompt, options, filled_value, agent_log_entry
+  - [ ] Implement `_pause_step(step)` returning correct input_type and prompt per step
+  - [ ] Steps not in ALWAYS_PAUSE: call `run_agent()` to auto-fill from profile; fallback to clarification pause on failure
+- **Verify:** `python -c "from agents.execution.agent import PRODUCT_FLOWS, process_step; print('ok')"` works
+
+### Step 6.2 — Execution Progress Persistence
+- [ ] Create `finance-advisor/tools/execution/progress.py`
+  - [ ] `save_progress(session_id, product_id, product_type, step_index, filled_data, agent_log)` — upsert to SQLite `agent_progress` table
+  - [ ] `load_progress(session_id)` → dict or None (None if expired or not found)
+  - [ ] Progress expires after 48 hours (check `expires_at` field)
+- [ ] Create `finance-advisor/tools/execution/service.py`
+  - [ ] `apply_product(order_data)` — insert into SQLite `orders` table, return reference_no
+  - [ ] `cancel_order(session_id)` — update status to "cancelled"
+- **Verify:** `python -c "from tools.execution.progress import save_progress, load_progress; print('ok')"` works
+
+### Step 6.3 — Execution API Endpoints
+- [ ] Add to `finance-advisor/api.py`:
+  - [ ] `POST /execute/start` — body: `{product_id, product_type, user_id, session_id}` → starts agent flow at step 0, returns first step result
+  - [ ] `POST /execute/resume` — body: `{session_id, input_type, value}` → processes user input, advances to next step
+  - [ ] `GET /execute/progress/{session_id}` — returns saved partial progress (for resume banner)
+  - [ ] `DELETE /execute/cancel/{session_id}` — cancels session, saves to DB
+  - [ ] `GET /orders/{user_id}` — list submitted orders
+  - [ ] `GET /agent-history/{user_id}` — completed agent actions with full agent_log
+- [ ] Response for `/execute/start` and `/execute/resume`:
+  ```json
+  {
+    "step": "fill_personal",
+    "status": "done" | "paused",
+    "step_index": 0,
+    "total_steps": 5,
+    "input_type": null | "otp" | "biometric" | "clarification" | "user_choice",
+    "prompt": null | "string",
+    "options": null | ["opt1", "opt2"],
+    "filled_value": null | "string",
+    "agent_log": ["step1 done", ...],
+    "complete": false | true,
+    "reference_no": null | "VPC-2024-XXXXXX"
+  }
+  ```
+- **Verify (curl):**
+  ```
+  curl -X POST http://localhost:8000/execute/start \
+    -H "Content-Type: application/json" \
+    -d '{"product_id":"CC-001","product_type":"card","user_id":"user-demo-001","session_id":"sess-001"}'
+  ```
+
+### Phase 6 Gate Check
+- [ ] `/execute/start` returns correct first step for each product_type
+- [ ] `/execute/resume` with `{"input_type":"otp","value":"123456"}` advances the flow
+- [ ] `load_progress` returns None for expired sessions
+- [ ] `GET /execute/progress/sess-001` returns saved state
+
+---
+
+## Phase 7 — Mobile: Foundation & Home + Accounts Tabs
+
+> **Local setup:** Expo app in `finance-advisor-app/`. API base URL: `http://localhost:8000`
+> Run: `cd finance-advisor-app && npx expo start`
+> On Android emulator use: `http://10.0.2.2:8000` instead of localhost
+
+### Step 7.1 — Expo Project Setup
+- [ ] Initialise Expo app (if not already done): `cd finance-advisor-app && npx create-expo-app@latest . --template blank-typescript`
+- [ ] Install dependencies:
+  ```
+  npx expo install expo-router react-native-safe-area-context react-native-screens
+  npx expo install @react-native-async-storage/async-storage
+  npm install axios zustand
+  npm install react-native-reanimated react-native-gesture-handler
+  ```
+- [ ] Configure `expo-router` entry point in `app.json`
+- [ ] Create file-based route structure under `app/(tabs)/`
+- **Verify:** `npx expo start` launches without errors; app loads on emulator/device
+
+### Step 7.2 — Design Tokens & Theme
+- [ ] Create `finance-advisor-app/theme/tokens.ts`
+  - [ ] Colours: navy `#0A1628`, gold `#C9A84C`, white, background greys, success green, error red
+  - [ ] Typography: font sizes (xs=11, sm=13, md=15, lg=18, xl=24, xxl=32), font weights
+  - [ ] Spacing scale: 4, 8, 12, 16, 20, 24, 32, 48
+  - [ ] Border radius: sm=4, md=8, lg=16, full=9999
+- [ ] Create `finance-advisor-app/theme/shadows.ts` — elevation presets
+- **Verify:** Import tokens in any component without error
+
+### Step 7.3 — API Service Layer
+- [ ] Create `finance-advisor-app/services/api.ts`
+  - [ ] Axios instance with `baseURL` from env (`process.env.EXPO_PUBLIC_API_URL` defaulting to `http://localhost:8000`)
+  - [ ] Request/response interceptors for error normalisation
+  - [ ] Typed functions for every backend endpoint:
+    - [ ] `getAccounts(userId)`, `getTransactions(accountId, params)`, `getCards(userId)`, `freezeCard(cardId, freeze)`
+    - [ ] `getProducts(type?)`, `getProductDetail(id)`, `compareProducts(ids)`, `getPromotions()`, `activatePromotion(id, userId)`
+    - [ ] `startExecution(body)`, `resumeExecution(body)`, `getExecutionProgress(sessionId)`, `cancelExecution(sessionId)`
+    - [ ] `getOrders(userId)`, `getAgentHistory(userId)`
+    - [ ] `advise(message, sessionId)`
+- [ ] Create `.env` in `finance-advisor-app/`:
+  ```
+  EXPO_PUBLIC_API_URL=http://localhost:8000
+  ```
+- **Verify:** `import { getAccounts } from '@/services/api'` resolves in any screen file
+
+### Step 7.4 — Global State (Zustand)
+- [ ] Create `finance-advisor-app/store/session.ts`
+  - [ ] Fields: `userId`, `profile`, `activeExecutionSessionId`, `executionState`, `inProgressProduct`
+  - [ ] Persist to AsyncStorage via Zustand middleware
+  - [ ] Actions: `setUserId`, `setProfile`, `startExecution`, `clearExecution`
+- **Verify:** Store importable, state persists across app restart
+
+### Step 7.5 — Shared Components (Bank)
+- [ ] Create `finance-advisor-app/components/bank/`:
+  - [ ] `BalanceSummary.tsx` — large balance display, trend indicator
+  - [ ] `AccountCard.tsx` — pill card with account type, masked number, balance
+  - [ ] `TransactionRow.tsx` — merchant, amount (colour-coded +/-), category badge, date
+  - [ ] `CardVisual.tsx` — animated navy/gold card with network logo, last 4 digits
+  - [ ] `ScoreRing.tsx` — circular progress ring for financial health score (0–100)
+  - [ ] `GoalBar.tsx` — progress bar with goal name, current/target amounts
+- **Verify:** All components render without props (with sensible defaults/placeholder data)
+
+### Step 7.6 — Bottom Tab Navigator
+- [ ] Create `app/(tabs)/_layout.tsx` with 5 tabs: Home, Accounts, Transfer, Discover, Profile
+  - [ ] Tab icons (use `@expo/vector-icons` Ionicons)
+  - [ ] Active tab colour: navy `#0A1628`; inactive: grey
+  - [ ] Tab bar background: white with subtle top border
+- **Verify:** All 5 tab icons visible; tapping navigates to correct screen
+
+### Step 7.7 — Home Screen
+- [ ] Create `app/(tabs)/home.tsx`
+  - [ ] Fetch `GET /accounts/{userId}` on mount, aggregate total balance
+  - [ ] Show `BalanceSummary` with total balance + month trend
+  - [ ] Scrollable account pill strip — tap navigates to Account Detail
+  - [ ] Quick actions grid: Transfer, Pay, Top-up, Cards, More
+  - [ ] Resume banner (conditional): shown if `store.inProgressProduct` exists
+    - [ ] Tapping resume navigates to execution screen with pre-loaded session
+  - [ ] AI Advisor nudge banner (conditional): shown if advise response has recommendations
+  - [ ] Recent transactions list (last 5, from first account)
+- **Verify:** Home screen loads, balance shows, account pills visible
+
+### Step 7.8 — Accounts Tab
+- [ ] Create `app/(tabs)/accounts/index.tsx` — accounts list
+  - [ ] List all accounts with type icon, masked number, balance
+  - [ ] Pull-to-refresh
+- [ ] Create `app/(tabs)/accounts/[id].tsx` — account detail + transactions
+  - [ ] Account header: type, masked number, balance
+  - [ ] Filter pills: All, In, Out, Search
+  - [ ] Grouped transaction list (Today / Yesterday / date headers)
+  - [ ] Transaction detail bottom sheet on row tap (merchant, amount, category, reference)
+- [ ] Create `app/(tabs)/accounts/cards.tsx` — cards management
+  - [ ] Swipeable card carousel with `CardVisual`
+  - [ ] Freeze/unfreeze toggle → calls `PATCH /cards/{id}/freeze`
+  - [ ] Card controls: monthly limit display, online txns toggle, contactless toggle
+  - [ ] "View PIN" button (biometric prompt simulation), "Report lost" button
+- **Verify:**
+  - Accounts list shows mock data from API
+  - Freezing a card calls the endpoint and toggles status in UI
+  - Transaction detail bottom sheet opens on row tap
+
+### Phase 7 Gate Check
+- [ ] `npx expo start` — no TypeScript or lint errors
+- [ ] All 3 Accounts sub-screens render with real API data
+- [ ] Freeze card toggle reflected in UI state immediately (optimistic update)
+
+---
+
+## Phase 8 — Mobile: Transfer Tab
+
+> **Security rule:** Agent never initiates transfers. This flow is always manual.
+
+### Step 8.1 — Transfer Home Screen
+- [ ] Create `app/(tabs)/transfer/index.tsx`
+  - [ ] "New Transfer" CTA button
+  - [ ] Saved payees list (mock data or from profile)
+  - [ ] Scheduled payments section (placeholder)
+- **Verify:** Transfer home renders
+
+### Step 8.2 — New Transfer Flow (4-step)
+- [ ] Create `app/(tabs)/transfer/new.tsx` — Step 1: Recipient
+  - [ ] Saved payees list with search
+  - [ ] "+ New payee" form: bank + account number fields
+  - [ ] Next button disabled until payee selected
+- [ ] Create `app/(tabs)/transfer/amount.tsx` — Step 2: Amount & details
+  - [ ] Large amount input with keypad
+  - [ ] From-account picker (dropdown of user accounts)
+  - [ ] Optional reference/note field
+- [ ] Create `app/(tabs)/transfer/review.tsx` — Step 3: Review
+  - [ ] Summary card: To, Bank, Account (masked), Amount, Reference
+  - [ ] "Confirm" → calls `POST /transfers`, receives OTP challenge
+- [ ] Create `app/(tabs)/transfer/otp.tsx` — Step 4: OTP
+  - [ ] 6-digit OTP input field
+  - [ ] Resend timer (60s countdown)
+  - [ ] On submit → calls `POST /transfers/{id}/confirm`
+  - [ ] On success → Success screen with reference number + "Save payee" option
+- **Verify (curl first):**
+  ```
+  curl -X POST http://localhost:8000/transfers -d '{"from_account":"acc-001","to_account":"acc-002","amount":500,"reference":"Test"}' -H "Content-Type: application/json"
+  ```
+- **Verify:** Full 4-step flow navigable; OTP screen shows resend timer
+
+### Phase 8 Gate Check
+- [ ] Transfer flow completes end-to-end with mock OTP (any 6-digit code accepted in dev mode)
+- [ ] Success screen shows reference number
+- [ ] Back navigation works at every step
+
+---
+
+## Phase 9 — Mobile: Discover Tab
+
+### Step 9.1 — Discover Home Screen
+- [ ] Create `app/(tabs)/discover/index.tsx`
+  - [ ] `ScoreRing` with financial health score (from `/advise` or stored)
+  - [ ] "Recommended for you" horizontal strip — AI picks (top 3 from `GET /products` filtered by stored profile)
+  - [ ] Category grid: Cards, Savings, Loans, Insurance, Investments, Promotions (2×3)
+  - [ ] Current promotions list (from `GET /promotions`)
+  - [ ] Persistent chat bar at bottom — tapping navigates to AI chat screen
+- **Verify:** Discover home renders; category tiles navigate to correct category listing
+
+### Step 9.2 — Category Listing Screen
+- [ ] Create `app/(tabs)/discover/[category].tsx`
+  - [ ] Fetches `GET /products?type={category}` on mount
+  - [ ] Sub-type filter pills (e.g. All, Cashback, Travel for Cards)
+  - [ ] Product list cards: name, key metric (cashback%/rate/etc.), CTA button
+  - [ ] "★ AI Pick" badge on recommended items
+  - [ ] Compare toggle: select up to 2 items → "Compare" button appears
+  - [ ] Tapping product card navigates to product detail
+  - [ ] Tapping CTA button navigates directly to execution flow
+- **Verify:** Cards category shows at least 3 products; compare button appears after selecting 2
+
+### Step 9.3 — Product Detail Screens (Type-Aware)
+- [ ] Create `finance-advisor-app/components/products/ProductShell.tsx` — shared wrapper (back nav, sticky CTA, chat strip)
+- [ ] Create per-type detail components:
+  - [ ] `CardDetail.tsx` — card visual, annual fee, rewards rate, benefits list, eligibility, fees table
+  - [ ] `SavingsDetail.tsx` — interest rate (large), account type badge, rate tiers table, lock-in period, deposit insurance badge
+  - [ ] `LoanDetail.tsx` — loan type badge, interest range, loan calculator widget (amount slider × tenure → monthly repayment), docs checklist, eligibility
+  - [ ] `InsuranceDetail.tsx` — coverage summary, premium estimate (monthly/annual toggle), exclusions accordion, claim process steps
+  - [ ] `InvestmentDetail.tsx` — fund type, risk rating visual (1–7 scale), historical returns chart (1y/3y/5y tabs), min investment, platform fee
+  - [ ] `PromoDetail.tsx` — offer headline, expiry badge, eligibility result, T&C accordion, activation steps
+- [ ] Create `app/(tabs)/discover/product/[id].tsx`
+  - [ ] Fetch `GET /products/{id}` on mount
+  - [ ] Render correct detail component based on `product_type`
+  - [ ] CTA label from `product.cta_label`
+  - [ ] Tapping CTA starts execution flow
+- **Verify:** Navigate to a Card product → CardDetail renders; navigate to a Savings product → SavingsDetail renders
+
+### Step 9.4 — Compare Screen
+- [ ] Create `app/(tabs)/discover/compare.tsx`
+  - [ ] Receives two product IDs via route params
+  - [ ] Calls `POST /products/compare` → receives side-by-side data + agent note
+  - [ ] Renders comparison table (green highlight = better value per row)
+  - [ ] Agent note shown at bottom
+  - [ ] "Apply" CTA under each column starts execution for that product
+- **Verify:** Selecting 2 cards and comparing shows correct highlighted differences
+
+### Step 9.5 — AI Chat Screen
+- [ ] Create `app/(tabs)/discover/chat.tsx`
+  - [ ] Message list (scrollable, time-stamped bubbles)
+  - [ ] Text input + send button at bottom
+  - [ ] On send → calls `POST /advise` (or a `/chat` variant) with session_id
+  - [ ] Typing indicator while waiting for response
+  - [ ] Support for markdown rendering in assistant responses
+- **Verify:** Sending "What card is best for travel?" returns an AI response
+
+### Phase 9 Gate Check
+- [ ] All 6 product type detail screens render with real data from API
+- [ ] Compare screen highlights better values correctly
+- [ ] Chat screen sends a message and receives a response
+
+---
+
+## Phase 10 — Mobile: Agent Execution Screen
+
+### Step 10.1 — Execution Screen Component
+- [ ] Create `finance-advisor-app/components/execution/ExecutionScreen.tsx`
+  - [ ] Manages 3 states: working (spinner), paused (input required), done (summary)
+  - [ ] On mount: calls `POST /execute/start` with product + session_id
+  - [ ] After each step: if `status === "done"` → auto-advances (calls `/execute/resume` with null value) after 500ms delay
+  - [ ] If `status === "paused"` → renders correct `PausePrompt`
+  - [ ] Saves progress to store after every step
+  - [ ] Cancel button: calls `DELETE /execute/cancel/{sessionId}`, saves state, navigates back
+  - [ ] On `complete === true` → renders `SummaryCard`
+
+### Step 10.2 — Pause Prompt Component
+- [ ] Create `finance-advisor-app/components/execution/PausePrompt.tsx`
+  - [ ] Renders correct UI per `input_type`:
+    - [ ] `"otp"` → 6-digit input, resend timer (60s), "Continue" button
+    - [ ] `"biometric"` → fingerprint icon, "Touch sensor to continue" text, "Use PIN instead" fallback (simulated in dev)
+    - [ ] `"user_choice"` → radio list of `options`, "Continue" button
+    - [ ] `"clarification"` → text input or choice (depends on prompt context), "Continue" button
+    - [ ] `"document_upload"` → file picker placeholder + "Upload later" option
+  - [ ] On submit → calls `POST /execute/resume` with `{session_id, input_type, value}`
+
+### Step 10.3 — Summary Card Component
+- [ ] Create `finance-advisor-app/components/execution/SummaryCard.tsx`
+  - [ ] Animated checkmark (✓) at top
+  - [ ] Product name + reference number
+  - [ ] Agent log list: ✓ prefix for auto-filled steps, ! prefix for user-provided steps
+  - [ ] "What happens next" section (approval timeline, delivery info)
+  - [ ] Two CTAs: "View in My Products", "Back to Discover"
+
+### Step 10.4 — Execution Screen Route
+- [ ] Create `app/(tabs)/discover/execute.tsx`
+  - [ ] Receives `productId`, `productType`, `sessionId` (or auto-generates new sessionId) via route params
+  - [ ] Renders `<ExecutionScreen />`
+  - [ ] On cancel → navigates back to product detail with cancelled state
+  - [ ] On complete → navigates to discover home with success toast
+
+### Step 10.5 — Resume Banner Integration
+- [ ] In `app/(tabs)/home.tsx` and `app/(tabs)/discover/index.tsx`:
+  - [ ] Check `store.inProgressProduct` on screen focus
+  - [ ] If present and not expired: show resume banner with product name + current step
+  - [ ] Tapping banner → navigates to `execute.tsx` with existing sessionId (loads saved progress)
+  - [ ] If expired: show "This application has expired. Start again?" banner
+
+### Phase 10 Gate Check
+- [ ] Card application flow: spinner → OTP pause → summary card with reference number
+- [ ] Cancelling mid-flow: resume banner appears on Home and Discover
+- [ ] Resuming from banner: execution continues from saved step_index
+- [ ] Summary card agent log distinguishes ✓ (auto) from ! (user) steps
+
+---
+
+## Phase 11 — Profile Tab & Agent History
+
+### Step 11.1 — Profile Home Screen
+- [ ] Create `app/(tabs)/profile/index.tsx`
+  - [ ] Personal info section (name, email, phone — from stored profile)
+  - [ ] Quick links: Active Products, Goals, Agent History, Settings
+  - [ ] Security settings section (biometric toggle, PIN change placeholder)
+
+### Step 11.2 — Active Products Screen
+- [ ] Create `app/(tabs)/profile/products.tsx`
+  - [ ] Fetch `GET /orders/{userId}` — show submitted/approved orders
+  - [ ] Group by product_type
+  - [ ] Show status badge (Submitted / Approved / Rejected)
+
+### Step 11.3 — Goals Tracker Screen
+- [ ] Create `app/(tabs)/profile/goals.tsx`
+  - [ ] Fetch `GET /goals/{userId}` — list goals with `GoalBar` progress bars
+  - [ ] "Add goal" button → simple form (name, target amount, deadline)
+  - [ ] Swipe-to-delete with `DELETE /goals/{goalId}` confirmation
+
+### Step 11.4 — Agent History Screen
+- [ ] Create `app/(tabs)/profile/agent-history.tsx`
+  - [ ] Fetch `GET /agent-history/{userId}`
+  - [ ] Each entry: product name, date, status badge, reference number
+  - [ ] Expand row to show full agent_log
+- **Verify:** After completing at least one execution flow, agent history shows the entry
+
+### Phase 11 Gate Check
+- [ ] All 4 Profile sub-screens render without errors
+- [ ] Agent History shows completed execution entries
+- [ ] Goals can be created and deleted
+
+---
+
+## Phase 12 — API Wiring & Polish
+
+### Step 12.1 — Replace All Mock Data
+- [ ] Audit every screen for hardcoded data
+- [ ] Replace every mock with real API call
+- [ ] Add loading spinners / skeleton screens for all async fetches
+- [ ] Add empty states for lists with zero items
+
+### Step 12.2 — Error States
+- [ ] API error → toast notification with error message
+- [ ] Network offline → offline banner across all screens
+- [ ] 401 / session expired → redirect to onboarding / login screen
+
+### Step 12.3 — Animations & Micro-interactions
+- [ ] Home balance counter animates on mount (count-up from 0)
+- [ ] Account pill strip smooth horizontal scroll
+- [ ] Transaction list items fade-in staggered on first load
+- [ ] Execution spinner: subtle 3-dot pulse animation (`Animated` API)
+- [ ] Summary card checkmark: animated draw (SVG or Lottie)
+- [ ] Score ring: animated fill on mount
+
+### Step 12.4 — Local Dev Environment Verification
+- [ ] Backend: `cd finance-advisor && uvicorn api:app --reload --port 8000` — runs with no errors
+- [ ] Frontend: `cd finance-advisor-app && npx expo start` — app loads on Android emulator or iOS simulator
+- [ ] Demo user: `user-demo-001` has seeded accounts, transactions, cards in DB
+- [ ] All endpoints return data for demo user
+- [ ] Execution flow for at least 2 product types (card + savings) completes end-to-end
+
+### Phase 12 Gate Check
+- [ ] No mock data remaining in any screen
+- [ ] Full card application flow works end-to-end on emulator
+- [ ] No TypeScript errors (`npx tsc --noEmit`)
+- [ ] All 43 backend unit tests still pass: `python -m pytest tests/ -v`
+
+---
+
+## Summary Gate Checks — All Phases
+
+| Phase | Gate Criterion | Status |
+|-------|---------------|--------|
+| 0 | Packages importable, pytest collects | ✅ PASSED |
+| 1 | All 4 tool test suites pass (43 tests) | ✅ PASSED |
+| 2 | All agents importable, supervisor pipeline callable | ✅ PASSED |
+| 3 | CLI --help works, FastAPI importable, 43 tests pass | ✅ PASSED |
+| 4 | Rich output, error handling, demo scenarios ready | ✅ PASSED |
+| 5 | Bank models, extended products.json, seeded DB, all new endpoints 200 | [ ] |
+| 6 | Execution agent processes steps, /execute/* endpoints work end-to-end | [ ] |
+| 7 | Expo app runs, Home + Accounts tabs render with real API data | [ ] |
+| 8 | Transfer 4-step flow complete, OTP works, success screen shows ref | [ ] |
+| 9 | All 6 product detail types render, compare works, chat responds | [ ] |
+| 10 | Card execution flow: spinner → OTP → summary card; resume banner works | [ ] |
+| 11 | Profile tab, Goals CRUD, Agent History populated after execution | [ ] |
+| 12 | No mock data, no TS errors, animations, full end-to-end on emulator | [ ] |
+
+---
+
+## Quick Start Commands (Local Dev)
+
+```bash
+# Backend
+cd finance-advisor
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+pip install -r requirements.txt
+cp .env.example .env            # add ANTHROPIC_API_KEY
+python tools/seed_db.py         # seed demo data (Phase 5)
+uvicorn api:app --reload --port 8000
+
+# Frontend
+cd finance-advisor-app
+npm install
+# create .env with: EXPO_PUBLIC_API_URL=http://localhost:8000
+npx expo start
+# Press 'a' for Android emulator, 'i' for iOS simulator
+
+# Tests
+cd finance-advisor
+python -m pytest tests/ -v
+```

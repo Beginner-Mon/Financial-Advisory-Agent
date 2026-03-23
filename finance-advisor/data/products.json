@@ -1,146 +1,579 @@
 [
   {
+    "id": "CC-001",
+    "name": "Visa Platinum",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 680,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["rewards", "travel", "general"],
+    "summary": {
+      "annual_fee": 180,
+      "cashback_pct": 3.0,
+      "min_income": 30000,
+      "min_credit_score": 680,
+      "network": "visa"
+    },
+    "detail": {
+      "tagline": "Earn 3% cashback on every purchase.",
+      "benefits": ["3% cashback on all spend", "Airport lounge access (2x/year)", "Travel insurance up to $500k", "Contactless payments"],
+      "fees": { "late_payment": 35, "forex_pct": 1.5, "cash_advance_pct": 5.0 },
+      "faqs": [
+        { "q": "When is the annual fee charged?", "a": "On your card anniversary date." },
+        { "q": "How do I redeem cashback?", "a": "Automatically credited monthly to your statement." }
+      ],
+      "terms_summary": "Subject to credit approval. Annual fee waived first year. Min income $30,000."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-002",
+    "name": "Mastercard Gold",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 620,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "annual_fee": 90,
+      "cashback_pct": 2.0,
+      "min_income": 20000,
+      "min_credit_score": 620,
+      "network": "mastercard"
+    },
+    "detail": {
+      "tagline": "2% cashback with no minimum spend.",
+      "benefits": ["2% cashback on dining & groceries", "1% cashback on all other spend", "Purchase protection", "Free supplementary card"],
+      "fees": { "late_payment": 25, "forex_pct": 2.0, "cash_advance_pct": 5.0 },
+      "faqs": [
+        { "q": "Is there a minimum spend for cashback?", "a": "No minimum spend required." },
+        { "q": "Can I add a supplementary cardholder?", "a": "Yes, one free supplementary card included." }
+      ],
+      "terms_summary": "Subject to credit approval. Min income $20,000."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-003",
+    "name": "Travel Elite Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 720,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["travel", "rewards"],
+    "summary": {
+      "annual_fee": 350,
+      "cashback_pct": 5.0,
+      "min_income": 60000,
+      "min_credit_score": 720,
+      "network": "visa"
+    },
+    "detail": {
+      "tagline": "5% miles on flights. Unlimited lounge access.",
+      "benefits": ["5x miles on travel & flights", "Unlimited airport lounge access", "Travel insurance up to $2M", "Hotel upgrades", "Concierge service"],
+      "fees": { "late_payment": 40, "forex_pct": 0.0, "cash_advance_pct": 5.0 },
+      "faqs": [
+        { "q": "Is the annual fee worth it?", "a": "With unlimited lounge access alone (est. $50/visit), frequent travellers break even quickly." },
+        { "q": "Do miles expire?", "a": "Miles are valid for 3 years from earning date." }
+      ],
+      "terms_summary": "Subject to credit approval. Min income $60,000. Annual fee not waivable."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
     "id": "SAV-001",
     "name": "High-Yield Savings Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
     "type": "savings",
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": 4.5,
-    "eligible_goals": ["emergency_fund", "house", "general"]
+    "eligible_goals": ["emergency_fund", "house", "general"],
+    "summary": {
+      "interest_rate": 4.5,
+      "account_type": "regular",
+      "min_balance": 500,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Earn 4.5% p.a. with full flexibility.",
+      "rate_tiers": [
+        { "from": 0, "to": 50000, "rate": 4.0 },
+        { "from": 50000, "to": null, "rate": 4.5 }
+      ],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [
+        { "q": "Is there a minimum balance?", "a": "Minimum $500 to earn interest." },
+        { "q": "Can I withdraw anytime?", "a": "Yes, no lock-in period." }
+      ],
+      "terms_summary": "FDIC insured up to $250,000. No monthly fees."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
   },
   {
     "id": "SAV-002",
-    "name": "Money Market Account",
-    "type": "savings",
-    "min_credit": 600,
-    "risk_level": "low",
-    "return_pct": 4.0,
-    "eligible_goals": ["emergency_fund", "general"]
-  },
-  {
-    "id": "SAV-003",
-    "name": "Certificate of Deposit (12-month)",
+    "name": "Fixed Deposit (12-Month)",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "fixed_deposit",
     "type": "savings",
     "min_credit": 0,
     "risk_level": "low",
-    "return_pct": 5.0,
-    "eligible_goals": ["emergency_fund", "house", "general"]
+    "return_pct": 5.2,
+    "eligible_goals": ["emergency_fund", "house", "general"],
+    "summary": {
+      "interest_rate": 5.2,
+      "account_type": "fixed_deposit",
+      "min_balance": 1000,
+      "max_balance": null,
+      "lock_in_months": 12
+    },
+    "detail": {
+      "tagline": "Lock in 5.2% for 12 months — guaranteed.",
+      "rate_tiers": [
+        { "from": 0, "to": null, "rate": 5.2 }
+      ],
+      "early_withdrawal_fee": "Forfeiture of accrued interest",
+      "deposit_insurance": true,
+      "faqs": [
+        { "q": "What happens if I withdraw early?", "a": "You forfeit all accrued interest for the term." },
+        { "q": "Is my principal guaranteed?", "a": "Yes, principal is fully guaranteed." }
+      ],
+      "terms_summary": "FDIC insured. Min deposit $1,000. Rate fixed for full term."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "SAV-003",
+    "name": "Children Savings Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 3.5,
+    "eligible_goals": ["education", "general"],
+    "summary": {
+      "interest_rate": 3.5,
+      "account_type": "regular",
+      "min_balance": 100,
+      "max_balance": 100000,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Start your child's savings journey early.",
+      "rate_tiers": [
+        { "from": 0, "to": null, "rate": 3.5 }
+      ],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [
+        { "q": "Who can open this account?", "a": "Any parent or guardian for a child under 18." },
+        { "q": "Can the child access funds?", "a": "Full access at age 18; parent-controlled before that." }
+      ],
+      "terms_summary": "FDIC insured. Account converts to standard savings at age 18."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "LN-001",
+    "name": "Personal Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "personal",
+    "type": "loan",
+    "min_credit": 620,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": ["emergency_fund", "general"],
+    "summary": {
+      "interest_rate_min": 5.9,
+      "interest_rate_max": 18.5,
+      "loan_amount_min": 1000,
+      "loan_amount_max": 50000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 60,
+      "min_income": 18000,
+      "approval_days": "1–3 working days"
+    },
+    "detail": {
+      "tagline": "Get funds in as little as 24 hours.",
+      "required_docs": ["Government-issued ID", "Last 3 months payslips", "Last 3 months bank statements"],
+      "faqs": [
+        { "q": "How is my interest rate determined?", "a": "Rate is based on credit score, income, and loan tenure." },
+        { "q": "Is there an early repayment fee?", "a": "No early settlement penalty." }
+      ],
+      "terms_summary": "Rate quoted is indicative. Final rate confirmed upon approval."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "LN-002",
+    "name": "Home Loan",
+    "product_type": "home_loan",
+    "category": "loans",
+    "sub_type": "home",
+    "type": "loan",
+    "min_credit": 680,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": ["house"],
+    "summary": {
+      "interest_rate_min": 3.5,
+      "interest_rate_max": 5.5,
+      "loan_amount_min": 50000,
+      "loan_amount_max": 2000000,
+      "tenure_min_months": 60,
+      "tenure_max_months": 360,
+      "min_income": 36000,
+      "approval_days": "5–10 working days"
+    },
+    "detail": {
+      "tagline": "Competitive rates for your dream home.",
+      "required_docs": ["Government-issued ID", "Last 6 months payslips", "Last 6 months bank statements", "Property sale & purchase agreement", "Latest EPF statement"],
+      "faqs": [
+        { "q": "What is the maximum LTV?", "a": "Up to 90% loan-to-value for first property." },
+        { "q": "Can I make partial prepayments?", "a": "Yes, with no lock-in after year 3." }
+      ],
+      "terms_summary": "Rate is subject to credit assessment. Property must be in approved locations."
+    },
+    "agent_flow": "home_loan",
+    "cta_label": "Apply now"
+  },
+  {
+    "id": "LN-003",
+    "name": "Car Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "car",
+    "type": "loan",
+    "min_credit": 640,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": ["car", "general"],
+    "summary": {
+      "interest_rate_min": 2.8,
+      "interest_rate_max": 4.5,
+      "loan_amount_min": 5000,
+      "loan_amount_max": 200000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 84,
+      "min_income": 24000,
+      "approval_days": "1–3 working days"
+    },
+    "detail": {
+      "tagline": "Drive away with rates from 2.8% p.a.",
+      "required_docs": ["Government-issued ID", "Last 3 months payslips", "Vehicle quotation from dealer"],
+      "faqs": [
+        { "q": "Does this cover used cars?", "a": "Yes, for vehicles up to 10 years old." },
+        { "q": "What is the maximum loan amount?", "a": "Up to 90% of vehicle price, max $200,000." }
+      ],
+      "terms_summary": "Vehicle serves as collateral. Comprehensive insurance required throughout tenure."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-001",
+    "name": "Term Life Insurance (20-Year)",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "life",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["emergency_fund", "retirement", "general"],
+    "summary": {
+      "coverage_amount_min": 100000,
+      "coverage_amount_max": 5000000,
+      "premium_monthly_est": 45,
+      "term_years": 20,
+      "underwriter": "ReliableLife Co."
+    },
+    "detail": {
+      "tagline": "Protect your family for 20 years from $45/month.",
+      "coverage": ["Death benefit", "Terminal illness benefit (early payout)", "Total & permanent disability (optional add-on)"],
+      "exclusions": ["Suicide within first 2 years", "War or terrorism", "Pre-existing conditions (declared)"],
+      "claim_process": ["Notify us within 30 days of event", "Submit claim form + supporting docs", "Assessment within 14 working days", "Payout within 7 days of approval"],
+      "faqs": [
+        { "q": "Is a medical exam required?", "a": "Not for coverage below $500,000 and age under 45." },
+        { "q": "Can I convert to whole life?", "a": "Yes, convertible option available at no extra cost." }
+      ],
+      "terms_summary": "Premium shown is indicative for age 35, non-smoker. Final premium assessed post-declaration."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-002",
+    "name": "Comprehensive Health Plan",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "health",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["health", "emergency_fund", "general"],
+    "summary": {
+      "coverage_amount_min": 50000,
+      "coverage_amount_max": 500000,
+      "premium_monthly_est": 80,
+      "term_years": 1,
+      "underwriter": "HealthShield Partners"
+    },
+    "detail": {
+      "tagline": "Hospitalisation, surgery & outpatient — covered.",
+      "coverage": ["Hospitalisation & surgery", "Outpatient consultations (20 visits/yr)", "Specialist referrals", "Cancer treatment", "Emergency evacuations"],
+      "exclusions": ["Cosmetic procedures", "Dental (except accidents)", "Pre-existing conditions in first 12 months"],
+      "claim_process": ["Visit any panel clinic or hospital", "Submit e-claim within 90 days", "Cashless treatment at panel hospitals", "Reimbursement within 10 working days"],
+      "faqs": [
+        { "q": "Are pre-existing conditions covered?", "a": "Covered after 12-month waiting period for declared conditions." },
+        { "q": "Can I use any doctor?", "a": "Panel network for cashless; non-panel for reimbursement." }
+      ],
+      "terms_summary": "Annual renewable. Premium reviewed annually. Waiting period applies."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-003",
+    "name": "Travel Insurance (Annual)",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "travel",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["travel", "general"],
+    "summary": {
+      "coverage_amount_min": 50000,
+      "coverage_amount_max": 500000,
+      "premium_monthly_est": 20,
+      "term_years": 1,
+      "underwriter": "GlobalTravel Assure"
+    },
+    "detail": {
+      "tagline": "Travel worry-free all year, unlimited trips.",
+      "coverage": ["Trip cancellation up to $5,000", "Medical emergencies up to $500,000", "Baggage loss up to $2,000", "Flight delays >3 hours: $100", "24/7 emergency assistance"],
+      "exclusions": ["Adventure sports (add-on available)", "Travel to sanctioned countries", "Pre-existing medical conditions"],
+      "claim_process": ["File claim within 30 days of return", "Upload receipts and reports online", "Assessment within 5 working days", "Payout within 7 days"],
+      "faqs": [
+        { "q": "How many trips are covered?", "a": "Unlimited trips per year, each up to 90 days." },
+        { "q": "Does it cover family?", "a": "Family plan available for spouse + up to 3 children." }
+      ],
+      "terms_summary": "Annual policy. Trips must be booked from home country."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
   },
   {
     "id": "INV-001",
     "name": "Diversified Index Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "unit_trust",
     "type": "investment",
     "min_credit": 650,
     "risk_level": "moderate",
     "return_pct": 8.0,
-    "eligible_goals": ["retirement", "wealth"]
+    "eligible_goals": ["retirement", "wealth"],
+    "summary": {
+      "risk_rating": 4,
+      "min_investment": 1000,
+      "platform_fee_pct": 0.5,
+      "fund_manager": "VanguardCore Asset Management",
+      "historical_returns": { "1y": 8.2, "3y": 7.8, "5y": 8.0 }
+    },
+    "detail": {
+      "tagline": "Broad market exposure. Low cost. Long-term growth.",
+      "fund_type": "Unit Trust — Global Equity",
+      "fund_factsheet_url": "#",
+      "faqs": [
+        { "q": "What does the fund invest in?", "a": "A blend of S&P 500, MSCI World, and emerging market indices." },
+        { "q": "How liquid is this investment?", "a": "Redeemable in T+3 business days." }
+      ],
+      "terms_summary": "Past performance does not guarantee future returns. Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
   },
   {
     "id": "INV-002",
-    "name": "Balanced Mutual Fund",
+    "name": "Fixed Income Bond Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "fixed_income",
     "type": "investment",
     "min_credit": 600,
-    "risk_level": "moderate",
-    "return_pct": 7.0,
-    "eligible_goals": ["retirement", "wealth", "general"]
+    "risk_level": "low",
+    "return_pct": 4.8,
+    "eligible_goals": ["retirement", "wealth", "general"],
+    "summary": {
+      "risk_rating": 2,
+      "min_investment": 500,
+      "platform_fee_pct": 0.3,
+      "fund_manager": "SecureYield Partners",
+      "historical_returns": { "1y": 4.5, "3y": 4.7, "5y": 4.8 }
+    },
+    "detail": {
+      "tagline": "Stable income. Lower volatility. Capital preservation.",
+      "fund_type": "Unit Trust — Fixed Income",
+      "fund_factsheet_url": "#",
+      "faqs": [
+        { "q": "What bonds does this fund hold?", "a": "Investment-grade corporate and government bonds, mostly AAA–BBB rated." },
+        { "q": "How often are dividends paid?", "a": "Quarterly income distribution." }
+      ],
+      "terms_summary": "Capital at risk. Fixed income does not mean risk-free. Past performance not indicative of future results."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
   },
   {
     "id": "INV-003",
-    "name": "Target-Date Retirement Fund",
+    "name": "Robo-Advisor Portfolio",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "robo_advisor",
     "type": "investment",
-    "min_credit": 600,
+    "min_credit": 0,
     "risk_level": "moderate",
-    "return_pct": 7.5,
-    "eligible_goals": ["retirement"]
+    "return_pct": 7.0,
+    "eligible_goals": ["retirement", "wealth", "general"],
+    "summary": {
+      "risk_rating": 3,
+      "min_investment": 100,
+      "platform_fee_pct": 0.4,
+      "fund_manager": "AutoWealth Robo",
+      "historical_returns": { "1y": 6.8, "3y": 7.1, "5y": 7.0 }
+    },
+    "detail": {
+      "tagline": "Set your goals. We invest and rebalance for you.",
+      "fund_type": "Automated Portfolio",
+      "fund_factsheet_url": "#",
+      "faqs": [
+        { "q": "How is my portfolio selected?", "a": "Based on your risk profile and goals via our AI engine." },
+        { "q": "When does rebalancing occur?", "a": "Automatically when allocation drifts more than 5% from target." }
+      ],
+      "terms_summary": "Capital at risk. Recommended investment horizon: 5+ years."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
   },
   {
-    "id": "INV-004",
-    "name": "Growth ETF Portfolio",
-    "type": "investment",
-    "min_credit": 700,
-    "risk_level": "high",
-    "return_pct": 12.0,
-    "eligible_goals": ["wealth", "retirement"]
-  },
-  {
-    "id": "INV-005",
-    "name": "Aggressive Growth Fund",
-    "type": "investment",
-    "min_credit": 720,
-    "risk_level": "high",
-    "return_pct": 14.0,
-    "eligible_goals": ["wealth"]
-  },
-  {
-    "id": "INV-006",
-    "name": "Small-Cap Value Fund",
-    "type": "investment",
-    "min_credit": 680,
-    "risk_level": "high",
-    "return_pct": 11.0,
-    "eligible_goals": ["wealth", "retirement"]
-  },
-  {
-    "id": "INV-007",
-    "name": "Real Estate Investment Trust (REIT)",
-    "type": "investment",
-    "min_credit": 650,
-    "risk_level": "moderate",
-    "return_pct": 6.5,
-    "eligible_goals": ["wealth", "house", "retirement"]
-  },
-  {
-    "id": "LN-001",
-    "name": "Home Mortgage Pre-Approval",
-    "type": "loan",
-    "min_credit": 680,
-    "risk_level": "moderate",
-    "return_pct": null,
-    "eligible_goals": ["house"]
-  },
-  {
-    "id": "LN-002",
-    "name": "Personal Debt Consolidation Loan",
-    "type": "loan",
-    "min_credit": 620,
-    "risk_level": "low",
-    "return_pct": null,
-    "eligible_goals": ["emergency_fund", "general"]
-  },
-  {
-    "id": "LN-003",
-    "name": "Home Equity Line of Credit",
-    "type": "loan",
-    "min_credit": 700,
-    "risk_level": "moderate",
-    "return_pct": null,
-    "eligible_goals": ["house", "general"]
-  },
-  {
-    "id": "INS-001",
-    "name": "Term Life Insurance (20-year)",
-    "type": "insurance",
+    "id": "PROMO-001",
+    "name": "3% Dining Cashback",
+    "product_type": "promotion",
+    "category": "promotions",
+    "sub_type": "cashback",
+    "type": "savings",
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["emergency_fund", "retirement"]
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "cashback_pct": 3.0,
+      "category": "dining",
+      "cap_amount": 30,
+      "min_spend": 50,
+      "expiry": "2024-12-31",
+      "eligible_cards": ["CC-001", "CC-002"]
+    },
+    "detail": {
+      "tagline": "Earn 3% cashback at over 5,000 dining outlets.",
+      "eligibility": "Requires Visa Platinum or Mastercard Gold",
+      "how_to_activate": ["Tap 'Activate offer' below", "Use eligible card for dining", "Cashback credited within 5 working days"],
+      "terms": "Max cashback $30/month. Cannot be combined with other dining promotions.",
+      "faqs": [
+        { "q": "Which restaurants qualify?", "a": "All restaurants, cafes, and food delivery apps (Uber Eats, DoorDash, etc.)." }
+      ]
+    },
+    "agent_flow": null,
+    "cta_label": "Activate offer"
   },
   {
-    "id": "INS-002",
-    "name": "Disability Income Insurance",
-    "type": "insurance",
+    "id": "PROMO-002",
+    "name": "Annual Fee Waiver",
+    "product_type": "promotion",
+    "category": "promotions",
+    "sub_type": "fee_waiver",
+    "type": "savings",
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["emergency_fund", "general"]
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "cashback_pct": null,
+      "category": "fee_waiver",
+      "cap_amount": null,
+      "min_spend": 5000,
+      "expiry": "2024-12-31",
+      "eligible_cards": ["CC-001", "CC-003"]
+    },
+    "detail": {
+      "tagline": "Spend $5,000 in 3 months — get your annual fee waived.",
+      "eligibility": "Requires Visa Platinum or Travel Elite Card. New cardholders only.",
+      "how_to_activate": ["Tap 'Activate offer' below", "Spend $5,000 within 90 days of card activation", "Fee waiver automatically applied at anniversary"],
+      "terms": "New cardholders only. Spend must be net of refunds. Cannot retroactively apply.",
+      "faqs": [
+        { "q": "Does this apply to renewals?", "a": "First-year only, for new cardholders." }
+      ]
+    },
+    "agent_flow": null,
+    "cta_label": "Activate offer"
   },
   {
-    "id": "INS-003",
-    "name": "Whole Life Insurance with Cash Value",
-    "type": "insurance",
+    "id": "PROMO-003",
+    "name": "5% Grocery Bonus",
+    "product_type": "promotion",
+    "category": "promotions",
+    "sub_type": "cashback",
+    "type": "savings",
     "min_credit": 0,
     "risk_level": "low",
-    "return_pct": 2.5,
-    "eligible_goals": ["retirement", "wealth", "emergency_fund"]
+    "return_pct": null,
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "cashback_pct": 5.0,
+      "category": "groceries",
+      "cap_amount": 25,
+      "min_spend": 80,
+      "expiry": "2024-11-30",
+      "eligible_cards": ["CC-002"]
+    },
+    "detail": {
+      "tagline": "5% back at major supermarkets. Every weekend.",
+      "eligibility": "Requires Mastercard Gold. Weekends only (Sat–Sun).",
+      "how_to_activate": ["Tap 'Activate offer' below", "Shop at participating supermarkets on weekends", "Cashback credited end of month"],
+      "terms": "Weekends only. Max cashback $25/month. Participating stores: Kroger, Whole Foods, Safeway.",
+      "faqs": [
+        { "q": "Does online grocery delivery count?", "a": "Yes, if the merchant is a qualifying supermarket." }
+      ]
+    },
+    "agent_flow": null,
+    "cta_label": "Activate offer"
   }
 ]
