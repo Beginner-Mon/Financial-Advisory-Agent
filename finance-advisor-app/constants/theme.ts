@@ -1,6 +1,11 @@
 /**
  * Theme constants — premium dark finance aesthetic.
+ * Step 7.2 — Design Tokens & Theme
  */
+
+// ---------------------------------------------------------------------------
+// Colors
+// ---------------------------------------------------------------------------
 export const Colors = {
   // Base
   background: '#0a0f1e',
@@ -8,6 +13,13 @@ export const Colors = {
   surfaceLight: '#1a2340',
   card: '#1e2a45',
   cardBorder: '#2a3a5c',
+
+  // Bank branding
+  navy: '#0A1628',
+  gold: '#C9A84C',
+  goldLight: '#E0C97A',
+  goldDark: '#9C7E2A',
+  white: '#FFFFFF',
 
   // Text
   textPrimary: '#f0f4ff',
@@ -41,39 +53,100 @@ export const Colors = {
   success: '#00e68a',
   warning: '#ffd93d',
 
+  // Amount colors
+  amountPositive: '#00e68a',
+  amountNegative: '#ff6b6b',
+
   // Transparent
   overlay: 'rgba(0,0,0,0.5)',
   glass: 'rgba(255,255,255,0.05)',
+  glassLight: 'rgba(255,255,255,0.08)',
+  glassMedium: 'rgba(255,255,255,0.12)',
 };
 
+// ---------------------------------------------------------------------------
+// Spacing scale
+// ---------------------------------------------------------------------------
 export const Spacing = {
   xs: 4,
   sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48,
+  md: 12,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  xxxl: 32,
+  huge: 48,
 };
 
+// ---------------------------------------------------------------------------
+// Typography
+// ---------------------------------------------------------------------------
 export const FontSize = {
   xs: 11,
   sm: 13,
   md: 15,
   lg: 18,
-  xl: 22,
-  xxl: 28,
-  hero: 36,
+  xl: 24,
+  xxl: 32,
+  hero: 42,
 };
 
+export const FontWeight = {
+  regular: '400' as const,
+  medium: '500' as const,
+  semibold: '600' as const,
+  bold: '700' as const,
+  extrabold: '800' as const,
+};
+
+// ---------------------------------------------------------------------------
+// Border Radius
+// ---------------------------------------------------------------------------
 export const BorderRadius = {
-  sm: 8,
-  md: 12,
+  sm: 4,
+  md: 8,
   lg: 16,
   xl: 24,
-  full: 999,
+  full: 9999,
 };
 
-// Default backend URL - change this for production
+// ---------------------------------------------------------------------------
+// Shadows
+// ---------------------------------------------------------------------------
+export const Shadows = {
+  sm: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  md: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  lg: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 8,
+  },
+  gold: {
+    shadowColor: '#C9A84C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 6,
+  },
+};
+
+// ---------------------------------------------------------------------------
+// API URLs
+// ---------------------------------------------------------------------------
 export const API_BASE_URL = 'http://10.0.2.2:8000'; // Android emulator → host
 export const API_BASE_URL_IOS = 'http://localhost:8000';
 export const API_BASE_URL_WEB = 'http://localhost:8000';
