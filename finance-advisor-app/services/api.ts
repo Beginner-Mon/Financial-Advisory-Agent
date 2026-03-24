@@ -497,6 +497,7 @@ export interface ChatResponse {
   session_id?: string;
   step_info?: ProfileStepInfo;
   progress?: ProfileProgress;
+  recommendations?: any[];
 }
 
 export interface ProfileStepResponse {

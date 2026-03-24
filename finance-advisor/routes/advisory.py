@@ -75,11 +75,33 @@ def advise_structured(q: AdvisoryQuery):
         from tools.financial_intel.engine import build_financial_plan
         from tools.product_catalog.service import get_recommendations
         from tools.reporting.generator import generate_report
+        from tools.profiling.service import load_session, normalize_profile_data
         from models.user import UserProfile
 
         logger.info(f"Structured advise: session={q.session_id}")
-        profile_result = profile_user(q.message)
-        profile_data = profile_result.get("profile")
+        
+        profile_data = None
+        profile_result = {}
+        
+        # 1. First, check if there's a completed step-by-step profile session
+        session = load_session(q.session_id)
+        if session and session.get("is_complete"):
+            normalized = normalize_profile_data(session.get("collected_data", {}))
+            # Fallbacks for missing non-critical fields
+            normalized.setdefault("user_id", session.get("user_id", "user-demo-001"))
+            normalized.setdefault("age", 30)
+            normalized.setdefault("income", normalized.get("income", 50000))
+            normalized.setdefault("credit_score", 700)
+            normalized.setdefault("risk_tolerance", "medium")
+            normalized.setdefault("job_stability", "stable")
+            normalized.setdefault("goals", ["general"])
+            profile_data = normalized
+            profile_result["agent_response"] = "Based on the comprehensive profile you just built, here is my final analysis and recommendation set."
+        else:
+            # 2. Fallback to LLM extraction on the single message
+            profile_result = profile_user(q.message)
+            profile_data = profile_result.get("profile")
+
         if not profile_data:
             return StructuredReport(
                 session_id=q.session_id,

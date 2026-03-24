@@ -265,13 +265,18 @@ PROFILE_INTENT_KEYWORDS = [
 ]
 
 
+import re
+
 def detect_profile_intent(message: str) -> bool:
     """
     Check if the user's message suggests they want to build a financial profile.
     Returns True if profiling should be triggered.
     """
     lower = message.lower()
-    return any(kw in lower for kw in PROFILE_INTENT_KEYWORDS)
+    for kw in PROFILE_INTENT_KEYWORDS:
+        if re.search(r'\b' + re.escape(kw) + r'\b', lower):
+            return True
+    return False
 
 
 # ---------------------------------------------------------------------------

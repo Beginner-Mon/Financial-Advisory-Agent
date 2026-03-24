@@ -13,8 +13,8 @@ import Markdown from 'react-native-markdown-display';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius, Shadows } from '../../constants/theme';
 import {
-  getProducts, getProductDetail, getAdvice, traditionalApply,
-  Product, StructuredReport, Recommendation,
+  getProducts, getProductDetail, traditionalApply,
+  Product, getAdvice, StructuredReport
 } from '../../services/api';
 import { useSessionStore } from '../../store/session';
 import BrowseProductsGrid from '../../components/products/BrowseProductsGrid';
@@ -24,6 +24,7 @@ import LoanDetail from '../../components/products/LoanDetail';
 import InsuranceDetail from '../../components/products/InsuranceDetail';
 import InvestmentDetail from '../../components/products/InvestmentDetail';
 import ResultCard, { KeyDetail } from '../../components/shared/ResultCard';
+import { sendChat, submitProfileStep, ChatResponse, ProfileStepInfo } from '../../services/api';
 
 type DiscoverView = 'home' | 'chat' | 'aiProductList' | 'productDetail' | 'aiAutoFill' | 'result';
 
@@ -32,7 +33,9 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   timestamp: Date;
-  recommendations?: Recommendation[];
+  recommendations?: any[];
+  isStep?: boolean;
+  stepInfo?: ProfileStepInfo;
 }
 
 export default function DiscoverScreen() {
@@ -100,11 +103,9 @@ export default function DiscoverScreen() {
       if (profile) {
         fetched = fetched.map(p => {
           let score = 0;
-          // Risk match
           if (profile.risk_tolerance === 'low' && p.risk_level === 'low') score += 2;
           if (profile.risk_tolerance === 'medium' && p.risk_level === 'moderate') score += 2;
           if (profile.risk_tolerance === 'high' && p.risk_level === 'high') score += 2;
-          // Goals match
           if (p.eligible_goals) {
             profile.goals.forEach(g => {
               if (p.eligible_goals!.includes(g)) score += 1;
@@ -113,11 +114,9 @@ export default function DiscoverScreen() {
           return { ...p, _score: score };
         })
         .sort((a: any, b: any) => b._score - a._score)
-        .map((p: any, idx) => {
-          // Top 3 matches get the AI Recommended badge
-          if (idx < 3 && p._score > 0) {
-            p.isAiRecommended = true;
-          }
+        .slice(0, 3) // ONLY SHOW TOP 3 RECOMMENDED
+        .map((p: any) => {
+          p.isAiRecommended = true;
           delete p._score;
           return p as Product;
         });
@@ -144,6 +143,10 @@ export default function DiscoverScreen() {
     } catch { setDetailProduct(null); }
     finally { setDetailLoading(false); }
   };
+
+  // ── Step State ──
+  const [profileSessionId, setProfileSessionId] = useState<string | null>(null);
+  const [stepInputValues, setStepInputValues] = useState<Record<string, any>>({});
 
   // ── AI Purchase: auto-fill form ──
   const startAiPurchase = async () => {
@@ -223,6 +226,53 @@ export default function DiscoverScreen() {
     }
   };
 
+  // ── Submit Step ──
+  const handleStepSubmit = async (stepName: string, skip: boolean) => {
+    if (!profileSessionId) return;
+    setChatSending(true);
+    try {
+      const res = await submitProfileStep({
+        session_id: profileSessionId,
+        step: stepName,
+        values: skip ? undefined : stepInputValues,
+        skip,
+      });
+      // Mark old steps as not active in UI by clearing their stepInfo
+      setChatMessages((prev) => prev.map(m => m.isStep ? { ...m, isStep: false } : m));
+      
+      if (res.is_complete) {
+         setChatMessages((prev) => [...prev, {
+            id: `a-${Date.now()}`, role: 'assistant', text: 'Thank you! Your profile is complete. Analyzing your data for personalized recommendations...', timestamp: new Date()
+         }]);
+         try {
+           const report: StructuredReport = await getAdvice('Provide final recommendations based on my complete profile.', profileSessionId);
+           const reply = [report.agent_commentary, report.report_markdown].filter(Boolean).join('\n\n') || 'I\'ve generated your personalized recommendations.';
+           setChatMessages((prev) => [...prev, {
+             id: `a-${Date.now()+1}`,
+             role: 'assistant',
+             text: reply,
+             timestamp: new Date(),
+             recommendations: report.recommendations?.length ? report.recommendations : undefined,
+           }]);
+         } catch (e: any) {
+           setChatMessages((prev) => [...prev, { id: `e-${Date.now()+1}`, role: 'assistant', text: 'Sorry, I encountered an error generating your final report.', timestamp: new Date() }]);
+         }
+      } else if (res.step_info) {
+         if (res.partial_note) {
+            setChatMessages((prev) => [...prev, { id: `an-${Date.now()}`, role: 'assistant', text: res.partial_note!, timestamp: new Date() }]);
+         }
+         setStepInputValues({});
+         setChatMessages((prev) => [...prev, {
+            id: `a-${Date.now()}`, role: 'assistant', text: `Let's move on to ${res.step_info!.group}.`, timestamp: new Date(), isStep: true, stepInfo: res.step_info!
+         }]);
+      }
+    } catch (e: any) {
+      setChatMessages((prev) => [...prev, { id: `e-${Date.now()}`, role: 'assistant', text: `Failed to save step: ${e.message}`, timestamp: new Date() }]);
+    } finally {
+      setChatSending(false);
+    }
+  };
+
   // ── Chat Send ──
   const sendChatMessage = async (initialMessage?: string | any) => {
     const text = (typeof initialMessage === 'string' ? initialMessage : undefined) || chatInput.trim();
@@ -232,17 +282,30 @@ export default function DiscoverScreen() {
     if (typeof initialMessage !== 'string') setChatInput('');
     setChatSending(true);
     try {
-      const report: StructuredReport = await getAdvice(text);
-      const reply = [report.agent_commentary, report.report_markdown].filter(Boolean).join('\n\n') || 'I\'m here to help with your finances.';
-      setChatMessages((prev) => [...prev, {
-        id: `a-${Date.now()}`,
-        role: 'assistant',
-        text: reply,
-        timestamp: new Date(),
-        recommendations: report.recommendations?.length ? report.recommendations : undefined,
-      }]);
-    } catch {
-      setChatMessages((prev) => [...prev, { id: `e-${Date.now()}`, role: 'assistant', text: 'Sorry, I encountered an error. Please try again.', timestamp: new Date() }]);
+      const resp: ChatResponse = await sendChat(text, profileSessionId || '', userId);
+      if (resp.session_id) setProfileSessionId(resp.session_id);
+
+      if (resp.type === 'profile_step' && resp.step_info) {
+         setStepInputValues({});
+         setChatMessages((prev) => [...prev, {
+            id: `a-${Date.now()}`,
+            role: 'assistant',
+            text: resp.message || "Let's build your financial profile.",
+            timestamp: new Date(),
+            isStep: true,
+            stepInfo: resp.step_info
+         }]);
+      } else {
+         setChatMessages((prev) => [...prev, {
+            id: `a-${Date.now()}`,
+            role: 'assistant',
+            text: resp.message,
+            timestamp: new Date(),
+            recommendations: resp.recommendations,
+         }]);
+      }
+    } catch (e: any) {
+      setChatMessages((prev) => [...prev, { id: `e-${Date.now()}`, role: 'assistant', text: `Error: ${e.message}`, timestamp: new Date() }]);
     } finally {
       setChatSending(false);
     }
@@ -519,6 +582,69 @@ export default function DiscoverScreen() {
                     {item.text}
                   </Markdown>
                 )}
+                {/* Profile Step UI */}
+                {item.isStep && item.stepInfo && (
+                  <View style={styles.stepContainer}>
+                    {item.stepInfo.questions.map((q: any, qIdx: number) => (
+                      <View key={q.field} style={styles.stepQuestion}>
+                        <Text style={styles.stepPrompt}>{q.prompt}{q.required ? ' *' : ''}</Text>
+                        
+                        {q.type === 'number' || q.type === 'text' ? (
+                           <TextInput
+                             style={styles.stepInput}
+                             keyboardType={q.type === 'number' ? "numeric" : "default"}
+                             value={stepInputValues[q.field]?.toString() || ''}
+                             onChangeText={(val) => setStepInputValues(prev => ({...prev, [q.field]: val}))}
+                             placeholder="..."
+                             placeholderTextColor={Colors.textMuted}
+                           />
+                        ) : q.type === 'choice' || q.type === 'multi_choice' ? (
+                           <View style={styles.stepOptions}>
+                             {q.options?.map((opt: string) => {
+                               const isSelected = q.type === 'multi_choice' 
+                                 ? (stepInputValues[q.field] || []).includes(opt)
+                                 : stepInputValues[q.field] === opt;
+                               return (
+                                 <TouchableOpacity 
+                                   key={opt}
+                                   style={[styles.stepOptionBtn, isSelected && styles.stepOptionBtnActive]}
+                                   onPress={() => {
+                                      if (q.type === 'choice') {
+                                        setStepInputValues(prev => ({...prev, [q.field]: opt}));
+                                      } else {
+                                        setStepInputValues(prev => {
+                                          const current = prev[q.field] || [];
+                                          if (current.includes(opt)) return {...prev, [q.field]: current.filter((x: string) => x !== opt)};
+                                          return {...prev, [q.field]: [...current, opt]};
+                                        });
+                                      }
+                                   }}
+                                 >
+                                   <Text style={[styles.stepOptionText, isSelected && styles.stepOptionTextActive]}>{opt}</Text>
+                                 </TouchableOpacity>
+                               )
+                             })}
+                           </View>
+                        ) : null}
+                      </View>
+                    ))}
+                    
+                    <View style={styles.stepActions}>
+                      <TouchableOpacity 
+                        style={styles.stepBtnCancel} 
+                        onPress={() => handleStepSubmit(item.stepInfo!.step, true)}
+                      >
+                         <Text style={styles.stepBtnCancelText}>Skip</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity 
+                        style={styles.stepBtnPrimary}
+                        onPress={() => handleStepSubmit(item.stepInfo!.step, false)}
+                      >
+                         <Text style={styles.stepBtnPrimaryText}>Continue</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                )}
                 {/* Recommendation cards */}
                 {item.recommendations && item.recommendations.length > 0 && (
                   <View style={styles.recCardsWrap}>
@@ -767,4 +893,20 @@ const styles = StyleSheet.create({
   recPurchaseBtnText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Colors.navy },
 
   chatSendDisabled: { backgroundColor: Colors.surfaceLight },
+  
+  // Step UI
+  stepContainer: { marginTop: Spacing.md, gap: Spacing.md, paddingTop: Spacing.sm, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: Colors.cardBorder },
+  stepQuestion: { marginBottom: Spacing.sm },
+  stepPrompt: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.textPrimary, marginBottom: 8 },
+  stepInput: { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.cardBorder, borderRadius: BorderRadius.md, padding: Spacing.md, fontSize: FontSize.md, color: Colors.textPrimary },
+  stepOptions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  stepOptionBtn: { backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.cardBorder, borderRadius: BorderRadius.full, paddingHorizontal: 12, paddingVertical: 6 },
+  stepOptionBtnActive: { backgroundColor: Colors.gold, borderColor: Colors.gold },
+  stepOptionText: { fontSize: FontSize.sm, color: Colors.textPrimary },
+  stepOptionTextActive: { fontWeight: FontWeight.bold, color: Colors.navy },
+  stepActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: Spacing.md, marginTop: Spacing.sm },
+  stepBtnCancel: { paddingHorizontal: 16, paddingVertical: 8 },
+  stepBtnCancelText: { fontSize: FontSize.sm, color: Colors.textMuted, fontWeight: '600' },
+  stepBtnPrimary: { backgroundColor: Colors.navy, borderRadius: BorderRadius.md, paddingHorizontal: 16, paddingVertical: 8 },
+  stepBtnPrimaryText: { fontSize: FontSize.sm, color: Colors.white, fontWeight: 'bold' },
 });
