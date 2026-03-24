@@ -3,13 +3,14 @@
  * Simplified: no confirm-each-field mechanic. User fills fields → Next → Submit.
  * Shows inline validation errors when fields are empty/invalid.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, TouchableOpacity,
   TextInput, Switch, ActivityIndicator, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius } from '../../constants/theme';
+import { useSessionStore } from '../../store/session';
 
 // ── Exported types ──
 export interface WizardField {
@@ -35,9 +36,40 @@ interface Props {
 }
 
 export default function WizardShell({ productName, steps, onSubmit, onCancel }: Props) {
+  const profile = useSessionStore((s) => s.profile);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [submitting, setSubmitting] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
+  const [showOtpPhase, setShowOtpPhase] = useState(false);
+
+  // ── Auto-fill basic details from profile ──
+  useEffect(() => {
+    if (!profile) return;
+    setFormData((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      const userName = profile.name || 'Alex Johnson';
+      
+      steps.flatMap((s) => s.fields).forEach((f) => {
+        if (!next[f.key] && !f.prefilled) { // Don't overwrite if touched or natively prefilled
+          if (f.key === 'full_name' || f.key === 'name') { next[f.key] = userName; changed = true; }
+          else if (f.key === 'email') { next[f.key] = `${userName.toLowerCase().replace(/\s/g, '.')}@email.com`; changed = true; }
+          else if (f.key === 'mobile') { next[f.key] = '+1 (555) 000-1234'; changed = true; }
+          else if (f.key === 'id_number') { next[f.key] = 'S1234567A'; changed = true; }
+          else if (f.key === 'dob' && profile.age) {
+            const year = new Date().getFullYear() - profile.age;
+            next[f.key] = `${year}-01-01`;
+            changed = true;
+          }
+          else if (f.key === 'employer') { next[f.key] = 'Demo Corp'; changed = true; }
+          else if (f.key === 'job_stability') { next[f.key] = 'Stable'; changed = true; }
+          else if (f.key === 'income' || f.key === 'gross_income') { next[f.key] = String(profile.income || '85000'); changed = true; }
+          else if (f.key === 'monthly_income') { next[f.key] = String(Math.floor((profile.income || 85000) / 12)); changed = true; }
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, [profile, steps]);
 
   const setValue = (key: string, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -76,13 +108,27 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
     return null;
   };
 
-  const allFieldsValid = steps
-    .flatMap((s) => s.fields)
-    .filter((f) => f.required)
-    .every(isFieldValid);
+  const nonOtpFields = steps.flatMap((s) => s.fields).filter((f) => f.type !== 'otp');
+  const otpField = steps.flatMap((s) => s.fields).find((f) => f.type === 'otp');
+
+  const allFieldsValid = nonOtpFields.filter((f) => f.required).every(isFieldValid);
+  const otpValid = otpField ? isFieldValid(otpField) : true;
+
+  const handleNext = () => {
+    if (!allFieldsValid) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
+    setShowOtpPhase(true);
+  };
 
   const handleBack = () => {
     setShowErrors(false);
+    if (showOtpPhase) {
+      setShowOtpPhase(false);
+      return;
+    }
     if (Platform.OS === 'web') {
       if (confirm('Cancel application? Your progress will be lost.')) {
         onCancel();
@@ -96,7 +142,7 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
   };
 
   const handleSubmit = async () => {
-    if (!allFieldsValid) {
+    if (!otpValid && showOtpPhase) {
       setShowErrors(true);
       return;
     }
@@ -240,28 +286,45 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
 
       {/* Fields */}
       <ScrollView style={styles.fieldsScroll} showsVerticalScrollIndicator={false}>
-        {steps.map((stepGrp, index) => (
-          <View key={index} style={styles.fieldset}>
-            <Text style={styles.stepTitle}>{stepGrp.title}</Text>
-            {stepGrp.fields.map(renderField)}
+        {showOtpPhase ? (
+          <View style={styles.fieldset}>
+            <Text style={styles.stepTitle}>Verification</Text>
+            {steps.flatMap(s => s.fields).filter(f => f.type === 'otp').map(renderField)}
           </View>
-        ))}
+        ) : (
+          steps.map((stepGrp, index) => {
+            const nonOtp = stepGrp.fields.filter((f) => f.type !== 'otp');
+            if (nonOtp.length === 0) return null;
+            return (
+              <View key={index} style={styles.fieldset}>
+                <Text style={styles.stepTitle}>{stepGrp.title}</Text>
+                {nonOtp.map(renderField)}
+              </View>
+            );
+          })
+        )}
         <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Bottom CTA */}
       <View style={styles.bottomBar}>
-        <TouchableOpacity
-          style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
-          onPress={handleSubmit}
-          disabled={submitting}
-        >
-          {submitting ? (
-            <ActivityIndicator color={Colors.navy} />
-          ) : (
-            <Text style={styles.primaryBtnText}>Submit application</Text>
-          )}
-        </TouchableOpacity>
+        {showOtpPhase ? (
+          <TouchableOpacity
+            style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
+            onPress={handleSubmit}
+            disabled={submitting}
+          >
+            {submitting ? (
+              <ActivityIndicator color={Colors.navy} />
+            ) : (
+              <Text style={styles.primaryBtnText}>Submit application</Text>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.primaryBtn} onPress={handleNext}>
+            <Text style={styles.primaryBtnText}>Continue to Verification</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
