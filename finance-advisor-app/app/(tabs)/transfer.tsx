@@ -74,13 +74,14 @@ export default function TransferScreen() {
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const checkmarkScale = useRef(new Animated.Value(0)).current;
 
-  // Fetch accounts on mount
+  // Fetch accounts on mount — only checking accounts allowed for transfers
   useEffect(() => {
     (async () => {
       try {
         const accs = await getAccounts(userId);
-        setAccounts(accs);
-        if (accs.length > 0) setSelectedFromAccount(accs[0]);
+        const checkingOnly = accs.filter((a) => a.type === 'checking');
+        setAccounts(checkingOnly);
+        if (checkingOnly.length > 0) setSelectedFromAccount(checkingOnly[0]);
       } catch (e) {
         console.warn('Error fetching accounts:', e);
       }

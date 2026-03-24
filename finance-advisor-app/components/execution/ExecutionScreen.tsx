@@ -149,7 +149,9 @@ export default function ExecutionScreen({
 
   const handleCancel = async () => {
     try {
-      await cancelExecution(sessionId);
+      if (sessionId) {
+        await cancelExecution(sessionId);
+      }
     } catch {}
     // Keep inProgressProduct in store for resume banner
     onCancel();
