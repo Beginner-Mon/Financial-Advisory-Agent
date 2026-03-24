@@ -28,8 +28,22 @@ class Settings:
 
         self.LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
+        # CORS — comma-separated allowed origins
+        _origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:8081,http://localhost:8082,http://localhost:19006,http://localhost:8000")
+        self.ALLOWED_ORIGINS: list[str] = [o.strip() for o in _origins.split(",") if o.strip()]
+
+        # JWT Authentication
+        self.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "dev-secret-change-in-production")
+        self.JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
+        self.ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
+
+        # Rate limiting
+        self.RATE_LIMIT_ADVISORY = os.getenv("RATE_LIMIT_ADVISORY", "30/minute")
+        self.RATE_LIMIT_DATA = os.getenv("RATE_LIMIT_DATA", "60/minute")
+
         # Ensure data directory exists
         self.DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 
     def get_db_path(self, override: Path | str | None = None) -> Path:
         """Return DB path, allowing test overrides."""

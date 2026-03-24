@@ -446,3 +446,104 @@ export interface TraditionalApplyResponse {
 export function traditionalApply(body: TraditionalApplyRequest): Promise<TraditionalApplyResponse> {
   return apiPost<TraditionalApplyResponse>('/traditional/apply', body);
 }
+
+// ---------------------------------------------------------------------------
+// Authentication
+// ---------------------------------------------------------------------------
+export interface AuthTokenResponse {
+  access_token: string;
+  token_type: string;
+  expires_in: number;
+  user_id: string;
+}
+
+export function authRegister(email: string, password: string, name: string = ''): Promise<AuthTokenResponse> {
+  return apiPost<AuthTokenResponse>('/auth/register', { email, password, name });
+}
+
+export function authLogin(email: string, password: string): Promise<AuthTokenResponse> {
+  return apiPost<AuthTokenResponse>('/auth/login', { email, password });
+}
+
+// ---------------------------------------------------------------------------
+// Chat & Step-by-Step Profile Collection
+// ---------------------------------------------------------------------------
+
+export interface ProfileQuestion {
+  field: string;
+  prompt: string;
+  type: 'number' | 'choice' | 'multi_choice';
+  options?: string[];
+  required: boolean;
+}
+
+export interface ProfileStepInfo {
+  step: string;
+  group: string;
+  questions: ProfileQuestion[];
+}
+
+export interface ProfileProgress {
+  filled: number;
+  total: number;
+  percentage: number;
+  filled_fields?: string[];
+  missing_fields?: string[];
+}
+
+export interface ChatResponse {
+  type: 'answer' | 'profile_step' | 'recommendation';
+  message: string;
+  session_id?: string;
+  step_info?: ProfileStepInfo;
+  progress?: ProfileProgress;
+}
+
+export interface ProfileStepResponse {
+  session_id: string;
+  current_step: string | null;
+  step_info: ProfileStepInfo | null;
+  progress: ProfileProgress;
+  has_enough_info: boolean;
+  is_complete: boolean;
+  collected_data: Record<string, any>;
+  partial_note: string | null;
+  normalized_profile?: Record<string, any>;
+}
+
+export function sendChat(message: string, sessionId: string = '', userId: string = ''): Promise<ChatResponse> {
+  return apiPost<ChatResponse>('/chat', { message, session_id: sessionId, user_id: userId });
+}
+
+export function submitProfileStep(body: {
+  session_id: string;
+  step: string;
+  values?: Record<string, any>;
+  skip?: boolean;
+}): Promise<ProfileStepResponse> {
+  return apiPost<ProfileStepResponse>('/profile/step', body);
+}
+
+export function getProfileProgress(sessionId: string): Promise<ProfileStepResponse> {
+  return apiGet<ProfileStepResponse>(`/profile/progress/${sessionId}`);
+}
+
+// ---------------------------------------------------------------------------
+// AI-Powered Smart Pre-Fill
+// ---------------------------------------------------------------------------
+
+export interface PrefillSuggestions {
+  product_type: string;
+  suggestions: Record<string, any>;
+  is_ai_generated: boolean;
+  editable: boolean;
+  badge: string;
+}
+
+export function getSmartPrefill(productType: string, userId: string = '', productId: string = ''): Promise<PrefillSuggestions> {
+  return apiPost<PrefillSuggestions>('/recommend/prefill', {
+    product_type: productType,
+    user_id: userId,
+    product_id: productId,
+  });
+}
