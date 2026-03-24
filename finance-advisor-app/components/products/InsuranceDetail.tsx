@@ -28,7 +28,7 @@ export default function InsuranceDetail({ product }: Props) {
       <View style={styles.heroSection}>
         <Ionicons name="umbrella" size={40} color={Colors.insurance} />
         <Text style={styles.coverageLabel}>Coverage up to</Text>
-        <Text style={styles.coverageValue}>{s.coverage || d.coverage || s.sum_assured || '—'}</Text>
+        <Text style={styles.coverageValue} numberOfLines={1} adjustsFontSizeToFit>{s.coverage || d.coverage || s.sum_assured || '—'}</Text>
         <View style={styles.typeBadge}>
           <Text style={styles.typeBadgeText}>{product.sub_type || 'life'} insurance</Text>
         </View>

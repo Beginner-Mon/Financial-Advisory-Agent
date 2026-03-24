@@ -1,56 +1,32 @@
 /**
- * Discover Tab — Full product browsing, detail, compare, AI chat, and execution.
- * Phase 9 + 10 — Internal views managed via state (same pattern as transfer.tsx).
- *
- * Views: home | category | detail | compare | chat | execution
+ * AI Guide Tab — Chat UI + AI-assisted Browse Products (✨).
+ * Views: home | chat | aiProductList | productDetail | aiAutoFill | result
  */
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, TouchableOpacity,
   ActivityIndicator, TextInput, FlatList, KeyboardAvoidingView, Platform,
+  Switch,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
+import { useRouter } from 'expo-router';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius, Shadows } from '../../constants/theme';
 import {
-  getProducts, getPromotions, getProductDetail, compareProducts, getAdvice,
-  activatePromotion, Product, CompareResult, StructuredReport,
+  getProducts, getProductDetail, getAdvice, traditionalApply,
+  Product, StructuredReport,
 } from '../../services/api';
 import { useSessionStore } from '../../store/session';
-import ScoreRing from '../../components/bank/ScoreRing';
-// Product detail components
-import ProductShell from '../../components/products/ProductShell';
+import BrowseProductsGrid from '../../components/products/BrowseProductsGrid';
 import CardDetail from '../../components/products/CardDetail';
 import SavingsDetail from '../../components/products/SavingsDetail';
 import LoanDetail from '../../components/products/LoanDetail';
 import InsuranceDetail from '../../components/products/InsuranceDetail';
 import InvestmentDetail from '../../components/products/InvestmentDetail';
-import PromoDetail from '../../components/products/PromoDetail';
-// Execution
-import ExecutionScreen from '../../components/execution/ExecutionScreen';
-import WizardShell from '../../components/traditional/WizardShell';
-import { CARD_STEPS } from '../../components/traditional/steps/cards';
-import { SAVINGS_STEPS } from '../../components/traditional/steps/savings';
-import { LOAN_STEPS } from '../../components/traditional/steps/loans';
-import { INSURANCE_STEPS } from '../../components/traditional/steps/insurance';
-import { INVESTMENT_STEPS } from '../../components/traditional/steps/investments';
-import { traditionalApply } from '../../services/api';
+import ResultCard, { KeyDetail } from '../../components/shared/ResultCard';
 
-type IoniconsName = keyof typeof Ionicons.glyphMap;
-type DiscoverView = 'home' | 'category' | 'detail' | 'compare' | 'chat' | 'execution' | 'traditional';
+type DiscoverView = 'home' | 'chat' | 'aiProductList' | 'productDetail' | 'aiAutoFill' | 'result';
 
-const CATEGORIES: { key: string; label: string; icon: IoniconsName; color: string }[] = [
-  { key: 'cards', label: 'Cards', icon: 'card', color: Colors.gold },
-  { key: 'savings', label: 'Savings', icon: 'shield-checkmark', color: Colors.savings },
-  { key: 'loans', label: 'Loans', icon: 'cash', color: Colors.loan },
-  { key: 'insurance', label: 'Insurance', icon: 'umbrella', color: Colors.insurance },
-  { key: 'investments', label: 'Investments', icon: 'trending-up', color: Colors.investment },
-  { key: 'promotions', label: 'Promos', icon: 'gift', color: Colors.scoreYellow },
-];
-
-// ──────────────────────────────────────────────
-// Chat message type
-// ──────────────────────────────────────────────
 interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
@@ -58,38 +34,38 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-// ──────────────────────────────────────────────
-// Main component
-// ──────────────────────────────────────────────
 export default function DiscoverScreen() {
+  const router = useRouter();
   const userId = useSessionStore((s) => s.userId);
-  const inProgressProduct = useSessionStore((s) => s.inProgressProduct);
+  const profile = useSessionStore((s) => s.profile);
 
-  // View state
   const [view, setView] = useState<DiscoverView>('home');
-  const [navStack, setNavStack] = useState<DiscoverView[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // Data
-  const [loading, setLoading] = useState(true);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [promos, setPromos] = useState<Product[]>([]);
-  const [healthScore, setHealthScore] = useState(72);
-
-  // Category view
+  // ── AI Product List ──
   const [activeCategory, setActiveCategory] = useState('');
-  const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
-  const [subTypeFilter, setSubTypeFilter] = useState('All');
-  const [compareSelection, setCompareSelection] = useState<string[]>([]);
+  const [aiProducts, setAiProducts] = useState<Product[]>([]);
+  const [aiNote, setAiNote] = useState('');
+  const [aiListLoading, setAiListLoading] = useState(false);
 
-  // Detail view
+  // ── Product Detail ──
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
 
-  // Compare view
-  const [compareResult, setCompareResult] = useState<CompareResult | null>(null);
-  const [compareLoading, setCompareLoading] = useState(false);
+  // ── AI Auto-Fill ──
+  const [filledForm, setFilledForm] = useState<Record<string, any>>({});
+  const [aiRationale, setAiRationale] = useState('');
+  const [autoFillLoading, setAutoFillLoading] = useState(false);
+  const [otpValue, setOtpValue] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  // Chat view
+  // ── Result ──
+  const [resultData, setResultData] = useState<{
+    productName: string; productType: string; referenceNo: string;
+    keyDetails: KeyDetail[]; nextSteps: string;
+  } | null>(null);
+
+  // ── Chat ──
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { id: '0', role: 'assistant', text: 'Hello! I\'m your AI Financial Advisor. How can I help you today?', timestamp: new Date() },
   ]);
@@ -97,225 +73,356 @@ export default function DiscoverScreen() {
   const [chatSending, setChatSending] = useState(false);
   const chatScrollRef = useRef<FlatList>(null);
 
-  // Execution view
-  const [execProductId, setExecProductId] = useState('');
-  const [execProductType, setExecProductType] = useState('');
-  const [execProductName, setExecProductName] = useState('');
-
-  // ──────────────────────────────────────────────
-  // Navigation helpers
-  // ──────────────────────────────────────────────
-  const navigateTo = (target: DiscoverView) => {
-    setNavStack((prev) => [...prev, view]);
-    setView(target);
-  };
-
+  // ── Navigation ──
   const goBack = () => {
-    const prev = [...navStack];
-    const last = prev.pop() || 'home';
-    setNavStack(prev);
-    setView(last);
-    // Reset compare selection when leaving category
-    if (last === 'home') {
-      setCompareSelection([]);
-      setSubTypeFilter('All');
-    }
+    if (view === 'aiProductList') setView('home');
+    else if (view === 'productDetail') setView('aiProductList');
+    else if (view === 'aiAutoFill') setView('productDetail');
+    else if (view === 'result') { setView('home'); setResultData(null); }
+    else if (view === 'chat') setView('home');
+    else setView('home');
   };
 
-  // ──────────────────────────────────────────────
-  // Fetch initial data
-  // ──────────────────────────────────────────────
-  useEffect(() => {
-    (async () => {
-      try {
-        const [prods, prs] = await Promise.all([getProducts(), getPromotions()]);
-        setAllProducts(prods);
-        setPromos(prs);
-      } catch (e) {
-        console.warn('Discover fetch error:', e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  // ──────────────────────────────────────────────
-  // Category handlers
-  // ──────────────────────────────────────────────
-  const openCategory = async (catKey: string) => {
+  // ── AI Category Tap: fetch recommended products ──
+  const openAiCategory = async (catKey: string) => {
     setActiveCategory(catKey);
-    setSubTypeFilter('All');
-    setCompareSelection([]);
+    setAiListLoading(true);
+    setView('aiProductList');
     try {
+      // Use existing getProducts for now — backend can be enhanced later
+      // to use POST /ai-guide/recommend when the AI endpoint is ready
       const prods = await getProducts(catKey);
-      setCategoryProducts(prods);
+      setAiProducts(prods);
+      setAiNote(`Based on your profile, here are the best ${catKey} options for you.`);
     } catch {
-      setCategoryProducts([]);
+      setAiProducts([]);
+      setAiNote('');
+    } finally {
+      setAiListLoading(false);
     }
-    navigateTo('category');
   };
 
-  const filteredCategoryProducts = subTypeFilter === 'All'
-    ? categoryProducts
-    : categoryProducts.filter((p) => p.sub_type === subTypeFilter);
-
-  const subTypes = ['All', ...Array.from(new Set(categoryProducts.map((p) => p.sub_type).filter(Boolean)))];
-
-  const toggleCompare = (id: string) => {
-    setCompareSelection((prev) => {
-      if (prev.includes(id)) return prev.filter((x) => x !== id);
-      if (prev.length >= 2) return prev;
-      return [...prev, id];
-    });
-  };
-
-  // ──────────────────────────────────────────────
-  // Detail handler
-  // ──────────────────────────────────────────────
+  // ── Product detail ──
   const openDetail = async (productId: string) => {
     setDetailLoading(true);
-    navigateTo('detail');
+    setView('productDetail');
     try {
       const prod = await getProductDetail(productId);
       setDetailProduct(prod);
-    } catch {
-      setDetailProduct(null);
-    } finally {
-      setDetailLoading(false);
-    }
+    } catch { setDetailProduct(null); }
+    finally { setDetailLoading(false); }
   };
 
-  // ──────────────────────────────────────────────
-  // Compare handler
-  // ──────────────────────────────────────────────
-  const startCompare = async () => {
-    if (compareSelection.length !== 2) return;
-    setCompareLoading(true);
-    navigateTo('compare');
+  // ── AI Purchase: auto-fill form ──
+  const startAiPurchase = async () => {
+    if (!detailProduct) return;
+    setAutoFillLoading(true);
+    setOtpValue('');
+    setView('aiAutoFill');
     try {
-      const result = await compareProducts(compareSelection);
-      setCompareResult(result);
+      // Auto-generate form data from user profile
+      const userName = profile?.name || 'Alex Johnson';
+      const filled: Record<string, any> = {
+        full_name: userName,
+        email: `${userName.toLowerCase().replace(/\s/g, '.')}@email.com`,
+        mobile: '+1 (555) 000-1234',
+        id_number: 'S1234567A',
+        dob: '1990-06-15',
+        job_stability: 'Stable',
+        employer: 'Demo Corp',
+        income: '85000',
+        monthly_income: '7083',
+      };
+
+      // Product-specific fields
+      if (detailProduct.product_type === 'card') {
+        filled.credit_limit = '$5,000';
+        filled.statement_cycle = '1st of month';
+        filled.autopay = 'Full balance';
+      } else if (detailProduct.product_type === 'savings') {
+        filled.account_nickname = `AI Savings ${new Date().toLocaleDateString()}`;
+        filled.initial_deposit = '1000';
+        filled.funding_account = 'Main Checking';
+      } else if (detailProduct.product_type === 'loan' || detailProduct.product_type === 'home_loan') {
+        filled.loan_amount = '10000';
+        filled.loan_tenure = '24 months';
+        filled.loan_purpose = 'Education';
+      } else if (detailProduct.product_type === 'insurance') {
+        filled.coverage_tier = 'Standard';
+        filled.coverage_amount = '50000';
+        filled.payment_frequency = 'Monthly';
+      } else if (detailProduct.product_type === 'investment') {
+        filled.investment_amount = '5000';
+        filled.funding_account = 'Main Checking';
+      }
+
+      setFilledForm(filled);
+      setAiRationale(`AI has selected optimal values based on your income ($${filled.income}/year), risk profile, and financial goals.`);
     } catch {
-      setCompareResult(null);
+      setAiRationale('Failed to auto-fill. Please try again.');
     } finally {
-      setCompareLoading(false);
+      setAutoFillLoading(false);
     }
   };
 
-  // ──────────────────────────────────────────────
-  // Chat handler
-  // ──────────────────────────────────────────────
+  // ── Submit AI auto-filled form ──
+  const submitAiForm = async () => {
+    if (!detailProduct || otpValue.length < 6) return;
+    setSubmitting(true);
+    try {
+      const res = await traditionalApply({
+        product_id: detailProduct.id,
+        product_type: detailProduct.product_type,
+        form_data: { ...filledForm, otp: otpValue, terms: true },
+        session_id: userId,
+      });
+      setResultData({
+        productName: detailProduct.name,
+        productType: detailProduct.product_type,
+        referenceNo: res.reference_no,
+        keyDetails: (res as any).key_details || [],
+        nextSteps: res.next_steps,
+      });
+      setView('result');
+    } catch (e: any) {
+      setAiRationale(`Submission failed: ${e.message || 'Please try again.'}`);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // ── Chat Send ──
   const sendChatMessage = async () => {
     const text = chatInput.trim();
     if (!text || chatSending) return;
-    setChatInput('');
-    const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', text, timestamp: new Date() };
+    const userMsg: ChatMessage = { id: `u-${Date.now()}`, role: 'user', text, timestamp: new Date() };
     setChatMessages((prev) => [...prev, userMsg]);
+    setChatInput('');
     setChatSending(true);
-
     try {
       const report: StructuredReport = await getAdvice(text);
-      const reply = [report.agent_commentary, report.report_markdown].filter(Boolean).join('\n\n---\n\n') || 'I analyzed your request. Check the recommendations in the Discover tab!';
-      const assistantMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        text: reply,
-        timestamp: new Date(),
-      };
-      setChatMessages((prev) => [...prev, assistantMsg]);
-      if (report.health_score) setHealthScore(report.health_score);
-    } catch (e: any) {
-      const errorMsg: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        text: `Sorry, I encountered an error: ${e.message || 'Unknown error'}. Please try again.`,
-        timestamp: new Date(),
-      };
-      setChatMessages((prev) => [...prev, errorMsg]);
+      const reply = [report.agent_commentary, report.report_markdown].filter(Boolean).join('\n\n') || 'I\'m here to help with your finances.';
+      setChatMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: 'assistant', text: reply, timestamp: new Date() }]);
+    } catch {
+      setChatMessages((prev) => [...prev, { id: `e-${Date.now()}`, role: 'assistant', text: 'Sorry, I encountered an error. Please try again.', timestamp: new Date() }]);
     } finally {
       setChatSending(false);
     }
   };
 
-  // ──────────────────────────────────────────────
-  // Execution handler
-  // ──────────────────────────────────────────────
-  const startExecutionFlow = (product: Product) => {
-    setExecProductId(product.id);
-    setExecProductType(product.agent_flow || product.product_type);
-    setExecProductName(product.name);
-    navigateTo('execution');
-  };
-
-  // ──────────────────────────────────────────────
-  // Traditional wizard handler
-  // ──────────────────────────────────────────────
-  const startTraditionalFlow = (product: Product) => {
-    setExecProductId(product.id);
-    setExecProductType(product.agent_flow || product.product_type);
-    setExecProductName(product.name);
-    navigateTo('traditional');
-  };
-
-  const getTraditionalSteps = (productType: string) => {
-    switch (productType) {
-      case 'card': return CARD_STEPS;
-      case 'savings': return SAVINGS_STEPS;
-      case 'loan': case 'home_loan': return LOAN_STEPS;
-      case 'insurance': return INSURANCE_STEPS;
-      case 'investment': return INVESTMENT_STEPS;
-      default: return CARD_STEPS;
-    }
-  };
-
-  // ──────────────────────────────────────────────
-  // Loading
-  // ──────────────────────────────────────────────
-  if (loading) {
+  // ══════════════════════════════════════════════
+  // VIEW: RESULT
+  // ══════════════════════════════════════════════
+  if (view === 'result' && resultData) {
     return (
-      <View style={styles.loader}>
-        <ActivityIndicator size="large" color={Colors.gold} />
+      <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
+        <ResultCard
+          productName={resultData.productName}
+          productType={resultData.productType}
+          referenceNo={resultData.referenceNo}
+          keyDetails={resultData.keyDetails}
+          nextSteps={resultData.nextSteps}
+          onViewActiveProducts={() => { setView('home'); router.push('/(tabs)/profile'); }}
+          onBrowseMore={() => { setView('home'); setResultData(null); }}
+        />
+      </ScrollView>
+    );
+  }
+
+  // ══════════════════════════════════════════════
+  // VIEW: AI AUTO-FILL (user only types OTP)
+  // ══════════════════════════════════════════════
+  if (view === 'aiAutoFill' && detailProduct) {
+    return (
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.subHeader}>
+          <TouchableOpacity onPress={goBack}>
+            <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <Text style={styles.subHeaderTitle}>AI Auto-Fill</Text>
+          <View style={styles.aiBadgeSmall}>
+            <Ionicons name="sparkles" size={12} color={Colors.gold} />
+          </View>
+        </View>
+
+        {autoFillLoading ? (
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color={Colors.gold} />
+            <Text style={styles.mutedText}>AI is filling your application...</Text>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={styles.autoFillContent}>
+            {/* AI rationale */}
+            <View style={styles.rationaleCard}>
+              <Ionicons name="sparkles" size={16} color={Colors.gold} />
+              <Text style={styles.rationaleText}>{aiRationale}</Text>
+            </View>
+
+            {/* Pre-filled fields (editable) */}
+            <Text style={styles.formSectionTitle}>Application Details</Text>
+            <Text style={styles.editHint}>AI filled these for you — tap any field to edit</Text>
+            {Object.entries(filledForm).map(([key, value]) => (
+              <View key={key} style={styles.filledRow}>
+                <Text style={styles.filledLabel}>{key.replace(/_/g, ' ')}</Text>
+                <TextInput
+                  style={styles.filledInput}
+                  value={String(value)}
+                  onChangeText={(text) => setFilledForm((prev) => ({ ...prev, [key]: text }))}
+                />
+                <Ionicons name="sparkles" size={14} color={Colors.gold} />
+              </View>
+            ))}
+
+            {/* OTP — the only thing user types */}
+            <View style={styles.otpSection}>
+              <Text style={styles.formSectionTitle}>Verification</Text>
+              <Text style={styles.otpHint}>Enter the 6-digit OTP sent to your registered mobile</Text>
+              <TextInput
+                style={styles.otpInput}
+                placeholder="• • • • • •"
+                placeholderTextColor={Colors.textMuted}
+                value={otpValue}
+                onChangeText={(t) => setOtpValue(t.replace(/\D/g, '').slice(0, 6))}
+                keyboardType="number-pad"
+                maxLength={6}
+                textAlign="center"
+              />
+            </View>
+
+            {/* Submit */}
+            <TouchableOpacity
+              style={[styles.submitBtn, (otpValue.length < 6 || submitting) && styles.submitBtnDisabled]}
+              onPress={submitAiForm}
+              disabled={otpValue.length < 6 || submitting}
+            >
+              {submitting ? (
+                <ActivityIndicator color={Colors.navy} />
+              ) : (
+                <>
+                  <Ionicons name="sparkles" size={16} color={Colors.navy} />
+                  <Text style={styles.submitBtnText}>Confirm & Submit</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </ScrollView>
+        )}
       </View>
     );
   }
 
   // ══════════════════════════════════════════════
-  // VIEW: EXECUTION
+  // VIEW: PRODUCT DETAIL
   // ══════════════════════════════════════════════
-  if (view === 'execution') {
+  if (view === 'productDetail') {
+    if (detailLoading || !detailProduct) {
+      return (
+        <View style={styles.container}>
+          <View style={styles.subHeader}>
+            <TouchableOpacity onPress={goBack}>
+              <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
+            </TouchableOpacity>
+            <Text style={styles.subHeaderTitle}>Product Detail</Text>
+            <View style={{ width: 22 }} />
+          </View>
+          <View style={styles.centered}>
+            {detailLoading ? <ActivityIndicator size="large" color={Colors.gold} /> : <Text style={styles.mutedText}>Product not found</Text>}
+          </View>
+        </View>
+      );
+    }
+
+    const DetailComponent = (() => {
+      switch (detailProduct.product_type) {
+        case 'card': return CardDetail;
+        case 'savings': return SavingsDetail;
+        case 'loan': case 'home_loan': return LoanDetail;
+        case 'insurance': return InsuranceDetail;
+        case 'investment': return InvestmentDetail;
+        default: return CardDetail;
+      }
+    })();
+
     return (
-      <ExecutionScreen
-        productId={execProductId}
-        productType={execProductType}
-        productName={execProductName}
-        onCancel={goBack}
-        onComplete={() => { setView('home'); setNavStack([]); }}
-        onViewProducts={() => { setView('home'); setNavStack([]); }}
-      />
+      <View style={styles.container}>
+        <View style={styles.subHeader}>
+          <TouchableOpacity onPress={goBack}>
+            <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <Text style={styles.subHeaderTitle} numberOfLines={1}>{detailProduct.name}</Text>
+          <View style={styles.aiBadgeSmall}>
+            <Ionicons name="sparkles" size={12} color={Colors.gold} />
+          </View>
+        </View>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 100 }} showsVerticalScrollIndicator={false}>
+          <DetailComponent product={detailProduct} />
+        </ScrollView>
+        {/* AI Purchase CTA */}
+        <View style={styles.ctaBar}>
+          <TouchableOpacity style={styles.aiPurchaseBtn} onPress={startAiPurchase} activeOpacity={0.8}>
+            <Ionicons name="sparkles" size={18} color={Colors.navy} />
+            <Text style={styles.aiPurchaseBtnText}>Purchase with AI</Text>
+          </TouchableOpacity>
+          <Text style={styles.ctaSubtext}>AI fills everything — you only type OTP</Text>
+        </View>
+      </View>
     );
   }
 
   // ══════════════════════════════════════════════
-  // VIEW: TRADITIONAL WIZARD
+  // VIEW: AI PRODUCT LIST
   // ══════════════════════════════════════════════
-  if (view === 'traditional') {
-    const steps = getTraditionalSteps(execProductType);
+  if (view === 'aiProductList') {
+    const catLabel = activeCategory.charAt(0).toUpperCase() + activeCategory.slice(1);
     return (
-      <WizardShell
-        productName={execProductName}
-        steps={steps}
-        onCancel={goBack}
-        onSubmit={async (formData) => {
-          await traditionalApply({
-            product_id: execProductId,
-            product_type: execProductType,
-            form_data: formData,
-            session_id: userId,
-          });
-          setView('home');
-          setNavStack([]);
-        }}
-      />
+      <View style={styles.container}>
+        <View style={styles.subHeader}>
+          <TouchableOpacity onPress={goBack}>
+            <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <Text style={styles.subHeaderTitle}>{catLabel}</Text>
+          <View style={styles.aiBadgeSmall}>
+            <Ionicons name="sparkles" size={12} color={Colors.gold} />
+          </View>
+        </View>
+
+        {aiListLoading ? (
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color={Colors.gold} />
+            <Text style={styles.mutedText}>AI is finding the best products for you…</Text>
+          </View>
+        ) : (
+          <ScrollView contentContainerStyle={styles.listContent}>
+            {/* AI note */}
+            {aiNote ? (
+              <View style={styles.rationaleCard}>
+                <Ionicons name="sparkles" size={16} color={Colors.gold} />
+                <Text style={styles.rationaleText}>{aiNote}</Text>
+              </View>
+            ) : null}
+
+            {aiProducts.length === 0 ? (
+              <Text style={styles.mutedText}>No products found</Text>
+            ) : (
+              aiProducts.map((p, idx) => (
+                <TouchableOpacity key={p.id} style={styles.productCard} onPress={() => openDetail(p.id)} activeOpacity={0.7}>
+                  {idx < 3 && (
+                    <View style={styles.aiPickTag}>
+                      <Ionicons name="sparkles" size={10} color={Colors.gold} />
+                      <Text style={styles.aiPickText}>AI Recommended</Text>
+                    </View>
+                  )}
+                  <Text style={styles.productName} numberOfLines={1}>{p.name}</Text>
+                  <Text style={styles.productSub}>{p.sub_type || p.category}</Text>
+                  {p.summary?.interest_rate && <Text style={styles.productMetric}>{p.summary.interest_rate}</Text>}
+                  {p.summary?.projected_return && <Text style={styles.productMetric}>{p.summary.projected_return}</Text>}
+                  <Text style={styles.productTagline} numberOfLines={2}>{p.detail?.tagline || ''}</Text>
+                </TouchableOpacity>
+              ))
+            )}
+          </ScrollView>
+        )}
+      </View>
     );
   }
 
@@ -324,8 +431,7 @@ export default function DiscoverScreen() {
   // ══════════════════════════════════════════════
   if (view === 'chat') {
     return (
-      <KeyboardAvoidingView style={styles.chatContainer} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        {/* Header */}
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.subHeader}>
           <TouchableOpacity onPress={goBack} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
             <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
@@ -334,7 +440,6 @@ export default function DiscoverScreen() {
           <View style={{ width: 22 }} />
         </View>
 
-        {/* Messages */}
         <FlatList
           ref={chatScrollRef}
           data={chatMessages}
@@ -372,7 +477,6 @@ export default function DiscoverScreen() {
           )}
         />
 
-        {/* Typing indicator */}
         {chatSending && (
           <View style={styles.typingRow}>
             <View style={styles.chatAvatar}>
@@ -386,7 +490,6 @@ export default function DiscoverScreen() {
           </View>
         )}
 
-        {/* Input */}
         <View style={styles.chatInputBar}>
           <TextInput
             style={styles.chatInputField}
@@ -410,459 +513,141 @@ export default function DiscoverScreen() {
   }
 
   // ══════════════════════════════════════════════
-  // VIEW: COMPARE
-  // ══════════════════════════════════════════════
-  if (view === 'compare') {
-    return (
-      <View style={styles.fullContainer}>
-        <View style={styles.subHeader}>
-          <TouchableOpacity onPress={goBack}>
-            <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
-          </TouchableOpacity>
-          <Text style={styles.subHeaderTitle}>Compare Products</Text>
-          <View style={{ width: 22 }} />
-        </View>
-        {compareLoading ? (
-          <View style={styles.loader}><ActivityIndicator size="large" color={Colors.gold} /></View>
-        ) : compareResult ? (
-          <ScrollView contentContainerStyle={styles.compareContent}>
-            {/* Product headers */}
-            <View style={styles.compareHeaderRow}>
-              {compareResult.products.map((p) => (
-                <View key={p.id} style={styles.compareHeaderCell}>
-                  <Text style={styles.compareProductName} numberOfLines={2}>{p.name}</Text>
-                  <Text style={styles.compareProductType}>{p.sub_type}</Text>
-                </View>
-              ))}
-            </View>
-
-            {/* Comparison rows */}
-            {(() => {
-              const keys = new Set<string>();
-              compareResult.products.forEach((p) => {
-                Object.keys(p.summary || {}).forEach((k) => keys.add(k));
-              });
-              return Array.from(keys).filter(k => !['id', 'name', 'product_type'].includes(k)).map((key) => {
-                const vals = compareResult!.products.map((p) => String((p.summary || {} as any)[key] ?? '—'));
-                const isBetter = vals[0] !== vals[1];
-                return (
-                  <View key={key} style={styles.compareRow}>
-                    <Text style={styles.compareKey}>{key.replace(/_/g, ' ')}</Text>
-                    <View style={styles.compareValuesRow}>
-                      {vals.map((v, i) => (
-                        <View key={i} style={[styles.compareValueCell, isBetter && i === 0 && styles.compareHighlight]}>
-                          <Text style={styles.compareValue}>{v}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  </View>
-                );
-              });
-            })()}
-
-            {/* Agent note */}
-            {compareResult.agent_note && (
-              <View style={styles.agentNoteCard}>
-                <Ionicons name="sparkles" size={16} color={Colors.gold} />
-                <Text style={styles.agentNoteText}>{compareResult.agent_note}</Text>
-              </View>
-            )}
-
-            {/* Apply CTAs */}
-            <View style={styles.compareCtas}>
-              {compareResult.products.map((p) => (
-                <TouchableOpacity key={p.id} style={styles.compareCta} onPress={() => startExecutionFlow(p)}>
-                  <Text style={styles.compareCtaText}>Apply for {p.name.split(' ')[0]}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-        ) : (
-          <View style={styles.loader}>
-            <Text style={styles.errorText}>Failed to load comparison</Text>
-          </View>
-        )}
-      </View>
-    );
-  }
-
-  // ══════════════════════════════════════════════
-  // VIEW: PRODUCT DETAIL
-  // ══════════════════════════════════════════════
-  if (view === 'detail') {
-    if (detailLoading || !detailProduct) {
-      return (
-        <View style={styles.fullContainer}>
-          <View style={styles.subHeader}>
-            <TouchableOpacity onPress={goBack}>
-              <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
-            </TouchableOpacity>
-            <Text style={styles.subHeaderTitle}>Product Detail</Text>
-            <View style={{ width: 22 }} />
-          </View>
-          <View style={styles.loader}>
-            {detailLoading ? <ActivityIndicator size="large" color={Colors.gold} /> : <Text style={styles.errorText}>Product not found</Text>}
-          </View>
-        </View>
-      );
-    }
-
-    const DetailComponent = (() => {
-      switch (detailProduct.product_type) {
-        case 'card': return CardDetail;
-        case 'savings': return SavingsDetail;
-        case 'loan': case 'home_loan': return LoanDetail;
-        case 'insurance': return InsuranceDetail;
-        case 'investment': return InvestmentDetail;
-        case 'promotion': return PromoDetail;
-        default: return CardDetail;
-      }
-    })();
-
-    const ctaLabel = detailProduct.product_type === 'promotion'
-      ? 'Activate Now'
-      : (detailProduct.cta_label || 'Apply Now');
-
-    const handleCta = detailProduct.product_type === 'promotion'
-      ? async () => {
-          try {
-            await activatePromotion(detailProduct.id, userId);
-            goBack();
-          } catch {}
-        }
-      : () => startExecutionFlow(detailProduct);
-
-    return (
-      <ProductShell
-        title={detailProduct.name}
-        ctaLabel={ctaLabel}
-        onBack={goBack}
-        onCta={handleCta}
-        onChat={() => navigateTo('chat')}
-        onTraditional={detailProduct.product_type !== 'promotion' ? () => startTraditionalFlow(detailProduct) : undefined}
-      >
-        <DetailComponent product={detailProduct} />
-      </ProductShell>
-    );
-  }
-
-  // ══════════════════════════════════════════════
-  // VIEW: CATEGORY LISTING
-  // ══════════════════════════════════════════════
-  if (view === 'category') {
-    const catMeta = CATEGORIES.find((c) => c.key === activeCategory);
-    return (
-      <View style={styles.fullContainer}>
-        <View style={styles.subHeader}>
-          <TouchableOpacity onPress={goBack}>
-            <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
-          </TouchableOpacity>
-          <Text style={styles.subHeaderTitle}>{catMeta?.label || activeCategory}</Text>
-          <View style={{ width: 22 }} />
-        </View>
-
-        {/* Sub-type filter pills */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterStrip} contentContainerStyle={styles.filterStripContent}>
-          {subTypes.map((st) => (
-            <TouchableOpacity
-              key={st}
-              style={[styles.filterPill, subTypeFilter === st && styles.filterPillActive]}
-              onPress={() => setSubTypeFilter(st)}
-            >
-              <Text style={[styles.filterPillText, subTypeFilter === st && styles.filterPillTextActive]}>{st}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Product list */}
-        <ScrollView contentContainerStyle={styles.categoryList}>
-          {filteredCategoryProducts.map((p) => {
-            const isSelected = compareSelection.includes(p.id);
-            const isRecommended = allProducts.slice(0, 3).some((r) => r.id === p.id);
-            return (
-              <TouchableOpacity key={p.id} style={styles.productCard} onPress={() => openDetail(p.id)} activeOpacity={0.7}>
-                {isRecommended && (
-                  <View style={styles.aiPickBadge}>
-                    <Ionicons name="sparkles" size={10} color={Colors.gold} />
-                    <Text style={styles.aiPickText}>AI Pick</Text>
-                  </View>
-                )}
-                <Text style={styles.productName} numberOfLines={1}>{p.name}</Text>
-                <Text style={styles.productMetric}>
-                  {p.summary?.interest_rate || p.summary?.cashback_rate || p.summary?.rewards_rate || p.summary?.projected_return || p.summary?.coverage || p.sub_type || ''}
-                </Text>
-                <View style={styles.productActions}>
-                  <TouchableOpacity
-                    style={[styles.compareToggle, isSelected && styles.compareToggleActive]}
-                    onPress={() => toggleCompare(p.id)}
-                  >
-                    <Ionicons name={isSelected ? 'checkmark-circle' : 'add-circle-outline'} size={16} color={isSelected ? Colors.gold : Colors.textMuted} />
-                    <Text style={[styles.compareToggleText, isSelected && styles.compareToggleTextActive]}>Compare</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.productCta} onPress={() => startExecutionFlow(p)}>
-                    <Text style={styles.productCtaText}>{p.cta_label || 'Apply'}</Text>
-                  </TouchableOpacity>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-
-        {/* Compare floating button */}
-        {compareSelection.length === 2 && (
-          <TouchableOpacity style={styles.compareFloat} onPress={startCompare}>
-            <Ionicons name="git-compare-outline" size={20} color={Colors.navy} />
-            <Text style={styles.compareFloatText}>Compare ({compareSelection.length})</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  }
-
-  // ══════════════════════════════════════════════
-  // VIEW: HOME (default)
+  // VIEW: HOME (AI Guide landing)
   // ══════════════════════════════════════════════
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Resume banner */}
-      {inProgressProduct && (
-        <TouchableOpacity style={styles.resumeBanner} activeOpacity={0.8}
-          onPress={() => {
-            setExecProductId(inProgressProduct.productId);
-            setExecProductType(inProgressProduct.productType);
-            setExecProductName(inProgressProduct.productName);
-            navigateTo('execution');
-          }}
-        >
-          <Ionicons name="play-circle" size={24} color={Colors.gold} />
-          <View style={styles.resumeInfo}>
-            <Text style={styles.resumeTitle}>Continue: {inProgressProduct.productName}</Text>
-            <Text style={styles.resumeSubtitle}>Your application is in progress</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
-        </TouchableOpacity>
-      )}
-
-      {/* Score Ring */}
-      <View style={styles.scoreSection}>
-        <ScoreRing score={healthScore} size={130} />
-        <Text style={styles.scoreCaption}>Your financial health is looking {healthScore >= 70 ? 'great!' : healthScore >= 40 ? 'okay' : 'concerning'}</Text>
-      </View>
-
-      {/* Recommended for you */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Recommended for You</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.recommendedStrip}>
-          {allProducts.slice(0, 3).map((p) => (
-            <TouchableOpacity key={p.id} style={styles.recommendedCard} activeOpacity={0.7} onPress={() => openDetail(p.id)}>
-              <View style={styles.aiBadge}>
-                <Ionicons name="sparkles" size={10} color={Colors.gold} />
-                <Text style={styles.aiBadgeText}>AI Pick</Text>
-              </View>
-              <Text style={styles.recommendedName} numberOfLines={1}>{p.name}</Text>
-              <Text style={styles.recommendedType}>{p.product_type}</Text>
-              <TouchableOpacity style={styles.recommendedCta} onPress={() => startExecutionFlow(p)}>
-                <Text style={styles.recommendedCtaText}>{p.cta_label || 'Learn More'}</Text>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-
-      {/* Category grid */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Browse Products</Text>
-        <View style={styles.categoryGrid}>
-          {CATEGORIES.map((cat) => (
-            <TouchableOpacity key={cat.key} style={styles.categoryTile} activeOpacity={0.7} onPress={() => openCategory(cat.key)}>
-              <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}18` }]}>
-                <Ionicons name={cat.icon} size={24} color={cat.color} />
-              </View>
-              <Text style={styles.categoryLabel}>{cat.label}</Text>
-            </TouchableOpacity>
-          ))}
+    <ScrollView style={styles.container} contentContainerStyle={styles.homeContent} showsVerticalScrollIndicator={false}>
+      {/* Chat CTA */}
+      <TouchableOpacity style={styles.chatCta} onPress={() => setView('chat')} activeOpacity={0.8}>
+        <View style={styles.chatCtaIcon}>
+          <Ionicons name="sparkles" size={22} color={Colors.gold} />
         </View>
-      </View>
-
-      {/* Promotions */}
-      {promos.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Current Promotions</Text>
-          {promos.map((p) => (
-            <TouchableOpacity key={p.id} style={styles.promoCard} activeOpacity={0.7} onPress={() => openDetail(p.id)}>
-              <View style={styles.promoIcon}>
-                <Ionicons name="gift" size={22} color={Colors.scoreYellow} />
-              </View>
-              <View style={styles.promoInfo}>
-                <Text style={styles.promoName} numberOfLines={1}>{p.name}</Text>
-                <Text style={styles.promoDesc} numberOfLines={2}>
-                  {p.summary?.tagline || p.detail?.tagline || 'Special offer available'}
-                </Text>
-              </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
-            </TouchableOpacity>
-          ))}
+        <View style={styles.chatCtaText}>
+          <Text style={styles.chatCtaTitle}>AI Financial Advisor</Text>
+          <Text style={styles.chatCtaSub}>Ask me anything about your finances</Text>
         </View>
-      )}
-
-      {/* AI Chat entry */}
-      <TouchableOpacity style={styles.chatBar} activeOpacity={0.8} onPress={() => navigateTo('chat')}>
-        <Ionicons name="chatbubble-ellipses" size={20} color={Colors.gold} />
-        <Text style={styles.chatBarText}>Ask the AI Advisor anything...</Text>
-        <Ionicons name="arrow-forward-circle" size={22} color={Colors.gold} />
+        <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
       </TouchableOpacity>
 
-      <View style={{ height: Spacing.huge }} />
+      {/* Browse Products ✨ */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeaderRow}>
+          <Ionicons name="sparkles" size={16} color={Colors.gold} />
+          <Text style={styles.sectionTitle}>Browse Products</Text>
+        </View>
+        <Text style={styles.sectionSub}>AI helps you choose and auto-fills the application</Text>
+        <BrowseProductsGrid aiMode={true} onCategoryTap={openAiCategory} />
+      </View>
     </ScrollView>
   );
 }
 
-// ══════════════════════════════════════════════
-// STYLES
-// ══════════════════════════════════════════════
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.background },
-  fullContainer: { flex: 1, backgroundColor: Colors.background },
-  loader: { flex: 1, backgroundColor: Colors.background, justifyContent: 'center', alignItems: 'center' },
-  errorText: { color: Colors.textMuted, fontSize: FontSize.md },
-  section: { paddingHorizontal: Spacing.lg, marginBottom: Spacing.xxl },
-  sectionTitle: { fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Colors.textPrimary, marginBottom: Spacing.md },
+  homeContent: { padding: Spacing.lg, paddingBottom: Spacing.huge },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: Spacing.lg },
+  mutedText: { color: Colors.textSecondary, fontSize: FontSize.md, textAlign: 'center' },
 
   // Sub-header
   subHeader: {
-    flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md,
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder,
   },
   subHeaderTitle: { flex: 1, textAlign: 'center', fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Colors.textPrimary },
+  aiBadgeSmall: {
+    width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(201,168,76,0.15)',
+    justifyContent: 'center', alignItems: 'center',
+  },
 
-  // Score section
-  scoreSection: { alignItems: 'center', paddingVertical: Spacing.xxl },
-  scoreCaption: { fontSize: FontSize.sm, color: Colors.textSecondary, marginTop: Spacing.md },
+  // Chat CTA
+  chatCta: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface,
+    borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: Colors.cardBorder,
+    padding: Spacing.lg, gap: Spacing.md, marginBottom: Spacing.xxl, ...Shadows.sm,
+  },
+  chatCtaIcon: {
+    width: 48, height: 48, borderRadius: BorderRadius.md, backgroundColor: 'rgba(201,168,76,0.12)',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  chatCtaText: { flex: 1 },
+  chatCtaTitle: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.textPrimary },
+  chatCtaSub: { fontSize: FontSize.xs, color: Colors.textMuted, marginTop: 2 },
 
-  // Resume banner
-  resumeBanner: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(201,168,76,0.1)',
-    borderWidth: 1, borderColor: Colors.goldDark, borderRadius: BorderRadius.md,
-    padding: Spacing.lg, marginHorizontal: Spacing.lg, marginTop: Spacing.lg, marginBottom: Spacing.xxl,
-  },
-  resumeInfo: { flex: 1, marginLeft: Spacing.md },
-  resumeTitle: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.gold },
-  resumeSubtitle: { fontSize: FontSize.xs, color: Colors.textSecondary, marginTop: 2 },
+  // Section
+  section: { marginBottom: Spacing.xxl },
+  sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 2 },
+  sectionTitle: { fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Colors.textPrimary },
+  sectionSub: { fontSize: FontSize.xs, color: Colors.textMuted, marginBottom: Spacing.md },
 
-  // Recommended strip
-  recommendedStrip: { paddingRight: Spacing.lg },
-  recommendedCard: {
-    width: 180, backgroundColor: Colors.surface, borderRadius: BorderRadius.lg,
-    borderWidth: 1, borderColor: Colors.cardBorder, padding: Spacing.lg, marginRight: Spacing.md, ...Shadows.sm,
-  },
-  aiBadge: {
-    flexDirection: 'row', alignItems: 'center', gap: 4,
-    backgroundColor: 'rgba(201,168,76,0.12)', paddingHorizontal: 8, paddingVertical: 2,
-    borderRadius: BorderRadius.sm, alignSelf: 'flex-start', marginBottom: Spacing.sm,
-  },
-  aiBadgeText: { fontSize: 9, fontWeight: FontWeight.bold, color: Colors.gold, letterSpacing: 0.5 },
-  recommendedName: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.textPrimary, marginBottom: 4 },
-  recommendedType: { fontSize: FontSize.xs, color: Colors.textMuted, textTransform: 'capitalize', marginBottom: Spacing.md },
-  recommendedCta: { backgroundColor: Colors.surfaceLight, borderRadius: BorderRadius.sm, paddingVertical: Spacing.sm, alignItems: 'center' },
-  recommendedCtaText: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Colors.gold },
-
-  // Category grid
-  categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: Spacing.md },
-  categoryTile: {
-    width: '30%', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
-    borderWidth: 1, borderColor: Colors.cardBorder, paddingVertical: Spacing.lg, paddingHorizontal: Spacing.sm,
-  },
-  categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius.md, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
-  categoryLabel: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Colors.textSecondary },
-
-  // Promos
-  promoCard: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
-    borderWidth: 1, borderColor: Colors.cardBorder, padding: Spacing.lg, marginBottom: Spacing.sm,
-  },
-  promoIcon: {
-    width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: 'rgba(255,217,61,0.12)',
-    justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md,
-  },
-  promoInfo: { flex: 1 },
-  promoName: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.textPrimary, marginBottom: 2 },
-  promoDesc: { fontSize: FontSize.xs, color: Colors.textSecondary, lineHeight: 16 },
-
-  // Chat bar
-  chatBar: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface, borderRadius: BorderRadius.lg,
-    borderWidth: 1, borderColor: Colors.cardBorder, padding: Spacing.lg, marginHorizontal: Spacing.lg, gap: Spacing.md,
-  },
-  chatBarText: { flex: 1, fontSize: FontSize.md, color: Colors.textMuted },
-
-  // Category listing
-  filterStrip: { maxHeight: 50, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder },
-  filterStripContent: { paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, gap: Spacing.sm },
-  filterPill: {
-    paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, borderRadius: BorderRadius.full,
-    backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.cardBorder,
-  },
-  filterPillActive: { backgroundColor: Colors.gold, borderColor: Colors.gold },
-  filterPillText: { fontSize: FontSize.sm, color: Colors.textSecondary, textTransform: 'capitalize' },
-  filterPillTextActive: { color: Colors.navy, fontWeight: FontWeight.bold },
-  categoryList: { padding: Spacing.lg, gap: Spacing.md },
+  // Product list
+  listContent: { padding: Spacing.lg },
   productCard: {
-    backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, borderWidth: 1,
-    borderColor: Colors.cardBorder, padding: Spacing.lg,
+    backgroundColor: Colors.surface, borderRadius: BorderRadius.lg, borderWidth: 1, borderColor: Colors.cardBorder,
+    padding: Spacing.lg, marginBottom: Spacing.md, ...Shadows.sm,
   },
-  aiPickBadge: {
+  aiPickTag: {
     flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(201,168,76,0.12)',
     paddingHorizontal: 8, paddingVertical: 2, borderRadius: BorderRadius.sm, alignSelf: 'flex-start', marginBottom: Spacing.sm,
   },
   aiPickText: { fontSize: 9, fontWeight: FontWeight.bold, color: Colors.gold, letterSpacing: 0.5 },
-  productName: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.textPrimary, marginBottom: 4 },
-  productMetric: { fontSize: FontSize.sm, color: Colors.textSecondary, marginBottom: Spacing.md },
-  productActions: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  compareToggle: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  compareToggleActive: {},
-  compareToggleText: { fontSize: FontSize.xs, color: Colors.textMuted },
-  compareToggleTextActive: { color: Colors.gold },
-  productCta: { backgroundColor: Colors.gold, borderRadius: BorderRadius.sm, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm },
-  productCtaText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, color: Colors.navy },
-  compareFloat: {
-    position: 'absolute', bottom: Spacing.xxl, left: Spacing.lg, right: Spacing.lg,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm,
-    backgroundColor: Colors.gold, borderRadius: BorderRadius.lg, paddingVertical: Spacing.md, ...Shadows.gold,
-  },
-  compareFloatText: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.navy },
+  productName: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.textPrimary, marginBottom: 4 },
+  productSub: { fontSize: FontSize.xs, color: Colors.textMuted, marginBottom: Spacing.sm },
+  productMetric: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.accent, marginBottom: 2 },
+  productTagline: { fontSize: FontSize.xs, color: Colors.textSecondary, lineHeight: 16 },
 
-  // Compare view
-  compareContent: { padding: Spacing.lg },
-  compareHeaderRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.xxl },
-  compareHeaderCell: {
-    flex: 1, backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
-    borderWidth: 1, borderColor: Colors.cardBorder, padding: Spacing.lg, alignItems: 'center',
+  // CTA bar
+  ctaBar: {
+    paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md,
+    borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: Colors.cardBorder, backgroundColor: Colors.surface,
   },
-  compareProductName: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.textPrimary, textAlign: 'center' },
-  compareProductType: { fontSize: FontSize.xs, color: Colors.textMuted, textTransform: 'capitalize', marginTop: 4 },
-  compareRow: {
-    marginBottom: Spacing.sm, backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
-    borderWidth: 1, borderColor: Colors.cardBorder, padding: Spacing.md,
+  aiPurchaseBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.gold, borderRadius: BorderRadius.md, paddingVertical: Spacing.md, gap: Spacing.sm, ...Shadows.gold,
   },
-  compareKey: { fontSize: FontSize.xs, color: Colors.textMuted, textTransform: 'capitalize', marginBottom: Spacing.sm },
-  compareValuesRow: { flexDirection: 'row', gap: Spacing.sm },
-  compareValueCell: { flex: 1, alignItems: 'center', paddingVertical: Spacing.sm, borderRadius: BorderRadius.sm },
-  compareHighlight: { backgroundColor: 'rgba(0,230,138,0.08)' },
-  compareValue: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.textPrimary },
-  agentNoteCard: {
+  aiPurchaseBtnText: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.navy },
+  ctaSubtext: { fontSize: 10, color: Colors.textMuted, textAlign: 'center', marginTop: 4 },
+
+  // AI rationale card
+  rationaleCard: {
     flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md,
-    backgroundColor: 'rgba(201,168,76,0.08)', borderRadius: BorderRadius.md, padding: Spacing.lg, marginVertical: Spacing.lg,
+    backgroundColor: 'rgba(201,168,76,0.08)', borderRadius: BorderRadius.md, padding: Spacing.lg, marginBottom: Spacing.xxl,
   },
-  agentNoteText: { flex: 1, fontSize: FontSize.sm, color: Colors.textSecondary, lineHeight: 20 },
-  compareCtas: { flexDirection: 'row', gap: Spacing.md, marginTop: Spacing.md },
-  compareCta: {
-    flex: 1, backgroundColor: Colors.gold, borderRadius: BorderRadius.md,
-    paddingVertical: Spacing.md, alignItems: 'center', ...Shadows.gold,
+  rationaleText: { flex: 1, fontSize: FontSize.sm, color: Colors.textSecondary, lineHeight: 20 },
+
+  // Auto-fill form
+  autoFillContent: { padding: Spacing.lg },
+  formSectionTitle: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.textPrimary, marginBottom: Spacing.md },
+  filledRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingVertical: Spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder,
   },
-  compareCtaText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Colors.navy },
+  filledLabel: { fontSize: FontSize.xs, color: Colors.textMuted, textTransform: 'capitalize', width: '35%' },
+  filledInput: {
+    flex: 1, fontSize: FontSize.sm, fontWeight: FontWeight.medium, color: Colors.textPrimary,
+    backgroundColor: Colors.surfaceLight, borderRadius: BorderRadius.sm, paddingHorizontal: Spacing.sm, paddingVertical: 4,
+    borderWidth: 1, borderColor: Colors.cardBorder,
+  },
+  editHint: { fontSize: FontSize.xs, color: Colors.textMuted, marginBottom: Spacing.md, fontStyle: 'italic' },
+
+  // OTP
+  otpSection: { marginTop: Spacing.xxl },
+  otpHint: { fontSize: FontSize.xs, color: Colors.textMuted, marginBottom: Spacing.md },
+  otpInput: {
+    backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
+    borderWidth: 1, borderColor: Colors.cardBorder,
+    padding: Spacing.lg, fontSize: FontSize.xl, fontWeight: FontWeight.bold,
+    color: Colors.textPrimary, letterSpacing: 8,
+  },
+  submitBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    backgroundColor: Colors.gold, borderRadius: BorderRadius.md, paddingVertical: Spacing.lg,
+    gap: Spacing.sm, marginTop: Spacing.xxl, ...Shadows.gold,
+  },
+  submitBtnDisabled: { opacity: 0.4 },
+  submitBtnText: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.navy },
 
   // Chat view
-  chatContainer: { flex: 1, backgroundColor: Colors.background },
   chatList: { padding: Spacing.lg, paddingBottom: Spacing.md },
   chatBubble: { flexDirection: 'row', marginBottom: Spacing.md },
   chatUser: { justifyContent: 'flex-end' },
@@ -888,9 +673,6 @@ const styles = StyleSheet.create({
     flex: 1, minHeight: 40, maxHeight: 100, backgroundColor: Colors.surfaceLight, borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, fontSize: FontSize.md, color: Colors.textPrimary, marginRight: Spacing.sm,
   },
-  chatSendBtn: {
-    width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.gold,
-    justifyContent: 'center', alignItems: 'center',
-  },
+  chatSendBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.gold, justifyContent: 'center', alignItems: 'center' },
   chatSendDisabled: { backgroundColor: Colors.surfaceLight },
 });

@@ -1,6 +1,7 @@
 /**
- * WizardShell — Shared step-by-step wizard wrapper for traditional product applications.
- * Fields are pre-filled from profile, user confirms each field with ✓ before proceeding.
+ * WizardShell — Step-by-step wizard for traditional product applications.
+ * Simplified: no confirm-each-field mechanic. User fills fields → Next → Submit.
+ * Shows inline validation errors when fields are empty/invalid.
  */
 import React, { useState } from 'react';
 import {
@@ -36,9 +37,9 @@ interface Props {
 export default function WizardShell({ productName, steps, onSubmit, onCancel }: Props) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
-  const [confirmed, setConfirmed] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Record<string, string>>({});
+  const [showErrors, setShowErrors] = useState(false);
 
   const step = steps[currentStep];
   const totalSteps = steps.length;
@@ -46,22 +47,51 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
 
   const setValue = (key: string, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
-    setConfirmed((prev) => ({ ...prev, [key]: false }));
+    // Clear errors when user starts typing
+    if (showErrors) setShowErrors(false);
   };
 
-  const confirmField = (key: string) => {
-    setConfirmed((prev) => ({ ...prev, [key]: true }));
+  // ── Validation ──
+  const getFieldValue = (field: WizardField) => {
+    return formData[field.key] ?? field.prefilled ?? '';
   };
 
-  const allFieldsConfirmed = step.fields
+  const isFieldValid = (field: WizardField) => {
+    if (!field.required) return true;
+    const val = getFieldValue(field);
+    if (field.type === 'toggle') return val === true;
+    if (field.type === 'otp') return (val || '').length === 6;
+    if (field.type === 'date') {
+      // Must be YYYY-MM-DD format
+      return /^\d{4}-\d{2}-\d{2}$/.test(String(val));
+    }
+    return !!val && String(val).trim().length > 0;
+  };
+
+  const getFieldError = (field: WizardField): string | null => {
+    if (!showErrors || !field.required) return null;
+    const val = getFieldValue(field);
+    if (field.type === 'toggle' && val !== true) return 'You must agree to continue';
+    if (field.type === 'otp' && (val || '').length < 6) return 'Enter the 6-digit OTP';
+    if (field.type === 'date') {
+      if (!val) return `${field.label} is required`;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(val))) return 'Use format YYYY-MM-DD';
+      return null;
+    }
+    if (!val || String(val).trim().length === 0) return `${field.label} is required`;
+    return null;
+  };
+
+  const allFieldsValid = step.fields
     .filter((f) => f.required)
-    .every((f) => {
-      if (f.type === 'toggle') return formData[f.key] === true;
-      if (f.type === 'otp') return (formData[f.key] || '').length === 6;
-      return !!formData[f.key] && confirmed[f.key];
-    });
+    .every(isFieldValid);
 
   const handleNext = () => {
+    if (!allFieldsValid) {
+      setShowErrors(true);
+      return;
+    }
+    setShowErrors(false);
     if (currentStep < totalSteps - 1) {
       setCurrentStep((prev) => prev + 1);
     }
@@ -69,19 +99,39 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
 
   const handleBack = () => {
     if (currentStep > 0) {
+      setShowErrors(false);
       setCurrentStep((prev) => prev - 1);
     } else {
-      Alert.alert('Cancel application?', 'Your progress will be lost.', [
-        { text: 'Stay', style: 'cancel' },
-        { text: 'Leave', style: 'destructive', onPress: onCancel },
-      ]);
+      if (Platform.OS === 'web') {
+        if (confirm('Cancel application? Your progress will be lost.')) {
+          onCancel();
+        }
+      } else {
+        Alert.alert('Cancel application?', 'Your progress will be lost.', [
+          { text: 'Stay', style: 'cancel' },
+          { text: 'Leave', style: 'destructive', onPress: onCancel },
+        ]);
+      }
     }
   };
 
   const handleSubmit = async () => {
+    if (!allFieldsValid) {
+      setShowErrors(true);
+      return;
+    }
     setSubmitting(true);
     try {
-      await onSubmit(formData);
+      // Make sure prefilled values are included in formData
+      const finalData = { ...formData };
+      steps.forEach((s) =>
+        s.fields.forEach((f) => {
+          if (f.prefilled && !(f.key in finalData)) {
+            finalData[f.key] = f.prefilled;
+          }
+        })
+      );
+      await onSubmit(finalData);
     } catch (e: any) {
       Alert.alert('Error', e.message || 'Submission failed. Please try again.');
     } finally {
@@ -92,8 +142,8 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
   const isLastStep = currentStep === totalSteps - 1;
 
   const renderField = (field: WizardField) => {
-    const value = formData[field.key];
-    const isConfirmed = confirmed[field.key];
+    const value = getFieldValue(field);
+    const error = getFieldError(field);
 
     if (field.type === 'toggle') {
       return (
@@ -101,13 +151,11 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
           <Text style={styles.fieldLabel}>{field.label}</Text>
           <Switch
             value={!!value}
-            onValueChange={(v) => {
-              setValue(field.key, v);
-              if (v) confirmField(field.key);
-            }}
+            onValueChange={(v) => setValue(field.key, v)}
             trackColor={{ false: Colors.cardBorder, true: Colors.accent }}
             thumbColor={Colors.white}
           />
+          {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
       );
     }
@@ -117,19 +165,19 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
         <View key={field.key} style={styles.fieldContainer}>
           <Text style={styles.fieldLabel}>{field.label}</Text>
           <TextInput
-            style={[styles.otpInput]}
+            style={[styles.otpInput, error ? styles.inputError : null]}
             placeholder="• • • • • •"
             placeholderTextColor={Colors.textMuted}
-            value={value || ''}
+            value={formData[field.key] || ''}
             onChangeText={(text) => {
               const digits = text.replace(/\D/g, '').slice(0, 6);
               setValue(field.key, digits);
-              if (digits.length === 6) confirmField(field.key);
             }}
             keyboardType="number-pad"
             maxLength={6}
             textAlign="center"
           />
+          {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
       );
     }
@@ -142,44 +190,62 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
             {field.options?.map((opt) => (
               <TouchableOpacity
                 key={opt}
-                style={[styles.optionPill, value === opt && styles.optionPillActive]}
-                onPress={() => {
-                  setValue(field.key, opt);
-                  confirmField(field.key);
-                }}
+                style={[
+                  styles.optionPill,
+                  value === opt && styles.optionPillActive,
+                  error && !value ? styles.optionPillError : null,
+                ]}
+                onPress={() => setValue(field.key, opt)}
               >
                 <Text style={[styles.optionText, value === opt && styles.optionTextActive]}>{opt}</Text>
               </TouchableOpacity>
             ))}
           </View>
+          {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
       );
     }
 
-    // text / number / date
+    if (field.type === 'date') {
+      return (
+        <View key={field.key} style={styles.fieldContainer}>
+          <Text style={styles.fieldLabel}>{field.label}</Text>
+          <TextInput
+            style={[styles.textInput, error ? styles.inputError : null]}
+            placeholder="YYYY-MM-DD"
+            placeholderTextColor={Colors.textMuted}
+            value={formData[field.key] || field.prefilled || ''}
+            onChangeText={(text) => {
+              // Auto-format: add dashes after year and month
+              let digits = text.replace(/[^\d-]/g, '');
+              if (digits.length === 4 && !digits.includes('-')) digits += '-';
+              if (digits.length === 7 && digits.split('-').length === 2) digits += '-';
+              if (digits.length > 10) digits = digits.slice(0, 10);
+              setValue(field.key, digits);
+            }}
+            keyboardType="number-pad"
+            maxLength={10}
+          />
+          <Text style={styles.dateHint}>Format: YYYY-MM-DD</Text>
+          {error && <Text style={styles.errorText}>{error}</Text>}
+        </View>
+      );
+    }
+
+    // text / number
     return (
       <View key={field.key} style={styles.fieldContainer}>
         <Text style={styles.fieldLabel}>{field.label}</Text>
-        <View style={styles.inputRow}>
-          <TextInput
-            style={[styles.textInput, isConfirmed && styles.textInputConfirmed]}
-            placeholder={`Enter ${field.label.toLowerCase()}`}
-            placeholderTextColor={Colors.textMuted}
-            value={value || field.prefilled || ''}
-            onChangeText={(text) => setValue(field.key, text)}
-            keyboardType={field.type === 'number' ? 'numeric' : 'default'}
-            editable={field.editable}
-          />
-          {!isConfirmed && (value || field.prefilled) ? (
-            <TouchableOpacity style={styles.confirmBtn} onPress={() => confirmField(field.key)}>
-              <Ionicons name="checkmark" size={18} color={Colors.white} />
-            </TouchableOpacity>
-          ) : isConfirmed ? (
-            <View style={styles.confirmedBadge}>
-              <Ionicons name="checkmark-circle" size={20} color={Colors.accent} />
-            </View>
-          ) : null}
-        </View>
+        <TextInput
+          style={[styles.textInput, error ? styles.inputError : null]}
+          placeholder={`Enter ${field.label.toLowerCase()}`}
+          placeholderTextColor={Colors.textMuted}
+          value={String(value)}
+          onChangeText={(text) => setValue(field.key, text)}
+          keyboardType={field.type === 'number' ? 'numeric' : 'default'}
+          editable={field.editable}
+        />
+        {error && <Text style={styles.errorText}>{error}</Text>}
       </View>
     );
   };
@@ -191,9 +257,9 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
         <TouchableOpacity onPress={handleBack} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>Apply manually</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>{productName}</Text>
         <View style={styles.stepBadge}>
-          <Text style={styles.stepBadgeText}>Step {currentStep + 1} of {totalSteps}</Text>
+          <Text style={styles.stepBadgeText}>Step {currentStep + 1}/{totalSteps}</Text>
         </View>
       </View>
 
@@ -215,9 +281,9 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
       <View style={styles.bottomBar}>
         {isLastStep ? (
           <TouchableOpacity
-            style={[styles.primaryBtn, (!allFieldsConfirmed || submitting) && styles.primaryBtnDisabled]}
+            style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
             onPress={handleSubmit}
-            disabled={!allFieldsConfirmed || submitting}
+            disabled={submitting}
           >
             {submitting ? (
               <ActivityIndicator color={Colors.navy} />
@@ -226,11 +292,7 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
             )}
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            style={[styles.primaryBtn, !allFieldsConfirmed && styles.primaryBtnDisabled]}
-            onPress={handleNext}
-            disabled={!allFieldsConfirmed}
-          >
+          <TouchableOpacity style={styles.primaryBtn} onPress={handleNext}>
             <Text style={styles.primaryBtnText}>Next step →</Text>
           </TouchableOpacity>
         )}
@@ -247,7 +309,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder,
   },
   backBtn: { marginRight: Spacing.md },
-  headerTitle: { flex: 1, fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Colors.textPrimary },
+  headerTitle: { flex: 1, fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.textPrimary },
   stepBadge: {
     backgroundColor: Colors.surfaceLight, borderRadius: BorderRadius.full,
     paddingHorizontal: Spacing.md, paddingVertical: 4,
@@ -257,7 +319,7 @@ const styles = StyleSheet.create({
     height: 4, backgroundColor: Colors.cardBorder, marginHorizontal: Spacing.lg, marginTop: Spacing.md,
     borderRadius: 2, overflow: 'hidden',
   },
-  progressFill: { height: '100%', backgroundColor: Colors.navy, borderRadius: 2 },
+  progressFill: { height: '100%', backgroundColor: Colors.gold, borderRadius: 2 },
   stepTitle: {
     fontSize: FontSize.xl, fontWeight: FontWeight.bold, color: Colors.textPrimary,
     paddingHorizontal: Spacing.lg, paddingTop: Spacing.xxl, paddingBottom: Spacing.lg,
@@ -268,21 +330,15 @@ const styles = StyleSheet.create({
   fieldContainer: { marginBottom: Spacing.xxl },
   fieldLabel: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.textSecondary, marginBottom: Spacing.sm },
   fieldRow: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap',
     paddingVertical: Spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder,
   },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   textInput: {
-    flex: 1, backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
+    backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
     borderWidth: 1, borderColor: Colors.cardBorder,
     padding: Spacing.md, fontSize: FontSize.md, color: Colors.textPrimary,
   },
-  textInputConfirmed: { borderColor: Colors.accent, backgroundColor: `${Colors.accent}08` },
-  confirmBtn: {
-    width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.navy,
-    justifyContent: 'center', alignItems: 'center',
-  },
-  confirmedBadge: { width: 36, height: 36, justifyContent: 'center', alignItems: 'center' },
+  inputError: { borderColor: Colors.error },
   otpInput: {
     backgroundColor: Colors.surface, borderRadius: BorderRadius.md,
     borderWidth: 1, borderColor: Colors.cardBorder,
@@ -295,8 +351,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface, borderWidth: 1, borderColor: Colors.cardBorder,
   },
   optionPillActive: { backgroundColor: Colors.navy, borderColor: Colors.navy },
+  optionPillError: { borderColor: Colors.error },
   optionText: { fontSize: FontSize.sm, color: Colors.textSecondary },
   optionTextActive: { color: Colors.white, fontWeight: FontWeight.bold },
+  errorText: { fontSize: FontSize.xs, color: Colors.error, marginTop: 4 },
+  dateHint: { fontSize: 10, color: Colors.textMuted, marginTop: 2 },
 
   // Bottom
   bottomBar: {

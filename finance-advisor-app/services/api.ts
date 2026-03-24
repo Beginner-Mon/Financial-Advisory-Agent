@@ -215,8 +215,11 @@ export interface Order {
   order_id: string;
   user_id: string;
   product_id: string;
+  product_name?: string;
   product_type: string;
   status: string;
+  source?: string;
+  form_data?: any;
   agent_log: string[];
   reference_no: string;
   created_at: string;
@@ -422,8 +425,11 @@ export interface TraditionalApplyRequest {
 export interface TraditionalApplyResponse {
   order_id: string;
   reference_no: string;
+  product_name: string;
+  product_type: string;
   message: string;
   next_steps: string;
+  key_details: { label: string; value: string }[];
 }
 
 export function traditionalApply(body: TraditionalApplyRequest): Promise<TraditionalApplyResponse> {
