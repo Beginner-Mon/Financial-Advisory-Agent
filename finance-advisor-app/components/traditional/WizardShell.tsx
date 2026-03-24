@@ -44,11 +44,10 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
 
   // ── Auto-fill basic details from profile ──
   useEffect(() => {
-    if (!profile) return;
     setFormData((prev) => {
       const next = { ...prev };
       let changed = false;
-      const userName = profile.name || 'Alex Johnson';
+      const userName = profile?.name || 'Alex Johnson';
       
       steps.flatMap((s) => s.fields).forEach((f) => {
         if (!next[f.key] && !f.prefilled) { // Don't overwrite if touched or natively prefilled
@@ -56,15 +55,16 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
           else if (f.key === 'email') { next[f.key] = `${userName.toLowerCase().replace(/\s/g, '.')}@email.com`; changed = true; }
           else if (f.key === 'mobile') { next[f.key] = '+1 (555) 000-1234'; changed = true; }
           else if (f.key === 'id_number') { next[f.key] = 'S1234567A'; changed = true; }
-          else if (f.key === 'dob' && profile.age) {
-            const year = new Date().getFullYear() - profile.age;
+          else if (f.key === 'dob') {
+            const age = profile?.age || 30;
+            const year = new Date().getFullYear() - age;
             next[f.key] = `${year}-01-01`;
             changed = true;
           }
           else if (f.key === 'employer') { next[f.key] = 'Demo Corp'; changed = true; }
           else if (f.key === 'job_stability') { next[f.key] = 'Stable'; changed = true; }
-          else if (f.key === 'income' || f.key === 'gross_income') { next[f.key] = String(profile.income || '85000'); changed = true; }
-          else if (f.key === 'monthly_income') { next[f.key] = String(Math.floor((profile.income || 85000) / 12)); changed = true; }
+          else if (f.key === 'income' || f.key === 'gross_income') { next[f.key] = String(profile?.income || '85000'); changed = true; }
+          else if (f.key === 'monthly_income') { next[f.key] = String(Math.floor((profile?.income || 85000) / 12)); changed = true; }
         }
       });
       return changed ? next : prev;
