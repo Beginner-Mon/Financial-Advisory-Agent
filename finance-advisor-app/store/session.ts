@@ -13,6 +13,7 @@ export interface UserProfile {
   income: number;
   credit_score: number;
   goals: string[];
+  risk_tolerance?: string;
 }
 
 interface ExecutionState {

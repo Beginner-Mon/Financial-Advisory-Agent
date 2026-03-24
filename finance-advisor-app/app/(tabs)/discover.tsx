@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Markdown from 'react-native-markdown-display';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius, Shadows } from '../../constants/theme';
 import {
   getProducts, getProductDetail, getAdvice, traditionalApply,
@@ -37,6 +37,7 @@ interface ChatMessage {
 
 export default function DiscoverScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const userId = useSessionStore((s) => s.userId);
   const profile = useSessionStore((s) => s.profile);
 
@@ -223,12 +224,12 @@ export default function DiscoverScreen() {
   };
 
   // ── Chat Send ──
-  const sendChatMessage = async () => {
-    const text = chatInput.trim();
+  const sendChatMessage = async (initialMessage?: string | any) => {
+    const text = (typeof initialMessage === 'string' ? initialMessage : undefined) || chatInput.trim();
     if (!text || chatSending) return;
     const userMsg: ChatMessage = { id: `u-${Date.now()}`, role: 'user', text, timestamp: new Date() };
     setChatMessages((prev) => [...prev, userMsg]);
-    setChatInput('');
+    if (typeof initialMessage !== 'string') setChatInput('');
     setChatSending(true);
     try {
       const report: StructuredReport = await getAdvice(text);
@@ -246,6 +247,18 @@ export default function DiscoverScreen() {
       setChatSending(false);
     }
   };
+
+  // ── Handle incoming query params from Home chips ──
+  useEffect(() => {
+    if (params.initialPrompt && typeof params.initialPrompt === 'string') {
+      setView('chat');
+      // Delay slightly to prevent ref updates during strict mode render cycle
+      setTimeout(() => {
+        sendChatMessage(params.initialPrompt as string);
+        router.setParams({ initialPrompt: '' });
+      }, 0);
+    }
+  }, [params.initialPrompt]);
 
   // ══════════════════════════════════════════════
   // VIEW: RESULT
@@ -510,7 +523,7 @@ export default function DiscoverScreen() {
                 {item.recommendations && item.recommendations.length > 0 && (
                   <View style={styles.recCardsWrap}>
                     <Text style={styles.recCardsTitle}>Recommended Products</Text>
-                    {item.recommendations.map((rec, idx) => (
+                    {item.recommendations.map((rec: any, idx: number) => (
                       <View key={idx} style={styles.recCard}>
                         <View style={{ flex: 1 }}>
                           <Text style={styles.recCardName}>{rec.name}</Text>
