@@ -1,6 +1,6 @@
 /**
  * ProductShell — Shared wrapper for all product detail screens.
- * Provides: back nav header, scrollable body, sticky CTA button at bottom.
+ * Provides: back nav header, scrollable body, dual CTA (AI Guide + Apply manually).
  */
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
@@ -13,10 +13,11 @@ interface Props {
   onBack: () => void;
   onCta: () => void;
   onChat?: () => void;
+  onTraditional?: () => void;
   children: React.ReactNode;
 }
 
-export default function ProductShell({ title, ctaLabel, onBack, onCta, onChat, children }: Props) {
+export default function ProductShell({ title, ctaLabel, onBack, onCta, onChat, onTraditional, children }: Props) {
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -33,17 +34,31 @@ export default function ProductShell({ title, ctaLabel, onBack, onCta, onChat, c
         {children}
       </ScrollView>
 
-      {/* Bottom bar */}
+      {/* Bottom bar — dual CTA */}
       <View style={styles.bottomBar}>
         {onChat && (
           <TouchableOpacity style={styles.chatBtn} onPress={onChat} activeOpacity={0.7}>
             <Ionicons name="chatbubble-ellipses" size={20} color={Colors.gold} />
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.ctaButton} onPress={onCta} activeOpacity={0.8}>
-          <Text style={styles.ctaText}>{ctaLabel}</Text>
-          <Ionicons name="arrow-forward" size={18} color={Colors.navy} />
-        </TouchableOpacity>
+        <View style={styles.ctaColumn}>
+          {/* Primary: AI Guide */}
+          <TouchableOpacity style={styles.ctaButton} onPress={onCta} activeOpacity={0.8}>
+            <Ionicons name="sparkles" size={16} color={Colors.navy} />
+            <Text style={styles.ctaText}>{ctaLabel}</Text>
+          </TouchableOpacity>
+          <Text style={styles.ctaSub}>Agent handles everything</Text>
+
+          {/* Secondary: Traditional */}
+          {onTraditional && (
+            <>
+              <TouchableOpacity style={styles.ctaSecondary} onPress={onTraditional} activeOpacity={0.7}>
+                <Text style={styles.ctaSecondaryText}>Apply manually</Text>
+              </TouchableOpacity>
+              <Text style={styles.ctaSubSecondary}>Step-by-step, you're in control</Text>
+            </>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -71,7 +86,7 @@ const styles = StyleSheet.create({
   bodyContent: { paddingBottom: Spacing.huge },
   bottomBar: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderTopWidth: StyleSheet.hairlineWidth,
@@ -86,9 +101,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(201, 168, 76, 0.12)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 4,
   },
+  ctaColumn: { flex: 1 },
   ctaButton: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -102,5 +118,31 @@ const styles = StyleSheet.create({
     fontSize: FontSize.md,
     fontWeight: FontWeight.bold,
     color: Colors.navy,
+  },
+  ctaSub: {
+    fontSize: 10,
+    color: Colors.textMuted,
+    textAlign: 'center',
+    marginTop: 2,
+    marginBottom: Spacing.sm,
+  },
+  ctaSecondary: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.cardBorder,
+  },
+  ctaSecondaryText: {
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.semibold,
+    color: Colors.textPrimary,
+  },
+  ctaSubSecondary: {
+    fontSize: 10,
+    color: Colors.textMuted,
+    textAlign: 'center',
+    marginTop: 2,
   },
 });

@@ -20,7 +20,7 @@ const TAB_CONFIG: {
   { name: 'home', title: 'Home', headerTitle: 'Finance Advisor', icon: 'home-outline', iconFocused: 'home' },
   { name: 'accounts', title: 'Accounts', headerTitle: 'Accounts', icon: 'wallet-outline', iconFocused: 'wallet' },
   { name: 'transfer', title: 'Transfer', headerTitle: 'Transfer', icon: 'swap-horizontal-outline', iconFocused: 'swap-horizontal' },
-  { name: 'discover', title: 'Discover', headerTitle: 'Discover', icon: 'compass-outline', iconFocused: 'compass' },
+  { name: 'discover', title: 'AI Guide', headerTitle: 'AI Guide', icon: 'sparkles-outline', iconFocused: 'sparkles' },
   { name: 'profile', title: 'Profile', headerTitle: 'Profile', icon: 'person-outline', iconFocused: 'person' },
 ];
 

@@ -50,9 +50,7 @@ export default function ScoreRing({ score, size = 120, strokeWidth = 8, label = 
           strokeDasharray={`${circumference}`}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
-          rotation="-90"
-          originX={size / 2}
-          originY={size / 2}
+          transform={`rotate(-90 ${size / 2} ${size / 2})`}
         />
       </Svg>
       <View style={[styles.scoreContainer, { width: size, height: size }]}>

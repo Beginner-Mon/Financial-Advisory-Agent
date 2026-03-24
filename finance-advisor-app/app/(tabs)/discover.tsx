@@ -28,9 +28,16 @@ import InvestmentDetail from '../../components/products/InvestmentDetail';
 import PromoDetail from '../../components/products/PromoDetail';
 // Execution
 import ExecutionScreen from '../../components/execution/ExecutionScreen';
+import WizardShell from '../../components/traditional/WizardShell';
+import { CARD_STEPS } from '../../components/traditional/steps/cards';
+import { SAVINGS_STEPS } from '../../components/traditional/steps/savings';
+import { LOAN_STEPS } from '../../components/traditional/steps/loans';
+import { INSURANCE_STEPS } from '../../components/traditional/steps/insurance';
+import { INVESTMENT_STEPS } from '../../components/traditional/steps/investments';
+import { traditionalApply } from '../../services/api';
 
 type IoniconsName = keyof typeof Ionicons.glyphMap;
-type DiscoverView = 'home' | 'category' | 'detail' | 'compare' | 'chat' | 'execution';
+type DiscoverView = 'home' | 'category' | 'detail' | 'compare' | 'chat' | 'execution' | 'traditional';
 
 const CATEGORIES: { key: string; label: string; icon: IoniconsName; color: string }[] = [
   { key: 'cards', label: 'Cards', icon: 'card', color: Colors.gold },
@@ -241,6 +248,27 @@ export default function DiscoverScreen() {
   };
 
   // ──────────────────────────────────────────────
+  // Traditional wizard handler
+  // ──────────────────────────────────────────────
+  const startTraditionalFlow = (product: Product) => {
+    setExecProductId(product.id);
+    setExecProductType(product.agent_flow || product.product_type);
+    setExecProductName(product.name);
+    navigateTo('traditional');
+  };
+
+  const getTraditionalSteps = (productType: string) => {
+    switch (productType) {
+      case 'card': return CARD_STEPS;
+      case 'savings': return SAVINGS_STEPS;
+      case 'loan': case 'home_loan': return LOAN_STEPS;
+      case 'insurance': return INSURANCE_STEPS;
+      case 'investment': return INVESTMENT_STEPS;
+      default: return CARD_STEPS;
+    }
+  };
+
+  // ──────────────────────────────────────────────
   // Loading
   // ──────────────────────────────────────────────
   if (loading) {
@@ -263,6 +291,30 @@ export default function DiscoverScreen() {
         onCancel={goBack}
         onComplete={() => { setView('home'); setNavStack([]); }}
         onViewProducts={() => { setView('home'); setNavStack([]); }}
+      />
+    );
+  }
+
+  // ══════════════════════════════════════════════
+  // VIEW: TRADITIONAL WIZARD
+  // ══════════════════════════════════════════════
+  if (view === 'traditional') {
+    const steps = getTraditionalSteps(execProductType);
+    return (
+      <WizardShell
+        productName={execProductName}
+        steps={steps}
+        onCancel={goBack}
+        onSubmit={async (formData) => {
+          await traditionalApply({
+            product_id: execProductId,
+            product_type: execProductType,
+            form_data: formData,
+            session_id: userId,
+          });
+          setView('home');
+          setNavStack([]);
+        }}
       />
     );
   }
@@ -487,6 +539,7 @@ export default function DiscoverScreen() {
         onBack={goBack}
         onCta={handleCta}
         onChat={() => navigateTo('chat')}
+        onTraditional={detailProduct.product_type !== 'promotion' ? () => startTraditionalFlow(detailProduct) : undefined}
       >
         <DetailComponent product={detailProduct} />
       </ProductShell>

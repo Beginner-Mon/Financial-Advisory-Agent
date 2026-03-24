@@ -368,6 +368,7 @@ export function getExecutionProgress(sessionId: string): Promise<ExecutionProgre
 }
 
 export function cancelExecution(sessionId: string): Promise<any> {
+  if (!sessionId) return Promise.resolve();
   return apiDelete(`/execute/cancel/${sessionId}`);
 }
 
@@ -406,4 +407,25 @@ export function updateGoal(goalId: string, updates: Partial<Goal>): Promise<Goal
 
 export function deleteGoal(goalId: string): Promise<any> {
   return apiDelete(`/goals/${goalId}`);
+}
+
+// ---------------------------------------------------------------------------
+// Traditional Application
+// ---------------------------------------------------------------------------
+export interface TraditionalApplyRequest {
+  product_id: string;
+  product_type: string;
+  form_data: Record<string, any>;
+  session_id: string;
+}
+
+export interface TraditionalApplyResponse {
+  order_id: string;
+  reference_no: string;
+  message: string;
+  next_steps: string;
+}
+
+export function traditionalApply(body: TraditionalApplyRequest): Promise<TraditionalApplyResponse> {
+  return apiPost<TraditionalApplyResponse>('/traditional/apply', body);
 }

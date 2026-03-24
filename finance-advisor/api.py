@@ -771,3 +771,89 @@ def get_agent_history(user_id: str):
     except Exception:
         rows = []
     return _ok(rows)
+
+
+# ---------------------------------------------------------------------------
+# Traditional Application (No AI)
+# ---------------------------------------------------------------------------
+
+class TraditionalApplyRequest(BaseModel):
+    product_id: str
+    product_type: str
+    form_data: dict
+    session_id: str
+
+
+@app.post("/traditional/apply")
+def traditional_apply(req: TraditionalApplyRequest):
+    """Process a manual step-by-step product application."""
+    db = _db()
+    ref_prefix = {
+        "card": "CC", "savings": "SAV", "loan": "LN",
+        "insurance": "INS", "investment": "INV",
+    }.get(req.product_type, "REF")
+    ref_no = f"{ref_prefix}-{uuid.uuid4().hex[:8].upper()}"
+
+    order = {
+        "order_id": f"ord-{req.session_id}-{int(datetime.now().timestamp())}",
+        "user_id": req.session_id,
+        "product_id": req.product_id,
+        "product_type": req.product_type,
+        "source": "traditional",
+        "form_data": json.dumps(req.form_data),
+        "status": "submitted",
+        "reference_no": ref_no,
+        "agent_log": json.dumps([]),
+        "created_at": datetime.now().isoformat(),
+    }
+
+    if "orders" not in db.table_names():
+        db["orders"].insert(order, pk="order_id")
+    else:
+        db["orders"].insert(order)
+
+    # For savings — create a new account instance
+    if req.product_type == "savings":
+        nickname = req.form_data.get("account_nickname", f"Savings {ref_no}")
+        deposit = float(req.form_data.get("initial_deposit", 0))
+        acc_id = f"sav-{req.session_id}-{int(datetime.now().timestamp())}"
+        products = _load_products()
+        prod_match = next((p for p in products if p["id"] == req.product_id), None)
+
+        acc_row = {
+            "account_id": acc_id,
+            "user_id": req.session_id,
+            "product_id": req.product_id,
+            "product_name": prod_match["name"] if prod_match else "Savings",
+            "nickname": nickname,
+            "type": "savings",
+            "account_no": f"SAV{uuid.uuid4().hex[:8].upper()}",
+            "balance": deposit,
+            "currency": "USD",
+            "status": "active",
+            "opened_via": "traditional",
+            "opened_at": datetime.now().isoformat(),
+        }
+        db["accounts"].insert(acc_row, pk="account_id")
+
+    messages = {
+        "card": "Your credit card application has been submitted for review.",
+        "savings": "Your savings account has been opened successfully!",
+        "loan": "Your loan application is under review. You will receive a decision within 3 business days.",
+        "insurance": "Your insurance policy has been purchased. Policy documents will be emailed.",
+        "investment": "Your investment order has been placed.",
+    }
+    next_steps = {
+        "card": "You will receive the card within 7-10 business days.",
+        "savings": "You can view your new savings account in the Accounts tab.",
+        "loan": "Keep your phone handy for a potential verification call.",
+        "insurance": "Your first premium will be debited on the start date you selected.",
+        "investment": "Units will be allocated within 2 business days.",
+    }
+
+    return _ok({
+        "order_id": order["order_id"],
+        "reference_no": ref_no,
+        "message": messages.get(req.product_type, "Application submitted."),
+        "next_steps": next_steps.get(req.product_type, "We will be in touch."),
+    })
