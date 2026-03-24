@@ -9,7 +9,11 @@
     "min_credit": 680,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "travel", "general"],
+    "eligible_goals": [
+      "rewards",
+      "travel",
+      "general"
+    ],
     "summary": {
       "annual_fee": 180,
       "cashback_pct": 3.0,
@@ -19,11 +23,26 @@
     },
     "detail": {
       "tagline": "Earn 3% cashback on every purchase.",
-      "benefits": ["3% cashback on all spend", "Airport lounge access (2x/year)", "Travel insurance up to $500k", "Contactless payments"],
-      "fees": { "late_payment": 35, "forex_pct": 1.5, "cash_advance_pct": 5.0 },
+      "benefits": [
+        "3% cashback on all spend",
+        "Airport lounge access (2x/year)",
+        "Travel insurance up to $500k",
+        "Contactless payments"
+      ],
+      "fees": {
+        "late_payment": 35,
+        "forex_pct": 1.5,
+        "cash_advance_pct": 5.0
+      },
       "faqs": [
-        { "q": "When is the annual fee charged?", "a": "On your card anniversary date." },
-        { "q": "How do I redeem cashback?", "a": "Automatically credited monthly to your statement." }
+        {
+          "q": "When is the annual fee charged?",
+          "a": "On your card anniversary date."
+        },
+        {
+          "q": "How do I redeem cashback?",
+          "a": "Automatically credited monthly to your statement."
+        }
       ],
       "terms_summary": "Subject to credit approval. Annual fee waived first year. Min income $30,000."
     },
@@ -40,7 +59,10 @@
     "min_credit": 620,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "annual_fee": 90,
       "cashback_pct": 2.0,
@@ -50,11 +72,26 @@
     },
     "detail": {
       "tagline": "2% cashback with no minimum spend.",
-      "benefits": ["2% cashback on dining & groceries", "1% cashback on all other spend", "Purchase protection", "Free supplementary card"],
-      "fees": { "late_payment": 25, "forex_pct": 2.0, "cash_advance_pct": 5.0 },
+      "benefits": [
+        "2% cashback on dining & groceries",
+        "1% cashback on all other spend",
+        "Purchase protection",
+        "Free supplementary card"
+      ],
+      "fees": {
+        "late_payment": 25,
+        "forex_pct": 2.0,
+        "cash_advance_pct": 5.0
+      },
       "faqs": [
-        { "q": "Is there a minimum spend for cashback?", "a": "No minimum spend required." },
-        { "q": "Can I add a supplementary cardholder?", "a": "Yes, one free supplementary card included." }
+        {
+          "q": "Is there a minimum spend for cashback?",
+          "a": "No minimum spend required."
+        },
+        {
+          "q": "Can I add a supplementary cardholder?",
+          "a": "Yes, one free supplementary card included."
+        }
       ],
       "terms_summary": "Subject to credit approval. Min income $20,000."
     },
@@ -71,7 +108,10 @@
     "min_credit": 720,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["travel", "rewards"],
+    "eligible_goals": [
+      "travel",
+      "rewards"
+    ],
     "summary": {
       "annual_fee": 350,
       "cashback_pct": 5.0,
@@ -81,11 +121,27 @@
     },
     "detail": {
       "tagline": "5% miles on flights. Unlimited lounge access.",
-      "benefits": ["5x miles on travel & flights", "Unlimited airport lounge access", "Travel insurance up to $2M", "Hotel upgrades", "Concierge service"],
-      "fees": { "late_payment": 40, "forex_pct": 0.0, "cash_advance_pct": 5.0 },
+      "benefits": [
+        "5x miles on travel & flights",
+        "Unlimited airport lounge access",
+        "Travel insurance up to $2M",
+        "Hotel upgrades",
+        "Concierge service"
+      ],
+      "fees": {
+        "late_payment": 40,
+        "forex_pct": 0.0,
+        "cash_advance_pct": 5.0
+      },
       "faqs": [
-        { "q": "Is the annual fee worth it?", "a": "With unlimited lounge access alone (est. $50/visit), frequent travellers break even quickly." },
-        { "q": "Do miles expire?", "a": "Miles are valid for 3 years from earning date." }
+        {
+          "q": "Is the annual fee worth it?",
+          "a": "With unlimited lounge access alone (est. $50/visit), frequent travellers break even quickly."
+        },
+        {
+          "q": "Do miles expire?",
+          "a": "Miles are valid for 3 years from earning date."
+        }
       ],
       "terms_summary": "Subject to credit approval. Min income $60,000. Annual fee not waivable."
     },
@@ -102,7 +158,11 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": 4.5,
-    "eligible_goals": ["emergency_fund", "house", "general"],
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
     "summary": {
       "interest_rate": 4.5,
       "account_type": "regular",
@@ -113,14 +173,28 @@
     "detail": {
       "tagline": "Earn 4.5% p.a. with full flexibility.",
       "rate_tiers": [
-        { "from": 0, "to": 50000, "rate": 4.0 },
-        { "from": 50000, "to": null, "rate": 4.5 }
+        {
+          "from": 0,
+          "to": 50000,
+          "rate": 4.0
+        },
+        {
+          "from": 50000,
+          "to": null,
+          "rate": 4.5
+        }
       ],
       "early_withdrawal_fee": null,
       "deposit_insurance": true,
       "faqs": [
-        { "q": "Is there a minimum balance?", "a": "Minimum $500 to earn interest." },
-        { "q": "Can I withdraw anytime?", "a": "Yes, no lock-in period." }
+        {
+          "q": "Is there a minimum balance?",
+          "a": "Minimum $500 to earn interest."
+        },
+        {
+          "q": "Can I withdraw anytime?",
+          "a": "Yes, no lock-in period."
+        }
       ],
       "terms_summary": "FDIC insured up to $250,000. No monthly fees."
     },
@@ -137,7 +211,11 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": 5.2,
-    "eligible_goals": ["emergency_fund", "house", "general"],
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
     "summary": {
       "interest_rate": 5.2,
       "account_type": "fixed_deposit",
@@ -146,15 +224,25 @@
       "lock_in_months": 12
     },
     "detail": {
-      "tagline": "Lock in 5.2% for 12 months — guaranteed.",
+      "tagline": "Lock in 5.2% for 12 months \u2014 guaranteed.",
       "rate_tiers": [
-        { "from": 0, "to": null, "rate": 5.2 }
+        {
+          "from": 0,
+          "to": null,
+          "rate": 5.2
+        }
       ],
       "early_withdrawal_fee": "Forfeiture of accrued interest",
       "deposit_insurance": true,
       "faqs": [
-        { "q": "What happens if I withdraw early?", "a": "You forfeit all accrued interest for the term." },
-        { "q": "Is my principal guaranteed?", "a": "Yes, principal is fully guaranteed." }
+        {
+          "q": "What happens if I withdraw early?",
+          "a": "You forfeit all accrued interest for the term."
+        },
+        {
+          "q": "Is my principal guaranteed?",
+          "a": "Yes, principal is fully guaranteed."
+        }
       ],
       "terms_summary": "FDIC insured. Min deposit $1,000. Rate fixed for full term."
     },
@@ -171,7 +259,10 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": 3.5,
-    "eligible_goals": ["education", "general"],
+    "eligible_goals": [
+      "education",
+      "general"
+    ],
     "summary": {
       "interest_rate": 3.5,
       "account_type": "regular",
@@ -182,13 +273,23 @@
     "detail": {
       "tagline": "Start your child's savings journey early.",
       "rate_tiers": [
-        { "from": 0, "to": null, "rate": 3.5 }
+        {
+          "from": 0,
+          "to": null,
+          "rate": 3.5
+        }
       ],
       "early_withdrawal_fee": null,
       "deposit_insurance": true,
       "faqs": [
-        { "q": "Who can open this account?", "a": "Any parent or guardian for a child under 18." },
-        { "q": "Can the child access funds?", "a": "Full access at age 18; parent-controlled before that." }
+        {
+          "q": "Who can open this account?",
+          "a": "Any parent or guardian for a child under 18."
+        },
+        {
+          "q": "Can the child access funds?",
+          "a": "Full access at age 18; parent-controlled before that."
+        }
       ],
       "terms_summary": "FDIC insured. Account converts to standard savings at age 18."
     },
@@ -205,7 +306,10 @@
     "min_credit": 620,
     "risk_level": "moderate",
     "return_pct": null,
-    "eligible_goals": ["emergency_fund", "general"],
+    "eligible_goals": [
+      "emergency_fund",
+      "general"
+    ],
     "summary": {
       "interest_rate_min": 5.9,
       "interest_rate_max": 18.5,
@@ -214,14 +318,24 @@
       "tenure_min_months": 12,
       "tenure_max_months": 60,
       "min_income": 18000,
-      "approval_days": "1–3 working days"
+      "approval_days": "1\u20133 working days"
     },
     "detail": {
       "tagline": "Get funds in as little as 24 hours.",
-      "required_docs": ["Government-issued ID", "Last 3 months payslips", "Last 3 months bank statements"],
+      "required_docs": [
+        "Government-issued ID",
+        "Last 3 months payslips",
+        "Last 3 months bank statements"
+      ],
       "faqs": [
-        { "q": "How is my interest rate determined?", "a": "Rate is based on credit score, income, and loan tenure." },
-        { "q": "Is there an early repayment fee?", "a": "No early settlement penalty." }
+        {
+          "q": "How is my interest rate determined?",
+          "a": "Rate is based on credit score, income, and loan tenure."
+        },
+        {
+          "q": "Is there an early repayment fee?",
+          "a": "No early settlement penalty."
+        }
       ],
       "terms_summary": "Rate quoted is indicative. Final rate confirmed upon approval."
     },
@@ -238,7 +352,9 @@
     "min_credit": 680,
     "risk_level": "moderate",
     "return_pct": null,
-    "eligible_goals": ["house"],
+    "eligible_goals": [
+      "house"
+    ],
     "summary": {
       "interest_rate_min": 3.5,
       "interest_rate_max": 5.5,
@@ -247,14 +363,26 @@
       "tenure_min_months": 60,
       "tenure_max_months": 360,
       "min_income": 36000,
-      "approval_days": "5–10 working days"
+      "approval_days": "5\u201310 working days"
     },
     "detail": {
       "tagline": "Competitive rates for your dream home.",
-      "required_docs": ["Government-issued ID", "Last 6 months payslips", "Last 6 months bank statements", "Property sale & purchase agreement", "Latest EPF statement"],
+      "required_docs": [
+        "Government-issued ID",
+        "Last 6 months payslips",
+        "Last 6 months bank statements",
+        "Property sale & purchase agreement",
+        "Latest EPF statement"
+      ],
       "faqs": [
-        { "q": "What is the maximum LTV?", "a": "Up to 90% loan-to-value for first property." },
-        { "q": "Can I make partial prepayments?", "a": "Yes, with no lock-in after year 3." }
+        {
+          "q": "What is the maximum LTV?",
+          "a": "Up to 90% loan-to-value for first property."
+        },
+        {
+          "q": "Can I make partial prepayments?",
+          "a": "Yes, with no lock-in after year 3."
+        }
       ],
       "terms_summary": "Rate is subject to credit assessment. Property must be in approved locations."
     },
@@ -271,7 +399,10 @@
     "min_credit": 640,
     "risk_level": "moderate",
     "return_pct": null,
-    "eligible_goals": ["car", "general"],
+    "eligible_goals": [
+      "car",
+      "general"
+    ],
     "summary": {
       "interest_rate_min": 2.8,
       "interest_rate_max": 4.5,
@@ -280,14 +411,24 @@
       "tenure_min_months": 12,
       "tenure_max_months": 84,
       "min_income": 24000,
-      "approval_days": "1–3 working days"
+      "approval_days": "1\u20133 working days"
     },
     "detail": {
       "tagline": "Drive away with rates from 2.8% p.a.",
-      "required_docs": ["Government-issued ID", "Last 3 months payslips", "Vehicle quotation from dealer"],
+      "required_docs": [
+        "Government-issued ID",
+        "Last 3 months payslips",
+        "Vehicle quotation from dealer"
+      ],
       "faqs": [
-        { "q": "Does this cover used cars?", "a": "Yes, for vehicles up to 10 years old." },
-        { "q": "What is the maximum loan amount?", "a": "Up to 90% of vehicle price, max $200,000." }
+        {
+          "q": "Does this cover used cars?",
+          "a": "Yes, for vehicles up to 10 years old."
+        },
+        {
+          "q": "What is the maximum loan amount?",
+          "a": "Up to 90% of vehicle price, max $200,000."
+        }
       ],
       "terms_summary": "Vehicle serves as collateral. Comprehensive insurance required throughout tenure."
     },
@@ -304,7 +445,11 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["emergency_fund", "retirement", "general"],
+    "eligible_goals": [
+      "emergency_fund",
+      "retirement",
+      "general"
+    ],
     "summary": {
       "coverage_amount_min": 100000,
       "coverage_amount_max": 5000000,
@@ -314,12 +459,31 @@
     },
     "detail": {
       "tagline": "Protect your family for 20 years from $45/month.",
-      "coverage": ["Death benefit", "Terminal illness benefit (early payout)", "Total & permanent disability (optional add-on)"],
-      "exclusions": ["Suicide within first 2 years", "War or terrorism", "Pre-existing conditions (declared)"],
-      "claim_process": ["Notify us within 30 days of event", "Submit claim form + supporting docs", "Assessment within 14 working days", "Payout within 7 days of approval"],
+      "coverage": [
+        "Death benefit",
+        "Terminal illness benefit (early payout)",
+        "Total & permanent disability (optional add-on)"
+      ],
+      "exclusions": [
+        "Suicide within first 2 years",
+        "War or terrorism",
+        "Pre-existing conditions (declared)"
+      ],
+      "claim_process": [
+        "Notify us within 30 days of event",
+        "Submit claim form + supporting docs",
+        "Assessment within 14 working days",
+        "Payout within 7 days of approval"
+      ],
       "faqs": [
-        { "q": "Is a medical exam required?", "a": "Not for coverage below $500,000 and age under 45." },
-        { "q": "Can I convert to whole life?", "a": "Yes, convertible option available at no extra cost." }
+        {
+          "q": "Is a medical exam required?",
+          "a": "Not for coverage below $500,000 and age under 45."
+        },
+        {
+          "q": "Can I convert to whole life?",
+          "a": "Yes, convertible option available at no extra cost."
+        }
       ],
       "terms_summary": "Premium shown is indicative for age 35, non-smoker. Final premium assessed post-declaration."
     },
@@ -336,7 +500,11 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["health", "emergency_fund", "general"],
+    "eligible_goals": [
+      "health",
+      "emergency_fund",
+      "general"
+    ],
     "summary": {
       "coverage_amount_min": 50000,
       "coverage_amount_max": 500000,
@@ -345,13 +513,34 @@
       "underwriter": "HealthShield Partners"
     },
     "detail": {
-      "tagline": "Hospitalisation, surgery & outpatient — covered.",
-      "coverage": ["Hospitalisation & surgery", "Outpatient consultations (20 visits/yr)", "Specialist referrals", "Cancer treatment", "Emergency evacuations"],
-      "exclusions": ["Cosmetic procedures", "Dental (except accidents)", "Pre-existing conditions in first 12 months"],
-      "claim_process": ["Visit any panel clinic or hospital", "Submit e-claim within 90 days", "Cashless treatment at panel hospitals", "Reimbursement within 10 working days"],
+      "tagline": "Hospitalisation, surgery & outpatient \u2014 covered.",
+      "coverage": [
+        "Hospitalisation & surgery",
+        "Outpatient consultations (20 visits/yr)",
+        "Specialist referrals",
+        "Cancer treatment",
+        "Emergency evacuations"
+      ],
+      "exclusions": [
+        "Cosmetic procedures",
+        "Dental (except accidents)",
+        "Pre-existing conditions in first 12 months"
+      ],
+      "claim_process": [
+        "Visit any panel clinic or hospital",
+        "Submit e-claim within 90 days",
+        "Cashless treatment at panel hospitals",
+        "Reimbursement within 10 working days"
+      ],
       "faqs": [
-        { "q": "Are pre-existing conditions covered?", "a": "Covered after 12-month waiting period for declared conditions." },
-        { "q": "Can I use any doctor?", "a": "Panel network for cashless; non-panel for reimbursement." }
+        {
+          "q": "Are pre-existing conditions covered?",
+          "a": "Covered after 12-month waiting period for declared conditions."
+        },
+        {
+          "q": "Can I use any doctor?",
+          "a": "Panel network for cashless; non-panel for reimbursement."
+        }
       ],
       "terms_summary": "Annual renewable. Premium reviewed annually. Waiting period applies."
     },
@@ -368,7 +557,10 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["travel", "general"],
+    "eligible_goals": [
+      "travel",
+      "general"
+    ],
     "summary": {
       "coverage_amount_min": 50000,
       "coverage_amount_max": 500000,
@@ -378,12 +570,33 @@
     },
     "detail": {
       "tagline": "Travel worry-free all year, unlimited trips.",
-      "coverage": ["Trip cancellation up to $5,000", "Medical emergencies up to $500,000", "Baggage loss up to $2,000", "Flight delays >3 hours: $100", "24/7 emergency assistance"],
-      "exclusions": ["Adventure sports (add-on available)", "Travel to sanctioned countries", "Pre-existing medical conditions"],
-      "claim_process": ["File claim within 30 days of return", "Upload receipts and reports online", "Assessment within 5 working days", "Payout within 7 days"],
+      "coverage": [
+        "Trip cancellation up to $5,000",
+        "Medical emergencies up to $500,000",
+        "Baggage loss up to $2,000",
+        "Flight delays >3 hours: $100",
+        "24/7 emergency assistance"
+      ],
+      "exclusions": [
+        "Adventure sports (add-on available)",
+        "Travel to sanctioned countries",
+        "Pre-existing medical conditions"
+      ],
+      "claim_process": [
+        "File claim within 30 days of return",
+        "Upload receipts and reports online",
+        "Assessment within 5 working days",
+        "Payout within 7 days"
+      ],
       "faqs": [
-        { "q": "How many trips are covered?", "a": "Unlimited trips per year, each up to 90 days." },
-        { "q": "Does it cover family?", "a": "Family plan available for spouse + up to 3 children." }
+        {
+          "q": "How many trips are covered?",
+          "a": "Unlimited trips per year, each up to 90 days."
+        },
+        {
+          "q": "Does it cover family?",
+          "a": "Family plan available for spouse + up to 3 children."
+        }
       ],
       "terms_summary": "Annual policy. Trips must be booked from home country."
     },
@@ -400,21 +613,34 @@
     "min_credit": 650,
     "risk_level": "moderate",
     "return_pct": 8.0,
-    "eligible_goals": ["retirement", "wealth"],
+    "eligible_goals": [
+      "retirement",
+      "wealth"
+    ],
     "summary": {
       "risk_rating": 4,
       "min_investment": 1000,
       "platform_fee_pct": 0.5,
       "fund_manager": "VanguardCore Asset Management",
-      "historical_returns": { "1y": 8.2, "3y": 7.8, "5y": 8.0 }
+      "historical_returns": {
+        "1y": 8.2,
+        "3y": 7.8,
+        "5y": 8.0
+      }
     },
     "detail": {
       "tagline": "Broad market exposure. Low cost. Long-term growth.",
-      "fund_type": "Unit Trust — Global Equity",
+      "fund_type": "Unit Trust \u2014 Global Equity",
       "fund_factsheet_url": "#",
       "faqs": [
-        { "q": "What does the fund invest in?", "a": "A blend of S&P 500, MSCI World, and emerging market indices." },
-        { "q": "How liquid is this investment?", "a": "Redeemable in T+3 business days." }
+        {
+          "q": "What does the fund invest in?",
+          "a": "A blend of S&P 500, MSCI World, and emerging market indices."
+        },
+        {
+          "q": "How liquid is this investment?",
+          "a": "Redeemable in T+3 business days."
+        }
       ],
       "terms_summary": "Past performance does not guarantee future returns. Capital at risk."
     },
@@ -431,21 +657,35 @@
     "min_credit": 600,
     "risk_level": "low",
     "return_pct": 4.8,
-    "eligible_goals": ["retirement", "wealth", "general"],
+    "eligible_goals": [
+      "retirement",
+      "wealth",
+      "general"
+    ],
     "summary": {
       "risk_rating": 2,
       "min_investment": 500,
       "platform_fee_pct": 0.3,
       "fund_manager": "SecureYield Partners",
-      "historical_returns": { "1y": 4.5, "3y": 4.7, "5y": 4.8 }
+      "historical_returns": {
+        "1y": 4.5,
+        "3y": 4.7,
+        "5y": 4.8
+      }
     },
     "detail": {
       "tagline": "Stable income. Lower volatility. Capital preservation.",
-      "fund_type": "Unit Trust — Fixed Income",
+      "fund_type": "Unit Trust \u2014 Fixed Income",
       "fund_factsheet_url": "#",
       "faqs": [
-        { "q": "What bonds does this fund hold?", "a": "Investment-grade corporate and government bonds, mostly AAA–BBB rated." },
-        { "q": "How often are dividends paid?", "a": "Quarterly income distribution." }
+        {
+          "q": "What bonds does this fund hold?",
+          "a": "Investment-grade corporate and government bonds, mostly AAA\u2013BBB rated."
+        },
+        {
+          "q": "How often are dividends paid?",
+          "a": "Quarterly income distribution."
+        }
       ],
       "terms_summary": "Capital at risk. Fixed income does not mean risk-free. Past performance not indicative of future results."
     },
@@ -462,21 +702,35 @@
     "min_credit": 0,
     "risk_level": "moderate",
     "return_pct": 7.0,
-    "eligible_goals": ["retirement", "wealth", "general"],
+    "eligible_goals": [
+      "retirement",
+      "wealth",
+      "general"
+    ],
     "summary": {
       "risk_rating": 3,
       "min_investment": 100,
       "platform_fee_pct": 0.4,
       "fund_manager": "AutoWealth Robo",
-      "historical_returns": { "1y": 6.8, "3y": 7.1, "5y": 7.0 }
+      "historical_returns": {
+        "1y": 6.8,
+        "3y": 7.1,
+        "5y": 7.0
+      }
     },
     "detail": {
       "tagline": "Set your goals. We invest and rebalance for you.",
       "fund_type": "Automated Portfolio",
       "fund_factsheet_url": "#",
       "faqs": [
-        { "q": "How is my portfolio selected?", "a": "Based on your risk profile and goals via our AI engine." },
-        { "q": "When does rebalancing occur?", "a": "Automatically when allocation drifts more than 5% from target." }
+        {
+          "q": "How is my portfolio selected?",
+          "a": "Based on your risk profile and goals via our AI engine."
+        },
+        {
+          "q": "When does rebalancing occur?",
+          "a": "Automatically when allocation drifts more than 5% from target."
+        }
       ],
       "terms_summary": "Capital at risk. Recommended investment horizon: 5+ years."
     },
@@ -493,7 +747,10 @@
     "min_credit": 580,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "annual_fee": 0,
       "cashback_pct": 1.5,
@@ -503,11 +760,27 @@
     },
     "detail": {
       "tagline": "No annual fee. Built for students.",
-      "benefits": ["1.5% cashback on all purchases", "No annual fee ever", "Free credit score monitoring", "Mobile wallet ready", "Graduate upgrade path"],
-      "fees": { "late_payment": 15, "forex_pct": 2.5, "cash_advance_pct": 5.0 },
+      "benefits": [
+        "1.5% cashback on all purchases",
+        "No annual fee ever",
+        "Free credit score monitoring",
+        "Mobile wallet ready",
+        "Graduate upgrade path"
+      ],
+      "fees": {
+        "late_payment": 15,
+        "forex_pct": 2.5,
+        "cash_advance_pct": 5.0
+      },
       "faqs": [
-        { "q": "Do I need proof of enrollment?", "a": "Yes, a valid student ID or enrollment letter is required." },
-        { "q": "What happens after graduation?", "a": "You can upgrade to a premium card with your credit history." }
+        {
+          "q": "Do I need proof of enrollment?",
+          "a": "Yes, a valid student ID or enrollment letter is required."
+        },
+        {
+          "q": "What happens after graduation?",
+          "a": "You can upgrade to a premium card with your credit history."
+        }
       ],
       "terms_summary": "No income requirement. Must be enrolled in accredited institution."
     },
@@ -524,7 +797,10 @@
     "min_credit": 700,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "annual_fee": 120,
       "cashback_pct": 4.0,
@@ -534,11 +810,27 @@
     },
     "detail": {
       "tagline": "4% cashback on groceries, gas & streaming.",
-      "benefits": ["4% on groceries, gas, streaming", "2% on dining", "1% on everything else", "Purchase protection up to $1,000", "Extended warranty +1 year"],
-      "fees": { "late_payment": 30, "forex_pct": 1.8, "cash_advance_pct": 5.0 },
+      "benefits": [
+        "4% on groceries, gas, streaming",
+        "2% on dining",
+        "1% on everything else",
+        "Purchase protection up to $1,000",
+        "Extended warranty +1 year"
+      ],
+      "fees": {
+        "late_payment": 30,
+        "forex_pct": 1.8,
+        "cash_advance_pct": 5.0
+      },
       "faqs": [
-        { "q": "Is the 4% rate capped?", "a": "Yes, up to $6,000 in combined purchases per quarter." },
-        { "q": "Can I choose my own bonus categories?", "a": "No, categories are fixed but rotate seasonally." }
+        {
+          "q": "Is the 4% rate capped?",
+          "a": "Yes, up to $6,000 in combined purchases per quarter."
+        },
+        {
+          "q": "Can I choose my own bonus categories?",
+          "a": "No, categories are fixed but rotate seasonally."
+        }
       ],
       "terms_summary": "Subject to credit approval. Min income $40,000."
     },
@@ -555,7 +847,10 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": 4.0,
-    "eligible_goals": ["emergency_fund", "general"],
+    "eligible_goals": [
+      "emergency_fund",
+      "general"
+    ],
     "summary": {
       "interest_rate": 4.0,
       "account_type": "regular",
@@ -566,13 +861,23 @@
     "detail": {
       "tagline": "Zero minimum balance. 100% digital.",
       "rate_tiers": [
-        { "from": 0, "to": null, "rate": 4.0 }
+        {
+          "from": 0,
+          "to": null,
+          "rate": 4.0
+        }
       ],
       "early_withdrawal_fee": null,
       "deposit_insurance": true,
       "faqs": [
-        { "q": "Is there a minimum balance?", "a": "No, zero minimum balance." },
-        { "q": "How do I deposit?", "a": "Via bank transfer, mobile check deposit, or linked account." }
+        {
+          "q": "Is there a minimum balance?",
+          "a": "No, zero minimum balance."
+        },
+        {
+          "q": "How do I deposit?",
+          "a": "Via bank transfer, mobile check deposit, or linked account."
+        }
       ],
       "terms_summary": "FDIC insured. No monthly fees. No minimum balance."
     },
@@ -589,7 +894,11 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": 5.0,
-    "eligible_goals": ["retirement", "emergency_fund", "general"],
+    "eligible_goals": [
+      "retirement",
+      "emergency_fund",
+      "general"
+    ],
     "summary": {
       "interest_rate": 5.0,
       "account_type": "regular",
@@ -600,14 +909,28 @@
     "detail": {
       "tagline": "Premium rates for ages 55+. Earn 5% p.a.",
       "rate_tiers": [
-        { "from": 0, "to": 100000, "rate": 4.5 },
-        { "from": 100000, "to": null, "rate": 5.0 }
+        {
+          "from": 0,
+          "to": 100000,
+          "rate": 4.5
+        },
+        {
+          "from": 100000,
+          "to": null,
+          "rate": 5.0
+        }
       ],
       "early_withdrawal_fee": null,
       "deposit_insurance": true,
       "faqs": [
-        { "q": "Who qualifies?", "a": "Account holders aged 55 and above." },
-        { "q": "Can I add a joint holder?", "a": "Yes, spouse can be added as joint account holder." }
+        {
+          "q": "Who qualifies?",
+          "a": "Account holders aged 55 and above."
+        },
+        {
+          "q": "Can I add a joint holder?",
+          "a": "Yes, spouse can be added as joint account holder."
+        }
       ],
       "terms_summary": "FDIC insured. Must be 55+ to open. No lock-in."
     },
@@ -624,7 +947,10 @@
     "min_credit": 600,
     "risk_level": "moderate",
     "return_pct": null,
-    "eligible_goals": ["education", "general"],
+    "eligible_goals": [
+      "education",
+      "general"
+    ],
     "summary": {
       "interest_rate_min": 4.5,
       "interest_rate_max": 9.0,
@@ -633,14 +959,24 @@
       "tenure_min_months": 12,
       "tenure_max_months": 180,
       "min_income": 0,
-      "approval_days": "3–5 working days"
+      "approval_days": "3\u20135 working days"
     },
     "detail": {
       "tagline": "Invest in your future. Rates from 4.5% p.a.",
-      "required_docs": ["Admission letter", "Government-issued ID", "Co-signer income docs (if applicable)"],
+      "required_docs": [
+        "Admission letter",
+        "Government-issued ID",
+        "Co-signer income docs (if applicable)"
+      ],
       "faqs": [
-        { "q": "Can I defer payments while studying?", "a": "Yes, interest-only payments during study period." },
-        { "q": "Is a co-signer required?", "a": "Required for applicants under 21 or without income." }
+        {
+          "q": "Can I defer payments while studying?",
+          "a": "Yes, interest-only payments during study period."
+        },
+        {
+          "q": "Is a co-signer required?",
+          "a": "Required for applicants under 21 or without income."
+        }
       ],
       "terms_summary": "Covers tuition, books, and living expenses. Deferment available."
     },
@@ -657,7 +993,10 @@
     "min_credit": 680,
     "risk_level": "high",
     "return_pct": null,
-    "eligible_goals": ["business", "general"],
+    "eligible_goals": [
+      "business",
+      "general"
+    ],
     "summary": {
       "interest_rate_min": 6.0,
       "interest_rate_max": 15.0,
@@ -666,14 +1005,26 @@
       "tenure_min_months": 12,
       "tenure_max_months": 84,
       "min_income": 50000,
-      "approval_days": "5–10 working days"
+      "approval_days": "5\u201310 working days"
     },
     "detail": {
       "tagline": "Fuel your business growth with flexible financing.",
-      "required_docs": ["Business registration", "2 years financial statements", "Business plan", "Government-issued ID", "6 months bank statements"],
+      "required_docs": [
+        "Business registration",
+        "2 years financial statements",
+        "Business plan",
+        "Government-issued ID",
+        "6 months bank statements"
+      ],
       "faqs": [
-        { "q": "Is collateral required?", "a": "Unsecured up to $100,000; above that, business assets as collateral." },
-        { "q": "Can startups apply?", "a": "Businesses must be operational for at least 1 year." }
+        {
+          "q": "Is collateral required?",
+          "a": "Unsecured up to $100,000; above that, business assets as collateral."
+        },
+        {
+          "q": "Can startups apply?",
+          "a": "Businesses must be operational for at least 1 year."
+        }
       ],
       "terms_summary": "Subject to business credit assessment. Rate varies by business profile."
     },
@@ -690,7 +1041,11 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["health", "emergency_fund", "general"],
+    "eligible_goals": [
+      "health",
+      "emergency_fund",
+      "general"
+    ],
     "summary": {
       "coverage_amount_min": 50000,
       "coverage_amount_max": 2000000,
@@ -700,12 +1055,33 @@
     },
     "detail": {
       "tagline": "Lump-sum payout on diagnosis of 37 critical illnesses.",
-      "coverage": ["Cancer (all stages)", "Heart attack", "Stroke", "Kidney failure", "Major organ transplant", "37 conditions total"],
-      "exclusions": ["Pre-existing critical illness", "Self-inflicted conditions", "Drug/alcohol-related events"],
-      "claim_process": ["Submit diagnosis from licensed specialist", "Medical review within 14 days", "Lump-sum payout within 7 days of approval"],
+      "coverage": [
+        "Cancer (all stages)",
+        "Heart attack",
+        "Stroke",
+        "Kidney failure",
+        "Major organ transplant",
+        "37 conditions total"
+      ],
+      "exclusions": [
+        "Pre-existing critical illness",
+        "Self-inflicted conditions",
+        "Drug/alcohol-related events"
+      ],
+      "claim_process": [
+        "Submit diagnosis from licensed specialist",
+        "Medical review within 14 days",
+        "Lump-sum payout within 7 days of approval"
+      ],
       "faqs": [
-        { "q": "Can I claim multiple times?", "a": "Single payout upon first qualifying diagnosis." },
-        { "q": "Does it cover early-stage cancer?", "a": "Yes, early-stage cancer pays 25% of sum assured." }
+        {
+          "q": "Can I claim multiple times?",
+          "a": "Single payout upon first qualifying diagnosis."
+        },
+        {
+          "q": "Does it cover early-stage cancer?",
+          "a": "Yes, early-stage cancer pays 25% of sum assured."
+        }
       ],
       "terms_summary": "Premium based on age and health declaration. 90-day waiting period."
     },
@@ -722,7 +1098,9 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["general"],
+    "eligible_goals": [
+      "general"
+    ],
     "summary": {
       "coverage_amount_min": 5000,
       "coverage_amount_max": 30000,
@@ -732,12 +1110,33 @@
     },
     "detail": {
       "tagline": "Vet bills covered. Because they're family too.",
-      "coverage": ["Accidents & injuries", "Illness & disease", "Surgery & hospitalization", "Prescription medications", "Emergency vet visits"],
-      "exclusions": ["Pre-existing conditions", "Routine check-ups & vaccinations", "Breeding-related costs", "Cosmetic procedures"],
-      "claim_process": ["Visit any licensed veterinarian", "Submit claim with vet invoice within 60 days", "Reimbursement within 10 working days"],
+      "coverage": [
+        "Accidents & injuries",
+        "Illness & disease",
+        "Surgery & hospitalization",
+        "Prescription medications",
+        "Emergency vet visits"
+      ],
+      "exclusions": [
+        "Pre-existing conditions",
+        "Routine check-ups & vaccinations",
+        "Breeding-related costs",
+        "Cosmetic procedures"
+      ],
+      "claim_process": [
+        "Visit any licensed veterinarian",
+        "Submit claim with vet invoice within 60 days",
+        "Reimbursement within 10 working days"
+      ],
       "faqs": [
-        { "q": "What pets are covered?", "a": "Dogs and cats aged 8 weeks to 10 years." },
-        { "q": "Is there a deductible?", "a": "Yes, $200 annual deductible per pet." }
+        {
+          "q": "What pets are covered?",
+          "a": "Dogs and cats aged 8 weeks to 10 years."
+        },
+        {
+          "q": "Is there a deductible?",
+          "a": "Yes, $200 annual deductible per pet."
+        }
       ],
       "terms_summary": "Annual renewable. Pets must be microchipped and vaccinated."
     },
@@ -754,21 +1153,34 @@
     "min_credit": 650,
     "risk_level": "high",
     "return_pct": 12.0,
-    "eligible_goals": ["wealth", "retirement"],
+    "eligible_goals": [
+      "wealth",
+      "retirement"
+    ],
     "summary": {
       "risk_rating": 5,
       "min_investment": 2000,
       "platform_fee_pct": 0.6,
       "fund_manager": "InnoTech Capital",
-      "historical_returns": { "1y": 15.2, "3y": 11.8, "5y": 12.0 }
+      "historical_returns": {
+        "1y": 15.2,
+        "3y": 11.8,
+        "5y": 12.0
+      }
     },
     "detail": {
       "tagline": "High-growth tech exposure. AI, cloud & semiconductors.",
-      "fund_type": "Unit Trust — Technology Sector",
+      "fund_type": "Unit Trust \u2014 Technology Sector",
       "fund_factsheet_url": "#",
       "faqs": [
-        { "q": "What companies does it invest in?", "a": "Top holdings include NVIDIA, Microsoft, TSMC, and emerging AI companies." },
-        { "q": "Is this suitable for beginners?", "a": "Higher volatility — recommended for investors with 5+ year horizon." }
+        {
+          "q": "What companies does it invest in?",
+          "a": "Top holdings include NVIDIA, Microsoft, TSMC, and emerging AI companies."
+        },
+        {
+          "q": "Is this suitable for beginners?",
+          "a": "Higher volatility \u2014 recommended for investors with 5+ year horizon."
+        }
       ],
       "terms_summary": "High risk. Past performance not indicative. Capital at risk."
     },
@@ -785,54 +1197,37 @@
     "min_credit": 600,
     "risk_level": "moderate",
     "return_pct": 6.5,
-    "eligible_goals": ["retirement", "wealth", "general"],
+    "eligible_goals": [
+      "retirement",
+      "wealth",
+      "general"
+    ],
     "summary": {
       "risk_rating": 3,
       "min_investment": 1000,
       "platform_fee_pct": 0.4,
       "fund_manager": "YieldMaster Investments",
-      "historical_returns": { "1y": 6.2, "3y": 6.5, "5y": 6.5 }
+      "historical_returns": {
+        "1y": 6.2,
+        "3y": 6.5,
+        "5y": 6.5
+      }
     },
     "detail": {
       "tagline": "Steady dividends from companies with 25+ years of growth.",
-      "fund_type": "Unit Trust — Dividend Income",
+      "fund_type": "Unit Trust \u2014 Dividend Income",
       "fund_factsheet_url": "#",
       "faqs": [
-        { "q": "How often are dividends paid?", "a": "Monthly distributions to your account." },
-        { "q": "What qualifies as a Dividend Aristocrat?", "a": "S&P 500 companies with 25+ consecutive years of dividend increases." }
+        {
+          "q": "How often are dividends paid?",
+          "a": "Monthly distributions to your account."
+        },
+        {
+          "q": "What qualifies as a Dividend Aristocrat?",
+          "a": "S&P 500 companies with 25+ consecutive years of dividend increases."
+        }
       ],
       "terms_summary": "Moderate risk. Dividends not guaranteed. Capital at risk."
-    },
-    "agent_flow": "investment",
-    "cta_label": "Invest now"
-  },
-  {
-    "id": "INV-006",
-    "name": "ESG Sustainable Fund",
-    "product_type": "investment",
-    "category": "investments",
-    "sub_type": "esg",
-    "type": "investment",
-    "min_credit": 0,
-    "risk_level": "moderate",
-    "return_pct": 7.5,
-    "eligible_goals": ["wealth", "retirement", "general"],
-    "summary": {
-      "risk_rating": 3,
-      "min_investment": 500,
-      "platform_fee_pct": 0.45,
-      "fund_manager": "GreenFuture Capital",
-      "historical_returns": { "1y": 7.8, "3y": 7.2, "5y": 7.5 }
-    },
-    "detail": {
-      "tagline": "Invest with impact. Top ESG-rated companies globally.",
-      "fund_type": "Unit Trust — ESG Global Equity",
-      "fund_factsheet_url": "#",
-      "faqs": [
-        { "q": "What ESG criteria are used?", "a": "Companies scored on environmental impact, social responsibility, and governance practices." },
-        { "q": "Does ESG investing sacrifice returns?", "a": "Studies show ESG funds perform comparably to traditional funds over the long term." }
-      ],
-      "terms_summary": "Capital at risk. ESG ratings sourced from MSCI and Sustainalytics."
     },
     "agent_flow": "investment",
     "cta_label": "Invest now"
@@ -847,7 +1242,10 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "cashback_pct": null,
       "category": "referral",
@@ -859,10 +1257,17 @@
     "detail": {
       "tagline": "Refer a friend, get $50. They get $50 too.",
       "eligibility": "Any existing account holder. Unlimited referrals up to $500 total.",
-      "how_to_activate": ["Share your referral link from the app", "Friend opens any account or card", "Both receive $50 credited within 30 days"],
+      "how_to_activate": [
+        "Share your referral link from the app",
+        "Friend opens any account or card",
+        "Both receive $50 credited within 30 days"
+      ],
       "terms": "Referred friend must complete first transaction within 90 days. Max $500 referral bonus per calendar year.",
       "faqs": [
-        { "q": "Can I refer family members?", "a": "Yes, any new customer qualifies." }
+        {
+          "q": "Can I refer family members?",
+          "a": "Yes, any new customer qualifies."
+        }
       ]
     },
     "agent_flow": null,
@@ -878,22 +1283,34 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["travel", "rewards"],
+    "eligible_goals": [
+      "travel",
+      "rewards"
+    ],
     "summary": {
       "cashback_pct": null,
       "category": "welcome",
       "cap_amount": null,
       "min_spend": 3000,
       "expiry": "2025-12-31",
-      "eligible_cards": ["CC-003"]
+      "eligible_cards": [
+        "CC-003"
+      ]
     },
     "detail": {
       "tagline": "Earn double miles on all spend for first 3 months.",
       "eligibility": "New Travel Elite Card holders only.",
-      "how_to_activate": ["Activate your new Travel Elite Card", "All spend in first 90 days earns 2x miles", "Miles credited monthly to your account"],
+      "how_to_activate": [
+        "Activate your new Travel Elite Card",
+        "All spend in first 90 days earns 2x miles",
+        "Miles credited monthly to your account"
+      ],
       "terms": "New cardholders only. 2x multiplier applies to base miles earn rate. Must spend $3,000 in first 90 days to qualify.",
       "faqs": [
-        { "q": "Do bonus miles expire?", "a": "Same as regular miles — valid for 3 years." }
+        {
+          "q": "Do bonus miles expire?",
+          "a": "Same as regular miles \u2014 valid for 3 years."
+        }
       ]
     },
     "agent_flow": null,
@@ -909,22 +1326,35 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "cashback_pct": 3.0,
       "category": "dining",
       "cap_amount": 30,
       "min_spend": 50,
       "expiry": "2024-12-31",
-      "eligible_cards": ["CC-001", "CC-002"]
+      "eligible_cards": [
+        "CC-001",
+        "CC-002"
+      ]
     },
     "detail": {
       "tagline": "Earn 3% cashback at over 5,000 dining outlets.",
       "eligibility": "Requires Visa Platinum or Mastercard Gold",
-      "how_to_activate": ["Tap 'Activate offer' below", "Use eligible card for dining", "Cashback credited within 5 working days"],
+      "how_to_activate": [
+        "Tap 'Activate offer' below",
+        "Use eligible card for dining",
+        "Cashback credited within 5 working days"
+      ],
       "terms": "Max cashback $30/month. Cannot be combined with other dining promotions.",
       "faqs": [
-        { "q": "Which restaurants qualify?", "a": "All restaurants, cafes, and food delivery apps (Uber Eats, DoorDash, etc.)." }
+        {
+          "q": "Which restaurants qualify?",
+          "a": "All restaurants, cafes, and food delivery apps (Uber Eats, DoorDash, etc.)."
+        }
       ]
     },
     "agent_flow": null,
@@ -940,22 +1370,35 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "cashback_pct": null,
       "category": "fee_waiver",
       "cap_amount": null,
       "min_spend": 5000,
       "expiry": "2024-12-31",
-      "eligible_cards": ["CC-001", "CC-003"]
+      "eligible_cards": [
+        "CC-001",
+        "CC-003"
+      ]
     },
     "detail": {
-      "tagline": "Spend $5,000 in 3 months — get your annual fee waived.",
+      "tagline": "Spend $5,000 in 3 months \u2014 get your annual fee waived.",
       "eligibility": "Requires Visa Platinum or Travel Elite Card. New cardholders only.",
-      "how_to_activate": ["Tap 'Activate offer' below", "Spend $5,000 within 90 days of card activation", "Fee waiver automatically applied at anniversary"],
+      "how_to_activate": [
+        "Tap 'Activate offer' below",
+        "Spend $5,000 within 90 days of card activation",
+        "Fee waiver automatically applied at anniversary"
+      ],
       "terms": "New cardholders only. Spend must be net of refunds. Cannot retroactively apply.",
       "faqs": [
-        { "q": "Does this apply to renewals?", "a": "First-year only, for new cardholders." }
+        {
+          "q": "Does this apply to renewals?",
+          "a": "First-year only, for new cardholders."
+        }
       ]
     },
     "agent_flow": null,
@@ -971,25 +1414,907 @@
     "min_credit": 0,
     "risk_level": "low",
     "return_pct": null,
-    "eligible_goals": ["rewards", "general"],
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
     "summary": {
       "cashback_pct": 5.0,
       "category": "groceries",
       "cap_amount": 25,
       "min_spend": 80,
       "expiry": "2024-11-30",
-      "eligible_cards": ["CC-002"]
+      "eligible_cards": [
+        "CC-002"
+      ]
     },
     "detail": {
       "tagline": "5% back at major supermarkets. Every weekend.",
-      "eligibility": "Requires Mastercard Gold. Weekends only (Sat–Sun).",
-      "how_to_activate": ["Tap 'Activate offer' below", "Shop at participating supermarkets on weekends", "Cashback credited end of month"],
+      "eligibility": "Requires Mastercard Gold. Weekends only (Sat\u2013Sun).",
+      "how_to_activate": [
+        "Tap 'Activate offer' below",
+        "Shop at participating supermarkets on weekends",
+        "Cashback credited end of month"
+      ],
       "terms": "Weekends only. Max cashback $25/month. Participating stores: Kroger, Whole Foods, Safeway.",
       "faqs": [
-        { "q": "Does online grocery delivery count?", "a": "Yes, if the merchant is a qualifying supermarket." }
+        {
+          "q": "Does online grocery delivery count?",
+          "a": "Yes, if the merchant is a qualifying supermarket."
+        }
       ]
     },
     "agent_flow": null,
     "cta_label": "Activate offer"
+  },
+  {
+    "id": "CC-006",
+    "name": "Everyday Essentials Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 700,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
+    "summary": {
+      "annual_fee": 100,
+      "cashback_pct": 5.0,
+      "min_income": 60000,
+      "min_credit_score": 650,
+      "network": "visa"
+    },
+    "detail": {
+      "tagline": "Enjoy up to 5.0% cashback.",
+      "benefits": [
+        "No foreign transaction fees",
+        "Purchase protection"
+      ],
+      "fees": {
+        "late_payment": 35
+      },
+      "faqs": [],
+      "terms_summary": "Subject to approval."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-007",
+    "name": "Platinum Edge Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 600,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
+    "summary": {
+      "annual_fee": 0,
+      "cashback_pct": 3.0,
+      "min_income": 60000,
+      "min_credit_score": 650,
+      "network": "visa"
+    },
+    "detail": {
+      "tagline": "Enjoy up to 3.0% cashback.",
+      "benefits": [
+        "No foreign transaction fees",
+        "Purchase protection"
+      ],
+      "fees": {
+        "late_payment": 35
+      },
+      "faqs": [],
+      "terms_summary": "Subject to approval."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-008",
+    "name": "Velocity Rewards Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 700,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
+    "summary": {
+      "annual_fee": 100,
+      "cashback_pct": 1.5,
+      "min_income": 60000,
+      "min_credit_score": 650,
+      "network": "mastercard"
+    },
+    "detail": {
+      "tagline": "Enjoy up to 1.5% cashback.",
+      "benefits": [
+        "No foreign transaction fees",
+        "Purchase protection"
+      ],
+      "fees": {
+        "late_payment": 35
+      },
+      "faqs": [],
+      "terms_summary": "Subject to approval."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-009",
+    "name": "EcoGreen Cash Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 600,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
+    "summary": {
+      "annual_fee": 50,
+      "cashback_pct": 3.0,
+      "min_income": 20000,
+      "min_credit_score": 650,
+      "network": "visa"
+    },
+    "detail": {
+      "tagline": "Enjoy up to 3.0% cashback.",
+      "benefits": [
+        "No foreign transaction fees",
+        "Purchase protection"
+      ],
+      "fees": {
+        "late_payment": 35
+      },
+      "faqs": [],
+      "terms_summary": "Subject to approval."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-010",
+    "name": "Business Pro Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 600,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "rewards",
+      "general"
+    ],
+    "summary": {
+      "annual_fee": 100,
+      "cashback_pct": 3.0,
+      "min_income": 40000,
+      "min_credit_score": 650,
+      "network": "mastercard"
+    },
+    "detail": {
+      "tagline": "Enjoy up to 3.0% cashback.",
+      "benefits": [
+        "No foreign transaction fees",
+        "Purchase protection"
+      ],
+      "fees": {
+        "late_payment": 35
+      },
+      "faqs": [],
+      "terms_summary": "Subject to approval."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "SAV-006",
+    "name": "Goal Saver Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 5.33,
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
+    "summary": {
+      "interest_rate": 5.33,
+      "account_type": "regular",
+      "min_balance": 100,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Earn competitive 5.33% p.a.",
+      "rate_tiers": [],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [],
+      "terms_summary": "FDIC Insured."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "SAV-007",
+    "name": "Yield Plus Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 4.52,
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
+    "summary": {
+      "interest_rate": 4.52,
+      "account_type": "regular",
+      "min_balance": 100,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Earn competitive 4.52% p.a.",
+      "rate_tiers": [],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [],
+      "terms_summary": "FDIC Insured."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "SAV-008",
+    "name": "RetireSmart Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 3.73,
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
+    "summary": {
+      "interest_rate": 3.73,
+      "account_type": "regular",
+      "min_balance": 100,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Earn competitive 3.73% p.a.",
+      "rate_tiers": [],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [],
+      "terms_summary": "FDIC Insured."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "SAV-009",
+    "name": "Flexi Deposit Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 5.38,
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
+    "summary": {
+      "interest_rate": 5.38,
+      "account_type": "regular",
+      "min_balance": 100,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Earn competitive 5.38% p.a.",
+      "rate_tiers": [],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [],
+      "terms_summary": "FDIC Insured."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "SAV-010",
+    "name": "Online Max Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 4.45,
+    "eligible_goals": [
+      "emergency_fund",
+      "house",
+      "general"
+    ],
+    "summary": {
+      "interest_rate": 4.45,
+      "account_type": "regular",
+      "min_balance": 100,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Earn competitive 4.45% p.a.",
+      "rate_tiers": [],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [],
+      "terms_summary": "FDIC Insured."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "LN-006",
+    "name": "Debt Consolidation Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "personal",
+    "type": "loan",
+    "min_credit": 620,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": [
+      "general"
+    ],
+    "summary": {
+      "interest_rate_min": 11.64,
+      "interest_rate_max": 16.64,
+      "loan_amount_min": 1000,
+      "loan_amount_max": 50000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 60,
+      "min_income": 30000,
+      "approval_days": "1-3 days"
+    },
+    "detail": {
+      "tagline": "Flexible terms for your needs.",
+      "required_docs": [
+        "ID",
+        "Payslips"
+      ],
+      "faqs": [],
+      "terms_summary": "Subject to assessment."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "LN-007",
+    "name": "Green Energy Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "personal",
+    "type": "loan",
+    "min_credit": 650,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": [
+      "general"
+    ],
+    "summary": {
+      "interest_rate_min": 7.54,
+      "interest_rate_max": 12.54,
+      "loan_amount_min": 1000,
+      "loan_amount_max": 50000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 60,
+      "min_income": 30000,
+      "approval_days": "1-3 days"
+    },
+    "detail": {
+      "tagline": "Flexible terms for your needs.",
+      "required_docs": [
+        "ID",
+        "Payslips"
+      ],
+      "faqs": [],
+      "terms_summary": "Subject to assessment."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "LN-008",
+    "name": "Renovation Plus Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "personal",
+    "type": "loan",
+    "min_credit": 600,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": [
+      "general"
+    ],
+    "summary": {
+      "interest_rate_min": 10.18,
+      "interest_rate_max": 15.18,
+      "loan_amount_min": 1000,
+      "loan_amount_max": 50000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 60,
+      "min_income": 30000,
+      "approval_days": "1-3 days"
+    },
+    "detail": {
+      "tagline": "Flexible terms for your needs.",
+      "required_docs": [
+        "ID",
+        "Payslips"
+      ],
+      "faqs": [],
+      "terms_summary": "Subject to assessment."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "LN-009",
+    "name": "Graduate Auto Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "personal",
+    "type": "loan",
+    "min_credit": 620,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": [
+      "general"
+    ],
+    "summary": {
+      "interest_rate_min": 10.8,
+      "interest_rate_max": 15.8,
+      "loan_amount_min": 1000,
+      "loan_amount_max": 50000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 60,
+      "min_income": 30000,
+      "approval_days": "1-3 days"
+    },
+    "detail": {
+      "tagline": "Flexible terms for your needs.",
+      "required_docs": [
+        "ID",
+        "Payslips"
+      ],
+      "faqs": [],
+      "terms_summary": "Subject to assessment."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "LN-010",
+    "name": "Medical Emergency Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "personal",
+    "type": "loan",
+    "min_credit": 600,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": [
+      "general"
+    ],
+    "summary": {
+      "interest_rate_min": 8.22,
+      "interest_rate_max": 13.22,
+      "loan_amount_min": 1000,
+      "loan_amount_max": 50000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 60,
+      "min_income": 30000,
+      "approval_days": "1-3 days"
+    },
+    "detail": {
+      "tagline": "Flexible terms for your needs.",
+      "required_docs": [
+        "ID",
+        "Payslips"
+      ],
+      "faqs": [],
+      "terms_summary": "Subject to assessment."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-006",
+    "name": "Family Shield Insurance",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "life",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "health",
+      "emergency_fund"
+    ],
+    "summary": {
+      "coverage_amount_min": 10000,
+      "coverage_amount_max": 200000,
+      "premium_monthly_est": 78,
+      "term_years": 1,
+      "underwriter": "Global Re"
+    },
+    "detail": {
+      "tagline": "Comprehensive protection.",
+      "coverage": [
+        "Basic cover",
+        "Accident cover"
+      ],
+      "exclusions": [
+        "Pre-existing"
+      ],
+      "claim_process": [],
+      "faqs": [],
+      "terms_summary": "Renewable annually."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-007",
+    "name": "Auto Protect Insurance",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "life",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "health",
+      "emergency_fund"
+    ],
+    "summary": {
+      "coverage_amount_min": 10000,
+      "coverage_amount_max": 200000,
+      "premium_monthly_est": 51,
+      "term_years": 1,
+      "underwriter": "Global Re"
+    },
+    "detail": {
+      "tagline": "Comprehensive protection.",
+      "coverage": [
+        "Basic cover",
+        "Accident cover"
+      ],
+      "exclusions": [
+        "Pre-existing"
+      ],
+      "claim_process": [],
+      "faqs": [],
+      "terms_summary": "Renewable annually."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-008",
+    "name": "Home Guard Insurance",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "life",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "health",
+      "emergency_fund"
+    ],
+    "summary": {
+      "coverage_amount_min": 10000,
+      "coverage_amount_max": 200000,
+      "premium_monthly_est": 104,
+      "term_years": 1,
+      "underwriter": "Global Re"
+    },
+    "detail": {
+      "tagline": "Comprehensive protection.",
+      "coverage": [
+        "Basic cover",
+        "Accident cover"
+      ],
+      "exclusions": [
+        "Pre-existing"
+      ],
+      "claim_process": [],
+      "faqs": [],
+      "terms_summary": "Renewable annually."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-009",
+    "name": "Cyber Safe Insurance",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "life",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "health",
+      "emergency_fund"
+    ],
+    "summary": {
+      "coverage_amount_min": 10000,
+      "coverage_amount_max": 200000,
+      "premium_monthly_est": 64,
+      "term_years": 1,
+      "underwriter": "Global Re"
+    },
+    "detail": {
+      "tagline": "Comprehensive protection.",
+      "coverage": [
+        "Basic cover",
+        "Accident cover"
+      ],
+      "exclusions": [
+        "Pre-existing"
+      ],
+      "claim_process": [],
+      "faqs": [],
+      "terms_summary": "Renewable annually."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-010",
+    "name": "Senior Care Insurance",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "life",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": [
+      "health",
+      "emergency_fund"
+    ],
+    "summary": {
+      "coverage_amount_min": 10000,
+      "coverage_amount_max": 200000,
+      "premium_monthly_est": 33,
+      "term_years": 1,
+      "underwriter": "Global Re"
+    },
+    "detail": {
+      "tagline": "Comprehensive protection.",
+      "coverage": [
+        "Basic cover",
+        "Accident cover"
+      ],
+      "exclusions": [
+        "Pre-existing"
+      ],
+      "claim_process": [],
+      "faqs": [],
+      "terms_summary": "Renewable annually."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INV-006",
+    "name": "ESG Global Equities Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "unit_trust",
+    "type": "investment",
+    "min_credit": 600,
+    "risk_level": "high",
+    "return_pct": 12.68,
+    "eligible_goals": [
+      "wealth",
+      "retirement"
+    ],
+    "summary": {
+      "risk_rating": 4,
+      "min_investment": 100,
+      "platform_fee_pct": 0.5,
+      "fund_manager": "Apex Funds",
+      "historical_returns": {
+        "1y": 12.68
+      }
+    },
+    "detail": {
+      "tagline": "Invest in future growth.",
+      "fund_type": "Equity/Bond",
+      "fund_factsheet_url": "#",
+      "faqs": [],
+      "terms_summary": "Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "INV-007",
+    "name": "Emerging Markets Bond Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "unit_trust",
+    "type": "investment",
+    "min_credit": 600,
+    "risk_level": "high",
+    "return_pct": 6.67,
+    "eligible_goals": [
+      "wealth",
+      "retirement"
+    ],
+    "summary": {
+      "risk_rating": 4,
+      "min_investment": 100,
+      "platform_fee_pct": 0.5,
+      "fund_manager": "Apex Funds",
+      "historical_returns": {
+        "1y": 6.67
+      }
+    },
+    "detail": {
+      "tagline": "Invest in future growth.",
+      "fund_type": "Equity/Bond",
+      "fund_factsheet_url": "#",
+      "faqs": [],
+      "terms_summary": "Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "INV-008",
+    "name": "Real Estate Trust Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "unit_trust",
+    "type": "investment",
+    "min_credit": 600,
+    "risk_level": "high",
+    "return_pct": 5.67,
+    "eligible_goals": [
+      "wealth",
+      "retirement"
+    ],
+    "summary": {
+      "risk_rating": 4,
+      "min_investment": 100,
+      "platform_fee_pct": 0.5,
+      "fund_manager": "Apex Funds",
+      "historical_returns": {
+        "1y": 5.67
+      }
+    },
+    "detail": {
+      "tagline": "Invest in future growth.",
+      "fund_type": "Equity/Bond",
+      "fund_factsheet_url": "#",
+      "faqs": [],
+      "terms_summary": "Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "INV-009",
+    "name": "Blue Chip Income Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "unit_trust",
+    "type": "investment",
+    "min_credit": 600,
+    "risk_level": "high",
+    "return_pct": 7.38,
+    "eligible_goals": [
+      "wealth",
+      "retirement"
+    ],
+    "summary": {
+      "risk_rating": 4,
+      "min_investment": 100,
+      "platform_fee_pct": 0.5,
+      "fund_manager": "Apex Funds",
+      "historical_returns": {
+        "1y": 7.38
+      }
+    },
+    "detail": {
+      "tagline": "Invest in future growth.",
+      "fund_type": "Equity/Bond",
+      "fund_factsheet_url": "#",
+      "faqs": [],
+      "terms_summary": "Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "INV-010",
+    "name": "Tech Innovators Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "unit_trust",
+    "type": "investment",
+    "min_credit": 600,
+    "risk_level": "high",
+    "return_pct": 5.13,
+    "eligible_goals": [
+      "wealth",
+      "retirement"
+    ],
+    "summary": {
+      "risk_rating": 4,
+      "min_investment": 100,
+      "platform_fee_pct": 0.5,
+      "fund_manager": "Apex Funds",
+      "historical_returns": {
+        "1y": 5.13
+      }
+    },
+    "detail": {
+      "tagline": "Invest in future growth.",
+      "fund_type": "Equity/Bond",
+      "fund_factsheet_url": "#",
+      "faqs": [],
+      "terms_summary": "Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
   }
 ]
