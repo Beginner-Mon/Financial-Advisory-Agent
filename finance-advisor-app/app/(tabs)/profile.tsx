@@ -60,6 +60,9 @@ export default function ProfileScreen() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
 
+  // Modal
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
   // ──────────────────────────────────────────────
   // Data fetchers
   // ──────────────────────────────────────────────
@@ -128,7 +131,7 @@ export default function ProfileScreen() {
           try {
             await deleteGoal(goalId);
             fetchGoals();
-          } catch {}
+          } catch { }
         },
       },
     ]);
@@ -171,32 +174,106 @@ export default function ProfileScreen() {
             <View style={styles.emptyState}>
               <Ionicons name="briefcase-outline" size={48} color={Colors.textMuted} />
               <Text style={styles.emptyText}>No active products yet</Text>
-              <Text style={styles.emptySubtext}>Browse products in the Discover tab to get started</Text>
+              <Text style={styles.emptySubtext}>Browse products to get started</Text>
             </View>
           ) : (
             Object.entries(grouped).map(([type, items]) => (
               <View key={type} style={styles.groupSection}>
                 <Text style={styles.groupTitle}>{type.replace(/_/g, ' ')}</Text>
-                {items.map((order) => (
-                  <View key={order.order_id} style={styles.orderCard}>
-                    <View style={styles.orderHeader}>
-                      <Text style={styles.orderProduct}>{order.product_id}</Text>
-                      <View style={[styles.statusBadge, { backgroundColor: `${STATUS_COLORS[order.status] || Colors.textMuted}20` }]}>
-                        <Text style={[styles.statusText, { color: STATUS_COLORS[order.status] || Colors.textMuted }]}>
-                          {order.status}
+                {items.map((order) => {
+                  const isAi = order.source === 'ai_agent' || order.source === 'ai';
+                  return (
+                    <TouchableOpacity
+                      key={order.order_id}
+                      style={styles.orderCard}
+                      activeOpacity={0.7}
+                      onPress={() => setSelectedOrder(order)}
+                    >
+                      <View style={styles.orderHeader}>
+                        <Text style={styles.orderProduct} numberOfLines={1}>
+                          {order.product_name || order.product_id}
                         </Text>
+                        <View style={[styles.statusBadge, { backgroundColor: `${STATUS_COLORS[order.status] || Colors.textMuted}20` }]}>
+                          <Text style={[styles.statusText, { color: STATUS_COLORS[order.status] || Colors.textMuted }]}>
+                            {order.status}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                    <Text style={styles.orderRef}>Ref: {order.reference_no}</Text>
-                    <Text style={styles.orderDate}>
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </Text>
-                  </View>
-                ))}
+                      <View style={styles.orderMeta}>
+                        <View style={[styles.sourceBadge, isAi ? styles.sourceBadgeAi : styles.sourceBadgeTraditional]}>
+                          <Ionicons
+                            name={isAi ? 'sparkles' : 'create-outline'}
+                            size={10}
+                            color={isAi ? Colors.gold : Colors.primary}
+                          />
+                          <Text style={[styles.sourceBadgeText, { color: isAi ? Colors.gold : Colors.primary }]}>
+                            {isAi ? 'AI Assistant' : 'Traditional'}
+                          </Text>
+                        </View>
+                        <Text style={styles.orderRef}>Ref: {order.reference_no}</Text>
+                      </View>
+                      <Text style={styles.orderDate}>
+                        {new Date(order.created_at).toLocaleDateString()}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             ))
           )}
         </ScrollView>
+
+        {/* ── Detail Modal ── */}
+        {selectedOrder && (
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHandle} />
+              <TouchableOpacity style={styles.modalClose} onPress={() => setSelectedOrder(null)}>
+                <Ionicons name="close" size={22} color={Colors.textMuted} />
+              </TouchableOpacity>
+
+              <Text style={styles.modalTitle}>{selectedOrder.product_name || selectedOrder.product_id}</Text>
+
+              {/* Source badge */}
+              {(() => {
+                const isAi = selectedOrder.source === 'ai_agent' || selectedOrder.source === 'ai';
+                return (
+                  <View style={[styles.sourceBadgeLg, isAi ? styles.sourceBadgeAi : styles.sourceBadgeTraditional]}>
+                    <Ionicons name={isAi ? 'sparkles' : 'create-outline'} size={14} color={isAi ? Colors.gold : Colors.primary} />
+                    <Text style={[styles.sourceBadgeTextLg, { color: isAi ? Colors.gold : Colors.primary }]}>
+                      {isAi ? 'Purchased via AI Assistant' : 'Purchased via Traditional Form'}
+                    </Text>
+                  </View>
+                );
+              })()}
+
+              <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator={false}>
+                {/* Detail rows */}
+                <View style={styles.detailRow}><Text style={styles.detailLabel}>Reference</Text><Text style={styles.detailValue}>{selectedOrder.reference_no}</Text></View>
+                <View style={styles.detailRow}><Text style={styles.detailLabel}>Status</Text><Text style={[styles.detailValue, { color: STATUS_COLORS[selectedOrder.status] || Colors.textMuted }]}>{selectedOrder.status}</Text></View>
+                <View style={styles.detailRow}><Text style={styles.detailLabel}>Product Type</Text><Text style={styles.detailValue}>{selectedOrder.product_type}</Text></View>
+                <View style={styles.detailRow}><Text style={styles.detailLabel}>Date</Text><Text style={styles.detailValue}>{new Date(selectedOrder.created_at).toLocaleString()}</Text></View>
+
+                {/* Form data (if any) */}
+                {selectedOrder.form_data && (() => {
+                  try {
+                    const fd = typeof selectedOrder.form_data === 'string' ? JSON.parse(selectedOrder.form_data) : selectedOrder.form_data;
+                    return Object.entries(fd).filter(([k]) => !['otp', 'terms'].includes(k)).map(([key, val]) => (
+                      <View key={key} style={styles.detailRow}>
+                        <Text style={styles.detailLabel}>{key.replace(/_/g, ' ')}</Text>
+                        <Text style={styles.detailValue}>{String(val)}</Text>
+                      </View>
+                    ));
+                  } catch { return null; }
+                })()}
+              </ScrollView>
+
+              <TouchableOpacity style={styles.modalDoneBtn} onPress={() => setSelectedOrder(null)}>
+                <Text style={styles.modalDoneBtnText}>Done</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
       </View>
     );
   }
@@ -517,11 +594,37 @@ const styles = StyleSheet.create({
     borderColor: Colors.cardBorder, padding: Spacing.lg, marginBottom: Spacing.sm,
   },
   orderHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm },
-  orderProduct: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.textPrimary, flex: 1 },
-  orderRef: { fontSize: FontSize.xs, color: Colors.textMuted, marginBottom: 2 },
-  orderDate: { fontSize: FontSize.xs, color: Colors.textMuted },
+  orderProduct: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.textPrimary, flex: 1, marginRight: Spacing.md },
+  orderRef: { fontSize: FontSize.xs, color: Colors.textMuted },
+  orderDate: { fontSize: FontSize.xs, color: Colors.textMuted, marginTop: Spacing.sm },
   statusBadge: { paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm },
   statusText: { fontSize: FontSize.xs, fontWeight: FontWeight.bold, textTransform: 'uppercase', letterSpacing: 0.5 },
+  orderMeta: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
+  sourceBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, borderWidth: 1 },
+  sourceBadgeAi: { backgroundColor: 'rgba(201,168,76,0.1)', borderColor: 'rgba(201,168,76,0.2)' },
+  sourceBadgeTraditional: { backgroundColor: 'rgba(79,140,255,0.1)', borderColor: 'rgba(79,140,255,0.2)' },
+  sourceBadgeText: { fontSize: 10, fontWeight: FontWeight.bold, textTransform: 'uppercase', letterSpacing: 0.5 },
+
+  // Detail Modal
+  modalOverlay: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end', zIndex: 100,
+  },
+  modalContent: {
+    backgroundColor: Colors.surface, borderTopLeftRadius: BorderRadius.xl, borderTopRightRadius: BorderRadius.xl,
+    padding: Spacing.lg, maxHeight: '85%', ...Shadows.lg,
+  },
+  modalHandle: { width: 40, height: 4, backgroundColor: Colors.cardBorder, borderRadius: 2, alignSelf: 'center', marginBottom: Spacing.lg },
+  modalClose: { position: 'absolute', top: Spacing.lg, right: Spacing.lg, zIndex: 10, padding: Spacing.sm },
+  modalTitle: { fontSize: FontSize.xl, fontWeight: FontWeight.bold, color: Colors.textPrimary, marginBottom: Spacing.md, paddingRight: Spacing.xxl },
+  sourceBadgeLg: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md, borderWidth: 1, alignSelf: 'flex-start', marginBottom: Spacing.xl },
+  sourceBadgeTextLg: { fontSize: FontSize.sm, fontWeight: FontWeight.bold },
+  modalScroll: { flexGrow: 0 },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', paddingVertical: Spacing.md, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder },
+  detailLabel: { fontSize: FontSize.sm, color: Colors.textMuted, textTransform: 'capitalize', width: '35%' },
+  detailValue: { fontSize: FontSize.sm, fontWeight: FontWeight.medium, color: Colors.textPrimary, flex: 1, textAlign: 'right' },
+  modalDoneBtn: { backgroundColor: Colors.navy, borderRadius: BorderRadius.md, paddingVertical: Spacing.lg, alignItems: 'center', marginTop: Spacing.xl },
+  modalDoneBtnText: { color: Colors.white, fontSize: FontSize.md, fontWeight: FontWeight.bold },
 
   // Goals
   addGoalBtn: {

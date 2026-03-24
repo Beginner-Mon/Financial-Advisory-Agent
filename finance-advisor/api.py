@@ -652,8 +652,10 @@ def execute_resume(body: ResumeExecutionBody):
         # All steps complete — create order
         reference_no = apply_product({
             "user_id": "user-demo-001",
+            "session_id": body.session_id,
             "product_id": product_id,
             "product_type": product_type,
+            "form_data": filled_data,
             "agent_log": agent_log,
         })
         save_progress(body.session_id, product_id, product_type, next_index, filled_data, agent_log)
@@ -788,7 +790,16 @@ class TraditionalApplyRequest(BaseModel):
 def traditional_apply(req: TraditionalApplyRequest):
     """Process a manual step-by-step product application."""
     db = _db()
+
+    # Ensure orders table has all needed columns (may have been created by execution flow)
+    if "orders" in db.table_names():
+        existing_cols = {col.name for col in db["orders"].columns}
+        for col_name in ["form_data", "source", "reference_no", "product_name"]:
+            if col_name not in existing_cols:
+                db.execute(f'ALTER TABLE orders ADD COLUMN {col_name} TEXT DEFAULT ""')
+
     ref_prefix = {
+
         "card": "CC", "savings": "SAV", "loan": "LN",
         "insurance": "INS", "investment": "INV",
     }.get(req.product_type, "REF")
@@ -798,6 +809,7 @@ def traditional_apply(req: TraditionalApplyRequest):
         "order_id": f"ord-{req.session_id}-{int(datetime.now().timestamp())}",
         "user_id": req.session_id,
         "product_id": req.product_id,
+        "product_name": product_name,
         "product_type": req.product_type,
         "source": "traditional",
         "form_data": json.dumps(req.form_data),
@@ -819,6 +831,13 @@ def traditional_apply(req: TraditionalApplyRequest):
         acc_id = f"sav-{req.session_id}-{int(datetime.now().timestamp())}"
         products = _load_products()
         prod_match = next((p for p in products if p["id"] == req.product_id), None)
+
+        # Ensure accounts table has all needed columns
+        if "accounts" in db.table_names():
+            existing_cols = {col.name for col in db["accounts"].columns}
+            for col_name in ["nickname", "product_id", "product_name", "opened_via", "opened_at"]:
+                if col_name not in existing_cols:
+                    db.execute(f'ALTER TABLE accounts ADD COLUMN {col_name} TEXT DEFAULT ""')
 
         acc_row = {
             "account_id": acc_id,
@@ -851,9 +870,91 @@ def traditional_apply(req: TraditionalApplyRequest):
         "investment": "Units will be allocated within 2 business days.",
     }
 
+    # Build key_details from form_data
+    key_details = []
+    products = _load_products() if req.product_type != "savings" else (products if req.product_type == "savings" else _load_products())
+    prod_match = next((p for p in _load_products() if p["id"] == req.product_id), None)
+    product_name = prod_match["name"] if prod_match else req.product_type.capitalize()
+
+    # Extract relevant form fields as key details
+    detail_keys = {
+        "card": ["full_name", "credit_limit", "statement_cycle", "autopay"],
+        "savings": ["account_nickname", "initial_deposit", "funding_account"],
+        "loan": ["loan_amount", "loan_tenure", "loan_purpose"],
+        "insurance": ["coverage_tier", "coverage_amount", "payment_frequency"],
+        "investment": ["investment_amount", "funding_account"],
+    }
+    for field in detail_keys.get(req.product_type, []):
+        if field in req.form_data:
+            key_details.append({
+                "label": field.replace("_", " ").title(),
+                "value": str(req.form_data[field]),
+            })
+
     return _ok({
         "order_id": order["order_id"],
         "reference_no": ref_no,
+        "product_name": product_name,
+        "product_type": req.product_type,
         "message": messages.get(req.product_type, "Application submitted."),
         "next_steps": next_steps.get(req.product_type, "We will be in touch."),
+        "key_details": key_details,
     })
+
+
+# ---------------------------------------------------------------------------
+# Goals
+# ---------------------------------------------------------------------------
+from tools.goals.tracker import (
+    get_goals as _get_goals,
+    create_goal as _create_goal,
+    update_goal as _update_goal,
+    delete_goal as _delete_goal,
+)
+
+
+class CreateGoalRequest(BaseModel):
+    user_id: str
+    name: str
+    target_amount: float
+    deadline: str = ""
+
+
+@app.get("/goals/{user_id}")
+def goals_list(user_id: str):
+    return _ok(_get_goals(user_id))
+
+
+@app.post("/goals")
+def goals_create(req: CreateGoalRequest):
+    goal = _create_goal(
+        user_id=req.user_id,
+        name=req.name,
+        target_amount=req.target_amount,
+        deadline=req.deadline or "",
+    )
+    return _ok(goal)
+
+
+class UpdateGoalRequest(BaseModel):
+    target_amount: float | None = None
+    current_amount: float | None = None
+    deadline: str | None = None
+    name: str | None = None
+
+
+@app.patch("/goals/{goal_id}")
+def goals_update(goal_id: str, req: UpdateGoalRequest):
+    updates = {k: v for k, v in req.dict().items() if v is not None}
+    result = _update_goal(goal_id, updates)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    return _ok(result)
+
+
+@app.delete("/goals/{goal_id}")
+def goals_delete(goal_id: str):
+    ok = _delete_goal(goal_id)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Goal not found")
+    return _ok({"deleted": True})
