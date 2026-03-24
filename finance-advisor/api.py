@@ -417,8 +417,8 @@ def confirm_transfer(transfer_id: str, body: ConfirmTransferBody):
 # ===========================================================================
 
 @app.get("/products")
-def list_products(type: str = "", category: str = ""):
-    """List products — filter by type or category query param."""
+def list_products(type: str = "", category: str = "", page: int = 1, limit: int = 10):
+    """List products — filter by type or category, with pagination."""
     products = _load_products()
     filter_val = type or category
     if filter_val:
@@ -426,7 +426,11 @@ def list_products(type: str = "", category: str = ""):
     # Strip promotions from general product list unless explicitly requested
     if not filter_val:
         products = [p for p in products if p.get("product_type") != "promotion"]
-    return _ok(products)
+
+    total = len(products)
+    start = (page - 1) * limit
+    paged = products[start : start + limit]
+    return _ok({"products": paged, "total": total, "page": page, "limit": limit})
 
 
 @app.get("/products/{product_id}")
@@ -798,8 +802,12 @@ def traditional_apply(req: TraditionalApplyRequest):
             if col_name not in existing_cols:
                 db.execute(f'ALTER TABLE orders ADD COLUMN {col_name} TEXT DEFAULT ""')
 
-    ref_prefix = {
+    # Resolve product name before building the order dict
+    _all_products = _load_products()
+    _prod_match = next((p for p in _all_products if p["id"] == req.product_id), None)
+    product_name = _prod_match["name"] if _prod_match else req.product_type.capitalize()
 
+    ref_prefix = {
         "card": "CC", "savings": "SAV", "loan": "LN",
         "insurance": "INS", "investment": "INV",
     }.get(req.product_type, "REF")
@@ -872,9 +880,7 @@ def traditional_apply(req: TraditionalApplyRequest):
 
     # Build key_details from form_data
     key_details = []
-    products = _load_products() if req.product_type != "savings" else (products if req.product_type == "savings" else _load_products())
-    prod_match = next((p for p in _load_products() if p["id"] == req.product_id), None)
-    product_name = prod_match["name"] if prod_match else req.product_type.capitalize()
+    prod_match = _prod_match  # already resolved above
 
     # Extract relevant form fields as key details
     detail_keys = {

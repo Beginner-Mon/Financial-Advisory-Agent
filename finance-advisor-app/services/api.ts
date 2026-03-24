@@ -324,9 +324,20 @@ export function confirmTransfer(transferId: string, otp: string): Promise<Transf
 // Products / Discover
 // ---------------------------------------------------------------------------
 
-export function getProducts(type?: string): Promise<Product[]> {
-  const qs = type ? `?type=${encodeURIComponent(type)}` : '';
-  return apiGet<Product[]>(`/products${qs}`);
+export interface ProductListResponse {
+  products: Product[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export function getProducts(type?: string, page: number = 1, limit: number = 10): Promise<ProductListResponse> {
+  const qs = new URLSearchParams();
+  if (type) qs.set('type', type);
+  qs.set('page', String(page));
+  qs.set('limit', String(limit));
+  const query = qs.toString();
+  return apiGet<ProductListResponse>(`/products${query ? `?${query}` : ''}`);
 }
 
 export function getProductDetail(productId: string): Promise<Product> {

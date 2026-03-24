@@ -14,7 +14,7 @@ import { useRouter } from 'expo-router';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius, Shadows } from '../../constants/theme';
 import {
   getProducts, getProductDetail, getAdvice, traditionalApply,
-  Product, StructuredReport,
+  Product, StructuredReport, Recommendation,
 } from '../../services/api';
 import { useSessionStore } from '../../store/session';
 import BrowseProductsGrid from '../../components/products/BrowseProductsGrid';
@@ -32,6 +32,7 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   timestamp: Date;
+  recommendations?: Recommendation[];
 }
 
 export default function DiscoverScreen() {
@@ -51,6 +52,7 @@ export default function DiscoverScreen() {
   // ── Product Detail ──
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailSource, setDetailSource] = useState<DiscoverView>('aiProductList');
 
   // ── AI Auto-Fill ──
   const [filledForm, setFilledForm] = useState<Record<string, any>>({});
@@ -76,23 +78,51 @@ export default function DiscoverScreen() {
   // ── Navigation ──
   const goBack = () => {
     if (view === 'aiProductList') setView('home');
-    else if (view === 'productDetail') setView('aiProductList');
+    else if (view === 'productDetail') setView(detailSource);
     else if (view === 'aiAutoFill') setView('productDetail');
     else if (view === 'result') { setView('home'); setResultData(null); }
     else if (view === 'chat') setView('home');
     else setView('home');
   };
 
-  // ── AI Category Tap: fetch recommended products ──
+  // ── AI Category Tap: fetch and sort recommended products ──
   const openAiCategory = async (catKey: string) => {
     setActiveCategory(catKey);
     setAiListLoading(true);
     setView('aiProductList');
     try {
-      // Use existing getProducts for now — backend can be enhanced later
-      // to use POST /ai-guide/recommend when the AI endpoint is ready
-      const prods = await getProducts(catKey);
-      setAiProducts(prods);
+      // Fetch all products in category
+      const res = await getProducts(catKey, 1, 50);
+      let fetched = res.products;
+
+      // Sort by relevance to profile
+      if (profile) {
+        fetched = fetched.map(p => {
+          let score = 0;
+          // Risk match
+          if (profile.risk_tolerance === 'low' && p.risk_level === 'low') score += 2;
+          if (profile.risk_tolerance === 'medium' && p.risk_level === 'moderate') score += 2;
+          if (profile.risk_tolerance === 'high' && p.risk_level === 'high') score += 2;
+          // Goals match
+          if (p.eligible_goals) {
+            profile.goals.forEach(g => {
+              if (p.eligible_goals!.includes(g)) score += 1;
+            });
+          }
+          return { ...p, _score: score };
+        })
+        .sort((a: any, b: any) => b._score - a._score)
+        .map((p: any, idx) => {
+          // Top 3 matches get the AI Recommended badge
+          if (idx < 3 && p._score > 0) {
+            p.isAiRecommended = true;
+          }
+          delete p._score;
+          return p as Product;
+        });
+      }
+
+      setAiProducts(fetched);
       setAiNote(`Based on your profile, here are the best ${catKey} options for you.`);
     } catch {
       setAiProducts([]);
@@ -103,7 +133,8 @@ export default function DiscoverScreen() {
   };
 
   // ── Product detail ──
-  const openDetail = async (productId: string) => {
+  const openDetail = async (productId: string, source: DiscoverView = 'aiProductList') => {
+    setDetailSource(source);
     setDetailLoading(true);
     setView('productDetail');
     try {
@@ -202,7 +233,13 @@ export default function DiscoverScreen() {
     try {
       const report: StructuredReport = await getAdvice(text);
       const reply = [report.agent_commentary, report.report_markdown].filter(Boolean).join('\n\n') || 'I\'m here to help with your finances.';
-      setChatMessages((prev) => [...prev, { id: `a-${Date.now()}`, role: 'assistant', text: reply, timestamp: new Date() }]);
+      setChatMessages((prev) => [...prev, {
+        id: `a-${Date.now()}`,
+        role: 'assistant',
+        text: reply,
+        timestamp: new Date(),
+        recommendations: report.recommendations?.length ? report.recommendations : undefined,
+      }]);
     } catch {
       setChatMessages((prev) => [...prev, { id: `e-${Date.now()}`, role: 'assistant', text: 'Sorry, I encountered an error. Please try again.', timestamp: new Date() }]);
     } finally {
@@ -469,6 +506,32 @@ export default function DiscoverScreen() {
                     {item.text}
                   </Markdown>
                 )}
+                {/* Recommendation cards */}
+                {item.recommendations && item.recommendations.length > 0 && (
+                  <View style={styles.recCardsWrap}>
+                    <Text style={styles.recCardsTitle}>Recommended Products</Text>
+                    {item.recommendations.map((rec, idx) => (
+                      <View key={idx} style={styles.recCard}>
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.recCardName}>{rec.name}</Text>
+                          <Text style={styles.recCardType}>{rec.type}{rec.return_pct ? ` • ${rec.return_pct}% return` : ''}</Text>
+                          <Text style={styles.recCardRationale} numberOfLines={2}>{rec.rationale}</Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.recPurchaseBtn}
+                          activeOpacity={0.7}
+                          onPress={() => {
+                            // Find product by name and open detail
+                            openAiCategory(rec.type === 'investment' ? 'investments' : rec.type === 'card' ? 'cards' : rec.type + 's');
+                          }}
+                        >
+                          <Ionicons name="sparkles" size={12} color={Colors.navy} />
+                          <Text style={styles.recPurchaseBtnText}>Browse</Text>
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                  </View>
+                )}
                 <Text style={styles.chatTime}>
                   {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>
@@ -674,5 +737,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, fontSize: FontSize.md, color: Colors.textPrimary, marginRight: Spacing.sm,
   },
   chatSendBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: Colors.gold, justifyContent: 'center', alignItems: 'center' },
+  // Recommendation Cards in Chat
+  recCardsWrap: { marginTop: Spacing.sm, gap: Spacing.sm },
+  recCardsTitle: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.textMuted, marginBottom: 2 },
+  recCard: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surface,
+    padding: Spacing.md, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: Colors.cardBorder, gap: Spacing.md
+  },
+  recCardName: { fontSize: FontSize.md, fontWeight: FontWeight.semibold, color: Colors.textPrimary, marginBottom: 2 },
+  recCardType: { fontSize: FontSize.xs, color: Colors.textMuted, marginBottom: 4, textTransform: 'capitalize' },
+  recCardRationale: { fontSize: FontSize.sm, color: Colors.textSecondary },
+  recPurchaseBtn: {
+    flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.gold,
+    paddingHorizontal: Spacing.md, paddingVertical: Spacing.sm, borderRadius: BorderRadius.sm, gap: 4
+  },
+  recPurchaseBtnText: { fontSize: FontSize.sm, fontWeight: FontWeight.bold, color: Colors.navy },
+
   chatSendDisabled: { backgroundColor: Colors.surfaceLight },
 });

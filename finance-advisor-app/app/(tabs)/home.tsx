@@ -12,7 +12,7 @@ import { useRouter } from 'expo-router';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius, Shadows } from '../../constants/theme';
 import {
   getAccounts, getProducts, getPromotions, getProductDetail,
-  traditionalApply, Account, Product,
+  traditionalApply, Account, Product, ProductListResponse,
 } from '../../services/api';
 import { useSessionStore } from '../../store/session';
 import HomeChat from '../../components/HomeChat';
@@ -62,6 +62,9 @@ export default function HomeScreen() {
   const [activeCategory, setActiveCategory] = useState('');
   const [categoryProducts, setCategoryProducts] = useState<Product[]>([]);
   const [catLoading, setCatLoading] = useState(false);
+  const [catPage, setCatPage] = useState(1);
+  const [catTotal, setCatTotal] = useState(0);
+  const [catLoadingMore, setCatLoadingMore] = useState(false);
 
   // ── Product detail ──
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
@@ -111,12 +114,25 @@ export default function HomeScreen() {
   const openCategory = async (catKey: string) => {
     setActiveCategory(catKey);
     setCatLoading(true);
+    setCatPage(1);
     setView('productList');
     try {
-      const prods = await getProducts(catKey);
-      setCategoryProducts(prods);
-    } catch { setCategoryProducts([]); }
+      const res = await getProducts(catKey, 1, 10);
+      setCategoryProducts(res.products);
+      setCatTotal(res.total);
+    } catch { setCategoryProducts([]); setCatTotal(0); }
     finally { setCatLoading(false); }
+  };
+
+  const loadMoreProducts = async () => {
+    const nextPage = catPage + 1;
+    setCatLoadingMore(true);
+    try {
+      const res = await getProducts(activeCategory, nextPage, 10);
+      setCategoryProducts((prev) => [...prev, ...res.products]);
+      setCatPage(nextPage);
+    } catch { /* ignore */ }
+    finally { setCatLoadingMore(false); }
   };
 
   // ── Product tap → detail ──
@@ -277,6 +293,9 @@ export default function HomeScreen() {
           <View style={styles.centered}><Text style={styles.mutedText}>No products found</Text></View>
         ) : (
           <ScrollView contentContainerStyle={styles.productListContent}>
+            <Text style={{ color: Colors.textMuted, fontSize: FontSize.xs, marginBottom: Spacing.md }}>
+              Showing {categoryProducts.length} of {catTotal}
+            </Text>
             {categoryProducts.map((p) => (
               <TouchableOpacity key={p.id} style={styles.productCard} onPress={() => openDetail(p.id)} activeOpacity={0.7}>
                 <View style={styles.productCardHeader}>
@@ -297,6 +316,20 @@ export default function HomeScreen() {
                 </Text>
               </TouchableOpacity>
             ))}
+            {categoryProducts.length < catTotal && (
+              <TouchableOpacity
+                style={styles.loadMoreBtn}
+                onPress={loadMoreProducts}
+                disabled={catLoadingMore}
+                activeOpacity={0.7}
+              >
+                {catLoadingMore ? (
+                  <ActivityIndicator size="small" color={Colors.gold} />
+                ) : (
+                  <Text style={styles.loadMoreText}>Load More</Text>
+                )}
+              </TouchableOpacity>
+            )}
           </ScrollView>
         )}
       </View>
@@ -463,6 +496,13 @@ const styles = StyleSheet.create({
     ...Shadows.gold,
   },
   purchaseBtnText: { fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.navy },
+
+  // Load more
+  loadMoreBtn: {
+    alignItems: 'center', justifyContent: 'center', paddingVertical: Spacing.md,
+    borderWidth: 1, borderColor: Colors.gold, borderRadius: BorderRadius.md, marginTop: Spacing.sm,
+  },
+  loadMoreText: { fontSize: FontSize.sm, fontWeight: FontWeight.semibold, color: Colors.gold },
 
   // Promos strip
   promoStrip: { paddingRight: Spacing.lg },

@@ -484,6 +484,422 @@
     "cta_label": "Invest now"
   },
   {
+    "id": "CC-004",
+    "name": "Student Cashback Card",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 580,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "annual_fee": 0,
+      "cashback_pct": 1.5,
+      "min_income": 0,
+      "min_credit_score": 580,
+      "network": "visa"
+    },
+    "detail": {
+      "tagline": "No annual fee. Built for students.",
+      "benefits": ["1.5% cashback on all purchases", "No annual fee ever", "Free credit score monitoring", "Mobile wallet ready", "Graduate upgrade path"],
+      "fees": { "late_payment": 15, "forex_pct": 2.5, "cash_advance_pct": 5.0 },
+      "faqs": [
+        { "q": "Do I need proof of enrollment?", "a": "Yes, a valid student ID or enrollment letter is required." },
+        { "q": "What happens after graduation?", "a": "You can upgrade to a premium card with your credit history." }
+      ],
+      "terms_summary": "No income requirement. Must be enrolled in accredited institution."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "CC-005",
+    "name": "Cash Rewards Plus",
+    "product_type": "card",
+    "category": "cards",
+    "sub_type": "credit",
+    "type": "savings",
+    "min_credit": 700,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "annual_fee": 120,
+      "cashback_pct": 4.0,
+      "min_income": 40000,
+      "min_credit_score": 700,
+      "network": "mastercard"
+    },
+    "detail": {
+      "tagline": "4% cashback on groceries, gas & streaming.",
+      "benefits": ["4% on groceries, gas, streaming", "2% on dining", "1% on everything else", "Purchase protection up to $1,000", "Extended warranty +1 year"],
+      "fees": { "late_payment": 30, "forex_pct": 1.8, "cash_advance_pct": 5.0 },
+      "faqs": [
+        { "q": "Is the 4% rate capped?", "a": "Yes, up to $6,000 in combined purchases per quarter." },
+        { "q": "Can I choose my own bonus categories?", "a": "No, categories are fixed but rotate seasonally." }
+      ],
+      "terms_summary": "Subject to credit approval. Min income $40,000."
+    },
+    "agent_flow": "card",
+    "cta_label": "Apply for this card"
+  },
+  {
+    "id": "SAV-004",
+    "name": "Digital Savings Account",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 4.0,
+    "eligible_goals": ["emergency_fund", "general"],
+    "summary": {
+      "interest_rate": 4.0,
+      "account_type": "regular",
+      "min_balance": 0,
+      "max_balance": null,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Zero minimum balance. 100% digital.",
+      "rate_tiers": [
+        { "from": 0, "to": null, "rate": 4.0 }
+      ],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [
+        { "q": "Is there a minimum balance?", "a": "No, zero minimum balance." },
+        { "q": "How do I deposit?", "a": "Via bank transfer, mobile check deposit, or linked account." }
+      ],
+      "terms_summary": "FDIC insured. No monthly fees. No minimum balance."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "SAV-005",
+    "name": "Senior Savings Plus",
+    "product_type": "savings",
+    "category": "savings",
+    "sub_type": "regular",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": 5.0,
+    "eligible_goals": ["retirement", "emergency_fund", "general"],
+    "summary": {
+      "interest_rate": 5.0,
+      "account_type": "regular",
+      "min_balance": 1000,
+      "max_balance": 500000,
+      "lock_in_months": 0
+    },
+    "detail": {
+      "tagline": "Premium rates for ages 55+. Earn 5% p.a.",
+      "rate_tiers": [
+        { "from": 0, "to": 100000, "rate": 4.5 },
+        { "from": 100000, "to": null, "rate": 5.0 }
+      ],
+      "early_withdrawal_fee": null,
+      "deposit_insurance": true,
+      "faqs": [
+        { "q": "Who qualifies?", "a": "Account holders aged 55 and above." },
+        { "q": "Can I add a joint holder?", "a": "Yes, spouse can be added as joint account holder." }
+      ],
+      "terms_summary": "FDIC insured. Must be 55+ to open. No lock-in."
+    },
+    "agent_flow": "savings",
+    "cta_label": "Open this account"
+  },
+  {
+    "id": "LN-004",
+    "name": "Education Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "education",
+    "type": "loan",
+    "min_credit": 600,
+    "risk_level": "moderate",
+    "return_pct": null,
+    "eligible_goals": ["education", "general"],
+    "summary": {
+      "interest_rate_min": 4.5,
+      "interest_rate_max": 9.0,
+      "loan_amount_min": 5000,
+      "loan_amount_max": 150000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 180,
+      "min_income": 0,
+      "approval_days": "3–5 working days"
+    },
+    "detail": {
+      "tagline": "Invest in your future. Rates from 4.5% p.a.",
+      "required_docs": ["Admission letter", "Government-issued ID", "Co-signer income docs (if applicable)"],
+      "faqs": [
+        { "q": "Can I defer payments while studying?", "a": "Yes, interest-only payments during study period." },
+        { "q": "Is a co-signer required?", "a": "Required for applicants under 21 or without income." }
+      ],
+      "terms_summary": "Covers tuition, books, and living expenses. Deferment available."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "LN-005",
+    "name": "Small Business Loan",
+    "product_type": "loan",
+    "category": "loans",
+    "sub_type": "business",
+    "type": "loan",
+    "min_credit": 680,
+    "risk_level": "high",
+    "return_pct": null,
+    "eligible_goals": ["business", "general"],
+    "summary": {
+      "interest_rate_min": 6.0,
+      "interest_rate_max": 15.0,
+      "loan_amount_min": 10000,
+      "loan_amount_max": 500000,
+      "tenure_min_months": 12,
+      "tenure_max_months": 84,
+      "min_income": 50000,
+      "approval_days": "5–10 working days"
+    },
+    "detail": {
+      "tagline": "Fuel your business growth with flexible financing.",
+      "required_docs": ["Business registration", "2 years financial statements", "Business plan", "Government-issued ID", "6 months bank statements"],
+      "faqs": [
+        { "q": "Is collateral required?", "a": "Unsecured up to $100,000; above that, business assets as collateral." },
+        { "q": "Can startups apply?", "a": "Businesses must be operational for at least 1 year." }
+      ],
+      "terms_summary": "Subject to business credit assessment. Rate varies by business profile."
+    },
+    "agent_flow": "loan",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-004",
+    "name": "Critical Illness Cover",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "critical_illness",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["health", "emergency_fund", "general"],
+    "summary": {
+      "coverage_amount_min": 50000,
+      "coverage_amount_max": 2000000,
+      "premium_monthly_est": 55,
+      "term_years": 20,
+      "underwriter": "CriticalShield Insurance"
+    },
+    "detail": {
+      "tagline": "Lump-sum payout on diagnosis of 37 critical illnesses.",
+      "coverage": ["Cancer (all stages)", "Heart attack", "Stroke", "Kidney failure", "Major organ transplant", "37 conditions total"],
+      "exclusions": ["Pre-existing critical illness", "Self-inflicted conditions", "Drug/alcohol-related events"],
+      "claim_process": ["Submit diagnosis from licensed specialist", "Medical review within 14 days", "Lump-sum payout within 7 days of approval"],
+      "faqs": [
+        { "q": "Can I claim multiple times?", "a": "Single payout upon first qualifying diagnosis." },
+        { "q": "Does it cover early-stage cancer?", "a": "Yes, early-stage cancer pays 25% of sum assured." }
+      ],
+      "terms_summary": "Premium based on age and health declaration. 90-day waiting period."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INS-005",
+    "name": "Pet Insurance",
+    "product_type": "insurance",
+    "category": "insurance",
+    "sub_type": "pet",
+    "type": "insurance",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["general"],
+    "summary": {
+      "coverage_amount_min": 5000,
+      "coverage_amount_max": 30000,
+      "premium_monthly_est": 35,
+      "term_years": 1,
+      "underwriter": "PawProtect Co."
+    },
+    "detail": {
+      "tagline": "Vet bills covered. Because they're family too.",
+      "coverage": ["Accidents & injuries", "Illness & disease", "Surgery & hospitalization", "Prescription medications", "Emergency vet visits"],
+      "exclusions": ["Pre-existing conditions", "Routine check-ups & vaccinations", "Breeding-related costs", "Cosmetic procedures"],
+      "claim_process": ["Visit any licensed veterinarian", "Submit claim with vet invoice within 60 days", "Reimbursement within 10 working days"],
+      "faqs": [
+        { "q": "What pets are covered?", "a": "Dogs and cats aged 8 weeks to 10 years." },
+        { "q": "Is there a deductible?", "a": "Yes, $200 annual deductible per pet." }
+      ],
+      "terms_summary": "Annual renewable. Pets must be microchipped and vaccinated."
+    },
+    "agent_flow": "insurance",
+    "cta_label": "Get a quote"
+  },
+  {
+    "id": "INV-004",
+    "name": "Tech Growth Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "sector_fund",
+    "type": "investment",
+    "min_credit": 650,
+    "risk_level": "high",
+    "return_pct": 12.0,
+    "eligible_goals": ["wealth", "retirement"],
+    "summary": {
+      "risk_rating": 5,
+      "min_investment": 2000,
+      "platform_fee_pct": 0.6,
+      "fund_manager": "InnoTech Capital",
+      "historical_returns": { "1y": 15.2, "3y": 11.8, "5y": 12.0 }
+    },
+    "detail": {
+      "tagline": "High-growth tech exposure. AI, cloud & semiconductors.",
+      "fund_type": "Unit Trust — Technology Sector",
+      "fund_factsheet_url": "#",
+      "faqs": [
+        { "q": "What companies does it invest in?", "a": "Top holdings include NVIDIA, Microsoft, TSMC, and emerging AI companies." },
+        { "q": "Is this suitable for beginners?", "a": "Higher volatility — recommended for investors with 5+ year horizon." }
+      ],
+      "terms_summary": "High risk. Past performance not indicative. Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "INV-005",
+    "name": "Dividend Aristocrats Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "dividend",
+    "type": "investment",
+    "min_credit": 600,
+    "risk_level": "moderate",
+    "return_pct": 6.5,
+    "eligible_goals": ["retirement", "wealth", "general"],
+    "summary": {
+      "risk_rating": 3,
+      "min_investment": 1000,
+      "platform_fee_pct": 0.4,
+      "fund_manager": "YieldMaster Investments",
+      "historical_returns": { "1y": 6.2, "3y": 6.5, "5y": 6.5 }
+    },
+    "detail": {
+      "tagline": "Steady dividends from companies with 25+ years of growth.",
+      "fund_type": "Unit Trust — Dividend Income",
+      "fund_factsheet_url": "#",
+      "faqs": [
+        { "q": "How often are dividends paid?", "a": "Monthly distributions to your account." },
+        { "q": "What qualifies as a Dividend Aristocrat?", "a": "S&P 500 companies with 25+ consecutive years of dividend increases." }
+      ],
+      "terms_summary": "Moderate risk. Dividends not guaranteed. Capital at risk."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "INV-006",
+    "name": "ESG Sustainable Fund",
+    "product_type": "investment",
+    "category": "investments",
+    "sub_type": "esg",
+    "type": "investment",
+    "min_credit": 0,
+    "risk_level": "moderate",
+    "return_pct": 7.5,
+    "eligible_goals": ["wealth", "retirement", "general"],
+    "summary": {
+      "risk_rating": 3,
+      "min_investment": 500,
+      "platform_fee_pct": 0.45,
+      "fund_manager": "GreenFuture Capital",
+      "historical_returns": { "1y": 7.8, "3y": 7.2, "5y": 7.5 }
+    },
+    "detail": {
+      "tagline": "Invest with impact. Top ESG-rated companies globally.",
+      "fund_type": "Unit Trust — ESG Global Equity",
+      "fund_factsheet_url": "#",
+      "faqs": [
+        { "q": "What ESG criteria are used?", "a": "Companies scored on environmental impact, social responsibility, and governance practices." },
+        { "q": "Does ESG investing sacrifice returns?", "a": "Studies show ESG funds perform comparably to traditional funds over the long term." }
+      ],
+      "terms_summary": "Capital at risk. ESG ratings sourced from MSCI and Sustainalytics."
+    },
+    "agent_flow": "investment",
+    "cta_label": "Invest now"
+  },
+  {
+    "id": "PROMO-004",
+    "name": "Referral Bonus $50",
+    "product_type": "promotion",
+    "category": "promotions",
+    "sub_type": "referral",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["rewards", "general"],
+    "summary": {
+      "cashback_pct": null,
+      "category": "referral",
+      "cap_amount": 500,
+      "min_spend": 0,
+      "expiry": "2025-06-30",
+      "eligible_cards": []
+    },
+    "detail": {
+      "tagline": "Refer a friend, get $50. They get $50 too.",
+      "eligibility": "Any existing account holder. Unlimited referrals up to $500 total.",
+      "how_to_activate": ["Share your referral link from the app", "Friend opens any account or card", "Both receive $50 credited within 30 days"],
+      "terms": "Referred friend must complete first transaction within 90 days. Max $500 referral bonus per calendar year.",
+      "faqs": [
+        { "q": "Can I refer family members?", "a": "Yes, any new customer qualifies." }
+      ]
+    },
+    "agent_flow": null,
+    "cta_label": "Share referral link"
+  },
+  {
+    "id": "PROMO-005",
+    "name": "Welcome Bonus 2x Miles",
+    "product_type": "promotion",
+    "category": "promotions",
+    "sub_type": "welcome",
+    "type": "savings",
+    "min_credit": 0,
+    "risk_level": "low",
+    "return_pct": null,
+    "eligible_goals": ["travel", "rewards"],
+    "summary": {
+      "cashback_pct": null,
+      "category": "welcome",
+      "cap_amount": null,
+      "min_spend": 3000,
+      "expiry": "2025-12-31",
+      "eligible_cards": ["CC-003"]
+    },
+    "detail": {
+      "tagline": "Earn double miles on all spend for first 3 months.",
+      "eligibility": "New Travel Elite Card holders only.",
+      "how_to_activate": ["Activate your new Travel Elite Card", "All spend in first 90 days earns 2x miles", "Miles credited monthly to your account"],
+      "terms": "New cardholders only. 2x multiplier applies to base miles earn rate. Must spend $3,000 in first 90 days to qualify.",
+      "faqs": [
+        { "q": "Do bonus miles expire?", "a": "Same as regular miles — valid for 3 years." }
+      ]
+    },
+    "agent_flow": null,
+    "cta_label": "Activate offer"
+  },
+  {
     "id": "PROMO-001",
     "name": "3% Dining Cashback",
     "product_type": "promotion",
