@@ -35,15 +35,9 @@ interface Props {
 }
 
 export default function WizardShell({ productName, steps, onSubmit, onCancel }: Props) {
-  const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<Record<string, string>>({});
   const [showErrors, setShowErrors] = useState(false);
-
-  const step = steps[currentStep];
-  const totalSteps = steps.length;
-  const progress = ((currentStep + 1) / totalSteps) * 100;
 
   const setValue = (key: string, value: any) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
@@ -82,36 +76,22 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
     return null;
   };
 
-  const allFieldsValid = step.fields
+  const allFieldsValid = steps
+    .flatMap((s) => s.fields)
     .filter((f) => f.required)
     .every(isFieldValid);
 
-  const handleNext = () => {
-    if (!allFieldsValid) {
-      setShowErrors(true);
-      return;
-    }
-    setShowErrors(false);
-    if (currentStep < totalSteps - 1) {
-      setCurrentStep((prev) => prev + 1);
-    }
-  };
-
   const handleBack = () => {
-    if (currentStep > 0) {
-      setShowErrors(false);
-      setCurrentStep((prev) => prev - 1);
-    } else {
-      if (Platform.OS === 'web') {
-        if (confirm('Cancel application? Your progress will be lost.')) {
-          onCancel();
-        }
-      } else {
-        Alert.alert('Cancel application?', 'Your progress will be lost.', [
-          { text: 'Stay', style: 'cancel' },
-          { text: 'Leave', style: 'destructive', onPress: onCancel },
-        ]);
+    setShowErrors(false);
+    if (Platform.OS === 'web') {
+      if (confirm('Cancel application? Your progress will be lost.')) {
+        onCancel();
       }
+    } else {
+      Alert.alert('Cancel application?', 'Your progress will be lost.', [
+        { text: 'Stay', style: 'cancel' },
+        { text: 'Leave', style: 'destructive', onPress: onCancel },
+      ]);
     }
   };
 
@@ -138,8 +118,6 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
       setSubmitting(false);
     }
   };
-
-  const isLastStep = currentStep === totalSteps - 1;
 
   const renderField = (field: WizardField) => {
     const value = getFieldValue(field);
@@ -258,44 +236,32 @@ export default function WizardShell({ productName, steps, onSubmit, onCancel }: 
           <Ionicons name="arrow-back" size={22} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle} numberOfLines={1}>{productName}</Text>
-        <View style={styles.stepBadge}>
-          <Text style={styles.stepBadgeText}>Step {currentStep + 1}/{totalSteps}</Text>
-        </View>
       </View>
-
-      {/* Progress bar */}
-      <View style={styles.progressOuter}>
-        <View style={[styles.progressFill, { width: `${progress}%` }]} />
-      </View>
-
-      {/* Step title */}
-      <Text style={styles.stepTitle}>{step.title}</Text>
 
       {/* Fields */}
       <ScrollView style={styles.fieldsScroll} showsVerticalScrollIndicator={false}>
-        {step.fields.map(renderField)}
+        {steps.map((stepGrp, index) => (
+          <View key={index} style={styles.fieldset}>
+            <Text style={styles.stepTitle}>{stepGrp.title}</Text>
+            {stepGrp.fields.map(renderField)}
+          </View>
+        ))}
         <View style={{ height: 100 }} />
       </ScrollView>
 
       {/* Bottom CTA */}
       <View style={styles.bottomBar}>
-        {isLastStep ? (
-          <TouchableOpacity
-            style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
-            onPress={handleSubmit}
-            disabled={submitting}
-          >
-            {submitting ? (
-              <ActivityIndicator color={Colors.navy} />
-            ) : (
-              <Text style={styles.primaryBtnText}>Submit application</Text>
-            )}
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={styles.primaryBtn} onPress={handleNext}>
-            <Text style={styles.primaryBtnText}>Next step →</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={[styles.primaryBtn, submitting && styles.primaryBtnDisabled]}
+          onPress={handleSubmit}
+          disabled={submitting}
+        >
+          {submitting ? (
+            <ActivityIndicator color={Colors.navy} />
+          ) : (
+            <Text style={styles.primaryBtnText}>Submit application</Text>
+          )}
+        </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
@@ -310,19 +276,15 @@ const styles = StyleSheet.create({
   },
   backBtn: { marginRight: Spacing.md },
   headerTitle: { flex: 1, fontSize: FontSize.md, fontWeight: FontWeight.bold, color: Colors.textPrimary },
-  stepBadge: {
-    backgroundColor: Colors.surfaceLight, borderRadius: BorderRadius.full,
-    paddingHorizontal: Spacing.md, paddingVertical: 4,
+  fieldset: {
+    backgroundColor: Colors.surface, borderRadius: BorderRadius.lg,
+    borderWidth: 1, borderColor: Colors.cardBorder,
+    padding: Spacing.lg, marginBottom: Spacing.xl,
   },
-  stepBadgeText: { fontSize: FontSize.xs, fontWeight: FontWeight.semibold, color: Colors.textMuted },
-  progressOuter: {
-    height: 4, backgroundColor: Colors.cardBorder, marginHorizontal: Spacing.lg, marginTop: Spacing.md,
-    borderRadius: 2, overflow: 'hidden',
-  },
-  progressFill: { height: '100%', backgroundColor: Colors.gold, borderRadius: 2 },
   stepTitle: {
-    fontSize: FontSize.xl, fontWeight: FontWeight.bold, color: Colors.textPrimary,
-    paddingHorizontal: Spacing.lg, paddingTop: Spacing.xxl, paddingBottom: Spacing.lg,
+    fontSize: FontSize.lg, fontWeight: FontWeight.bold, color: Colors.textPrimary,
+    borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.cardBorder,
+    paddingBottom: Spacing.md, marginBottom: Spacing.lg,
   },
   fieldsScroll: { flex: 1, paddingHorizontal: Spacing.lg },
 
