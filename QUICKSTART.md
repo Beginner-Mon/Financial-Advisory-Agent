@@ -49,12 +49,18 @@ copy .env.example .env
 
 Chỉnh `GOOGLE_API_KEY` trong `.env` — không commit file `.env`.
 
-### Chạy server
+### Khởi tạo dữ liệu và Chạy server
 
-Lắng nghe trên mọi interface để app trên điện thoại/emulator có thể trỏ tới máy bạn:
+Trước khi chạy lần đầu, hãy tạo dữ liệu mẫu (mock data) cho ngân hàng:
 
 ```bash
-uvicorn api:app --host 0.0.0.0 --port 8000
+python tools/seed_db.py
+```
+
+Sau đó, khởi động server (lắng nghe trên mọi interface để app trên điện thoại/emulator có thể trỏ tới máy bạn):
+
+```bash
+uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 Kiểm tra nhanh: mở trình duyệt tại `http://localhost:8000/docs` (Swagger) hoặc `GET /health`.
@@ -111,7 +117,8 @@ Sau khi lưu URL trong Settings, dùng **Test** để kiểm tra kết nối.
 ```bash
 cd finance-advisor
 .\.venv\Scripts\Activate.ps1
-uvicorn api:app --host 0.0.0.0 --port 8000
+python tools/seed_db.py
+uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 **Terminal B — app:**

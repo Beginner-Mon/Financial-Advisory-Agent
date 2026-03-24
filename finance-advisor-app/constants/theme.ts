@@ -8,11 +8,11 @@
 // ---------------------------------------------------------------------------
 export const Colors = {
   // Base
-  background: '#0a0f1e',
-  surface: '#131a2e',
-  surfaceLight: '#1a2340',
-  card: '#1e2a45',
-  cardBorder: '#2a3a5c',
+  background: '#F4F6F9',
+  surface: '#FFFFFF',
+  surfaceLight: '#F8FAFC',
+  card: '#FFFFFF',
+  cardBorder: '#E2E8F0',
 
   // Bank branding
   navy: '#0A1628',
@@ -22,46 +22,46 @@ export const Colors = {
   white: '#FFFFFF',
 
   // Text
-  textPrimary: '#f0f4ff',
-  textSecondary: '#8892b0',
-  textMuted: '#5a6380',
+  textPrimary: '#1E293B',
+  textSecondary: '#475569',
+  textMuted: '#64748B',
 
   // Accent
-  primary: '#4f8cff',
-  primaryDark: '#3a6fd4',
-  accent: '#00d4aa',
-  accentDark: '#00a88a',
+  primary: '#2563EB',
+  primaryDark: '#1D4ED8',
+  accent: '#059669',
+  accentDark: '#047857',
 
   // Health score colors
-  scoreGreen: '#00e68a',
-  scoreYellow: '#ffd93d',
-  scoreRed: '#ff6b6b',
+  scoreGreen: '#10B981',
+  scoreYellow: '#F59E0B',
+  scoreRed: '#EF4444',
 
   // Risk badges
-  riskConservative: '#4f8cff',
-  riskModerate: '#ffd93d',
-  riskAggressive: '#ff6b6b',
+  riskConservative: '#3B82F6',
+  riskModerate: '#F59E0B',
+  riskAggressive: '#EF4444',
 
   // Product types
-  savings: '#00d4aa',
-  investment: '#4f8cff',
-  loan: '#ffa366',
-  insurance: '#c77dff',
+  savings: '#10B981',
+  investment: '#3B82F6',
+  loan: '#F97316',
+  insurance: '#8B5CF6',
 
   // Status
-  error: '#ff4757',
-  success: '#00e68a',
-  warning: '#ffd93d',
+  error: '#EF4444',
+  success: '#10B981',
+  warning: '#F59E0B',
 
   // Amount colors
-  amountPositive: '#00e68a',
-  amountNegative: '#ff6b6b',
+  amountPositive: '#059669',
+  amountNegative: '#EF4444',
 
   // Transparent
-  overlay: 'rgba(0,0,0,0.5)',
-  glass: 'rgba(255,255,255,0.05)',
-  glassLight: 'rgba(255,255,255,0.08)',
-  glassMedium: 'rgba(255,255,255,0.12)',
+  overlay: 'rgba(10, 22, 40, 0.4)',
+  glass: 'rgba(10, 22, 40, 0.03)',
+  glassLight: 'rgba(10, 22, 40, 0.06)',
+  glassMedium: 'rgba(10, 22, 40, 0.1)',
 };
 
 // ---------------------------------------------------------------------------

@@ -10,6 +10,7 @@ import {
   ActivityIndicator, TextInput, FlatList, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Markdown from 'react-native-markdown-display';
 import { Colors, FontSize, FontWeight, Spacing, BorderRadius, Shadows } from '../../constants/theme';
 import {
   getProducts, getPromotions, getProductDetail, compareProducts, getAdvice,
@@ -207,7 +208,7 @@ export default function DiscoverScreen() {
 
     try {
       const report: StructuredReport = await getAdvice(text);
-      const reply = report.agent_commentary || report.report_markdown || 'I analyzed your request. Check the recommendations in the Discover tab!';
+      const reply = [report.agent_commentary, report.report_markdown].filter(Boolean).join('\n\n---\n\n') || 'I analyzed your request. Check the recommendations in the Discover tab!';
       const assistantMsg: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
@@ -296,7 +297,21 @@ export default function DiscoverScreen() {
                 </View>
               )}
               <View style={[styles.chatBubbleInner, item.role === 'user' ? styles.chatBubbleUser : styles.chatBubbleBot]}>
-                <Text style={[styles.chatText, item.role === 'user' && styles.chatTextUser]}>{item.text}</Text>
+                {item.role === 'user' ? (
+                  <Text style={[styles.chatText, styles.chatTextUser]}>{item.text}</Text>
+                ) : (
+                  <Markdown style={{
+                    body: { fontSize: FontSize.md, color: Colors.textPrimary, lineHeight: 22 },
+                    heading1: { fontSize: 18, fontWeight: 'bold', color: Colors.primary, marginTop: 12, marginBottom: 8 },
+                    heading2: { fontSize: 16, fontWeight: 'bold', color: Colors.primary, marginTop: 12, marginBottom: 8 },
+                    heading3: { fontSize: 15, fontWeight: 'bold', color: Colors.textPrimary, marginTop: 8, marginBottom: 4 },
+                    paragraph: { marginTop: 0, marginBottom: 8 },
+                    list_item: { marginTop: 0, marginBottom: 4 },
+                    strong: { fontWeight: 'bold', color: Colors.textPrimary },
+                  }}>
+                    {item.text}
+                  </Markdown>
+                )}
                 <Text style={styles.chatTime}>
                   {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </Text>

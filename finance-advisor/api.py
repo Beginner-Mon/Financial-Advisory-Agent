@@ -179,7 +179,16 @@ def advise_structured(q: AdvisoryQuery):
         profile_result = profile_user(q.message)
         profile_data = profile_result.get("profile")
         if not profile_data:
-            raise HTTPException(status_code=400, detail="Could not extract financial profile from input.")
+            return StructuredReport(
+                session_id=q.session_id,
+                health_score=0.0,
+                risk_profile="unknown",
+                goals=[],
+                plan_steps=[],
+                recommendations=[],
+                agent_commentary=profile_result.get("agent_response", "I could not extract your profile. Please provide your age, income, credit score, and financial goals."),
+                report_markdown=""
+            )
 
         profile = UserProfile(**profile_data) if isinstance(profile_data, dict) else profile_data
         assessment = build_financial_plan(profile)
