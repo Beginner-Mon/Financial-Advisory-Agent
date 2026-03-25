@@ -109,6 +109,17 @@ def apply_product(order_data: dict, db_path=None) -> str:
         }
         db["accounts"].insert(acc_row, pk="account_id")
 
+        if deposit > 0:
+            funding_acc = next(db["accounts"].rows_where("user_id = ? AND type = 'checking' AND status = 'active'", [order["user_id"]]), None)
+            if not funding_acc:
+                funding_acc = next(db["accounts"].rows_where("user_id = ? AND status = 'active' AND type != 'savings'", [order["user_id"]]), None)
+            if not funding_acc:
+                funding_acc = next(db["accounts"].rows_where("user_id = ? AND account_id != ?", [order["user_id"], acc_id]), None)
+            
+            if funding_acc:
+                new_bal = float(funding_acc.get("balance", 0)) - deposit
+                db["accounts"].update(funding_acc["account_id"], {"balance": new_bal})
+
     # Mark agent_progress as completed
     session_id = order_data.get("session_id")
     if session_id:

@@ -273,6 +273,17 @@ def traditional_apply(req: TraditionalApplyRequest):
         }
         _db["accounts"].insert(acc_row, pk="account_id")
 
+        if deposit > 0:
+            funding_acc = next(_db["accounts"].rows_where("user_id = ? AND type = 'checking' AND status = 'active'", [req.session_id]), None)
+            if not funding_acc:
+                funding_acc = next(_db["accounts"].rows_where("user_id = ? AND status = 'active' AND type != 'savings'", [req.session_id]), None)
+            if not funding_acc:
+                funding_acc = next(_db["accounts"].rows_where("user_id = ? AND account_id != ?", [req.session_id, acc_id]), None)
+
+            if funding_acc:
+                new_bal = float(funding_acc.get("balance", 0)) - deposit
+                _db["accounts"].update(funding_acc["account_id"], {"balance": new_bal})
+
     messages = {
         "card": "Your credit card application has been submitted for review.",
         "savings": "Your savings account has been opened successfully!",
