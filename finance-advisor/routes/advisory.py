@@ -30,6 +30,7 @@ class HealthStatus(BaseModel):
 
 
 class StructuredRecommendation(BaseModel):
+    id: str = ""
     name: str
     type: str
     return_pct: float
@@ -122,6 +123,7 @@ def advise_structured(q: AdvisoryQuery):
 
         structured_recs = [
             StructuredRecommendation(
+                id=r.get("id", ""),
                 name=r.get("name", "Unknown"),
                 type=r.get("type", "general"),
                 return_pct=r.get("projected_return", 0.0),

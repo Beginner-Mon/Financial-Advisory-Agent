@@ -660,8 +660,11 @@ export default function DiscoverScreen() {
                           style={styles.recPurchaseBtn}
                           activeOpacity={0.7}
                           onPress={() => {
-                            // Find product by name and open detail
-                            openAiCategory(rec.type === 'investment' ? 'investments' : rec.type === 'card' ? 'cards' : rec.type + 's');
+                            if (rec.id) {
+                              openDetail(rec.id, 'chat');
+                            } else {
+                              openAiCategory(rec.type === 'investment' ? 'investments' : rec.type === 'card' ? 'cards' : rec.type + 's');
+                            }
                           }}
                         >
                           <Ionicons name="sparkles" size={12} color={Colors.navy} />
